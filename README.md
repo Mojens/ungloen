@@ -26,4 +26,3 @@ git clone https://github.com/Mojens/ungloen.git
 cd ungloen
 ```
 3. Følg instruktionerne i de individuelle README-filer for server og klient for at installere de nødvendige pakker og køre programmerne.
-4. 
