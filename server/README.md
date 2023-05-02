@@ -41,13 +41,13 @@ Efter at have installeret de nødvendige pakker, skal du oprette en .env-fil i s
 
 PORT=8080
 <br>
-MAIL_USER=<DinEmail>
+MAIL_USER=(DinEmail)
 <br>
-MAIL_PASS=<DinEmailAdgangskode>
+MAIL_PASS=(DinEmailAdgangskode)
 <br>
-SESSION_SECRET=<Din_Session_Nøgle>
+SESSION_SECRET=(Din_Session_Nøgle)
 <br>
-CORS_SECRET=<Din_CORS_Nøgle>
+CORS_SECRET=(Din_CORS_Nøgle)
 
 
 1. Udfyld variablerne med dine egne værdier:
