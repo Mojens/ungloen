@@ -1,6 +1,7 @@
 # Ungløn
 
-Ungløn er et projekt lavet i forbindelse med min eksamen i fullstack med Node.js. Projektet består af en server og en klient, hver med deres egne installations- og kørselsinstruktioner.
+Ungløn er et projekt lavet i forbindelse med min eksamen i fullstack med Node.js.<br>
+Projektet består af en server og en klient, hver med deres egne installationsinstrukser.
 
 Følg nedenstående links for at se de individuelle README-filer og finde ud af, hvordan du kommer i gang med både server- og klientdelen af projektet.
 
