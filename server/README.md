@@ -8,4 +8,6 @@ Følg guiden forneden til at komme i gang.
 
 1. Clone the repository to your local machine:
 
+```bash
 git clone https://github.com/your_username/your_project.git
+```
