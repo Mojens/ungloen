@@ -1,17 +1,9 @@
-import dotenv from "dotenv/config";
-import { MongoClient } from "mongodb";
+import sqlite3 from 'sqlite3'
+import { open } from 'sqlite'
 
-const URL = process.env.MONGODB_URL;
+const connection = await open({
+    filename: './database/ung_loen.sqlite',
+    driver: sqlite3.Database
+});
 
-const client = new MongoClient(URL);
-
-const db = client.db("candy");
-
-
-
-export default {
-    users: db.collection("users"),
-    candyTypes: db.collection("candy_types"),
-    gummyBears: db.collection("gummyBears"),
-
-};
+export default connection;
