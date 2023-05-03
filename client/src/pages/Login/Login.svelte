@@ -43,7 +43,6 @@
         linket "Glemt adgangskode?".
     </p>
     <form on:submit|preventDefault={handleLogin}>
-        <!-- Markup example 2: input is after label -->
         <label for="email">Email addresse</label>
         <input
             type="email"
@@ -63,7 +62,6 @@
             placeholder="********"
             required
         />
-        <!-- Button -->
         <button type="submit">Log ind</button>
     </form>
     <div class="form-links">
