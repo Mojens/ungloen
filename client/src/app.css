@@ -1,3 +1,8 @@
+html,
+body {
+    height: 100%;
+}
+
 h1 {
     margin-bottom: 3% !important;
 }
@@ -52,4 +57,18 @@ h1 {
 
 .form-links a {
     margin: 0 10px;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.top-m {
+    margin-top: 1% !important;
+}
+
+.down-m {
+    margin-bottom: 1% !important;
 }

@@ -127,6 +127,8 @@
     .dropdown-ul {
         position: absolute;
         left: 0;
+        background-color: white;
+        border-radius: 8px;
     }
     .dropdown-summary {
         margin-left: 10px;
