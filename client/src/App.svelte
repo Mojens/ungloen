@@ -13,6 +13,7 @@
     import Contact from "./pages/Contact/Contact.svelte";
 </script>
 
+
 <Router>
     <Navbar />
     <Route path="/" component={Home} />

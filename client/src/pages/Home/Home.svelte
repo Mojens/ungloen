@@ -65,7 +65,7 @@
         mere selvsikker i forhold til din økonomi.
       </p>
       <a href="/opret-bruger">
-        <button class="btn btn-primary">Opret en gratis bruger</button>
+        <button class="btn btn-primary">Opret dig selv idag!</button>
       </a>
     </div>
   </div>

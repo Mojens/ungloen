@@ -59,8 +59,6 @@
 <style>
     .footer-top-m {
         padding-top: 2rem;
-        background-color: var(--color-primary);
-        color: var(--color-white);
     }
     .center a {
         margin: 0 10px;
