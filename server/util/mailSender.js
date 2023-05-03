@@ -20,7 +20,7 @@ export function sendForgotPasswordMail(res, email, token) {
         <p>Du modtager denne e-mail, fordi du har anmodet om at nulstille din adgangskode.</p>
         <p>Hvis du ikke har bedt om at nulstille din adgangskode, skal du ignorere denne e-mail.</p>
         <p>Klik venligst på følgende link for at nulstille din adgangskode:</p>
-        <a href="http://localhost:5173/reset-password/${token}">Nulstil adgangskode</a>
+        <a href="http://localhost:5173/nulstil-adgangskode/${token}">Nulstil adgangskode</a>
         <p>Dette link udløber om 1 time.</p>
         `,
     };

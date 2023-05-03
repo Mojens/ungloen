@@ -6,8 +6,8 @@
 
     $: notLoggedNavigationLinks = [
         {
-            path: "/om",
-            name: "Om",
+            path: "/om-os",
+            name: "Om os",
         },
         {
             path: "/kontakt",
@@ -19,7 +19,7 @@
                   name: "log ud",
               }
             : {
-                  path: "/logind",
+                  path: "/log-ind",
                   name: "Log ind",
               },
     ].filter(Boolean);
@@ -53,7 +53,7 @@
         }
     }
     function setSession() {
-        localStorage.setItem("user", JSON.stringify({id: 1}));
+        localStorage.setItem("user", JSON.stringify({ id: 1 }));
         window.location.reload();
     }
 </script>
@@ -98,7 +98,7 @@
     <ul>
         <li>
             <Link to="/">
-                <button on:click={setSession}></button>
+                <button on:click={setSession} />
                 <h1>UngLøn</h1>
             </Link>
         </li>
