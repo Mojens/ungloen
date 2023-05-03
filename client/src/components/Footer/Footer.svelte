@@ -46,9 +46,9 @@
         </div>
         <div />
         <div class="center">
-            <a href=""><i class="fa fa-facebook" /></a>
-            <a href=""><i class="fa fa-instagram" /></a>
-            <a href=""><i class="fa fa-twitter" /></a>
+            <a href="/#"><i class="fa fa-facebook" /></a>
+            <a href="/#"><i class="fa fa-instagram" /></a>
+            <a href="/#"><i class="fa fa-twitter" /></a>
             <a href="https://github.com/Mojens/ungloen" target="_blank"
                 ><i class="fa fa-github" /></a
             >
