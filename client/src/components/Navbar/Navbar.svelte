@@ -52,10 +52,6 @@
             toastr.error(data.message);
         }
     }
-    function setSession() {
-        localStorage.setItem("user", JSON.stringify({ id: 1 }));
-        window.location.reload();
-    }
 </script>
 
 <nav>
@@ -98,8 +94,7 @@
     <ul>
         <li>
             <Link to="/">
-                <button on:click={setSession} />
-                <h1>UngLøn</h1>
+                <h1>💰 UngLøn</h1>
             </Link>
         </li>
     </ul>
