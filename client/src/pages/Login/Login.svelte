@@ -36,14 +36,14 @@
 </script>
 
 <main class="container">
-    <h1 class="login-title">Log ind på din profil</h1>
+    <h1 class="title">Log ind på din profil</h1>
     <p>Indtast venligst dine loginoplysninger nedenfor.</p>
     <p class="p-end">
         Hvis du har glemt din adgangskode, kan du nulstille det ved at klikke på
         linket "Glemt adgangskode?".
     </p>
     <form on:submit|preventDefault={handleLogin}>
-        <label for="email">Email addresse</label>
+        <label for="email">Mailadresse</label>
         <input
             type="email"
             id="email"
@@ -75,14 +75,6 @@
     p {
         font-size: small;
         margin-bottom: 0;
-    }
-    .login-title {
-        margin-bottom: 0 !important;
-        margin-top: 10% !important;
-        font-size: 3rem !important;
-    }
-    .p-end {
-        margin-bottom: 2% !important;
     }
     label {
         font-weight: bold !important;

@@ -1,4 +1,5 @@
 import db from "./connection.js";
+import dotenv from 'dotenv/config';
 
 const isDeleteMode = process.argv.findIndex((argument) => argument === "delete_mode") === -1 ? false : true;
 
