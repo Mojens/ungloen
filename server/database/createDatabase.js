@@ -14,6 +14,7 @@ db.exec(`
     last_name TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
+    phone TEXT NOT NULL UNIQUE,
     token TEXT,
     token_expiration TEXT
   );
@@ -22,6 +23,6 @@ db.exec(`
 
 // DML
 if (isDeleteMode) {
-  db.exec(`INSERT INTO users (first_name, last_name, email, password) VALUES ('John', 'Doe', 'john_doe@emailprovider.com', '$2a$12$hxhnvxSh0THAcHji9Ac2k.9UWma2HzwviezFENVcmsHhWNod3bdmC')`);
-  
+  db.exec(`INSERT INTO users (first_name, last_name, email, password, phone) VALUES ('John', 'Doe', 'john_doe@emailprovider.com', '$2a$12$hxhnvxSh0THAcHji9Ac2k.9UWma2HzwviezFENVcmsHhWNod3bdmC', '${process.env.TEST_PHONE}');`);
+
 }

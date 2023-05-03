@@ -11,9 +11,11 @@
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^2.0.3",
     "svelte": "^3.55.1",
+    "@types/toastr": "^2.1.40",
     "vite": "^4.2.0"
   },
   "dependencies": {
-    "svelte-navigator": "^3.2.2"
+    "svelte-navigator": "^3.2.2",
+    "toastr": "^2.1.4"
   }
 }

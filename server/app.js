@@ -31,6 +31,9 @@ app.use(session({
 import loginRouter from './routers/loginRouter.js';
 app.use(loginRouter);
 
+import userRouter from './routers/userRouter.js';
+app.use(userRouter);
+
 
 
 app.listen(process.env.PORT, (err) => {
