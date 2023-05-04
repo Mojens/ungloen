@@ -1,6 +1,8 @@
 import { Router } from 'express';
+import { sendContactMail, sendFooterContactMail } from '../util/mailSender.js';
 import db from '../database/connection.js';
 import dotenv from 'dotenv/config';
+
 
 const router = Router();
 
@@ -49,6 +51,28 @@ router.put('/api/users/:id', async (req, res) => {
         user: userWithoutPassword,
         status: 200
     });
+});
+
+router.post('/api/footer/contact', async (req, res) => {
+    const { email } = req.body;
+    if (!email) {
+        return res.status(400).send({
+            message: 'Venligst udfyld din email',
+            status: 400
+        });
+    }
+    sendFooterContactMail(res, email);
+});
+
+router.post('/api/contact', async (req, res) => {
+    const { email, message, name, title } = req.body;
+    if (!email || !message || !name || !title) {
+        return res.status(400).send({
+            message: 'Venligst udfyld alle felter',
+            status: 400
+        });
+    }
+    sendContactMail(res, email, name, message, title)
 });
 
 export default router;

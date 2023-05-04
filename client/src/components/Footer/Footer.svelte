@@ -1,7 +1,23 @@
 <script>
+    import toastr from "toastr";
+    import { BASE_URL } from "../../stores/globalsStore.js";
     let email = "";
     async function handleContact() {
-        console.log("handleContact", email);
+        const response = await fetch($BASE_URL + "/api/footer/contact", {
+            credentials: "include",
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email }),
+        });
+        const data = await response.json();
+        if (response.status === 200) {
+            toastr.success(data.message);
+            email = "";
+        } else {
+            toastr.error(data.message);
+        }
     }
 </script>
 
@@ -27,7 +43,7 @@
         <div class="center">
             <form on:submit|preventDefault={handleContact}>
                 <input
-                    type="text"
+                    type="email"
                     id="email"
                     name="email"
                     bind:value={email}

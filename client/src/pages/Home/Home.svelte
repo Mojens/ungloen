@@ -1,5 +1,4 @@
 <script>
-  import { Link } from "svelte-navigator";
   import Slider from "../../components/Slider/Slider.svelte";
   const carouselPhotos = [
     {

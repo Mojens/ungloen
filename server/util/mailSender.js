@@ -39,3 +39,61 @@ export function sendForgotPasswordMail(res, email, token) {
         }
     });
 }
+
+export function sendFooterContactMail(res, email) {
+    const mailData = {
+        from: process.env.MAIL_USER,
+        to: email,
+        subject: 'Modtaget besked',
+        html: `
+        <p>Tak for at tage kontakt, vi vender tilbage hurtigst muligt.</p>
+        `,
+    };
+    const mailDataToLead = {
+        from: process.env.MAIL_USER,
+        to: process.env.MAIL_USER,
+        subject: 'Modtaget besked',
+        html: `
+        <p>${email} har taget kontakt igennem Contact Footer.</p>
+        `,
+    };
+    transporter.sendMail(mailDataToLead)
+    transporter.sendMail(mailData, (err) => {
+        if (err) {
+            return res.status(400).send({
+                message: 'Noget gik galt, prøv igen senere',
+                status: 400
+            });
+        } else {
+            return res.status(200).send({
+                message: 'Email er sendt',
+                status: 200
+            });
+        }
+    });
+}
+export function sendContactMail(res, email, name, message, title) {
+    const mailData = {
+        from: email,
+        to: process.env.MAIL_USER,
+        subject: title,
+        html: `
+          <p>Navn: ${name}</p>
+          <p>Email: ${email}</p>
+          <p>Besked: ${message}</p>
+        `,
+    };
+    transporter.sendMail(mailData, (err) => {
+        if (err) {
+            return res.status(400).send({
+                message: 'Noget gik galt, prøv igen senere',
+                status: 400
+            });
+        } else {
+            return res.status(200).send({
+                message: 'Email er sendt',
+                status: 200
+            });
+        }
+    });
+}

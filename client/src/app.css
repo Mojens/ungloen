@@ -73,6 +73,41 @@ h1 {
     margin-bottom: 1% !important;
 }
 
+.right-m {
+    margin-right: 1% !important;
+}
+
+.left-m {
+    margin-left: 1% !important;
+}
+
 main {
     margin-bottom: 10% !important;
+}
+
+.bg-primary {
+    background-color: #039BCE;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.w-75 {
+    width: 75%;
+}
+
+.w-50 {
+    width: 50%;
+}
+
+.w-25 {
+    width: 25%;
+}
+
+.border-raidus {
+    border-radius: 5px;
+}
+.title-contact {
+    font-size: 3rem !important;
 }
