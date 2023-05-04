@@ -34,6 +34,9 @@ app.use(loginRouter);
 import userRouter from './routers/userRouter.js';
 app.use(userRouter);
 
+import forumRouter from './routers/forumRouter.js';
+app.use(forumRouter);
+
 
 
 app.listen(process.env.PORT, (err) => {

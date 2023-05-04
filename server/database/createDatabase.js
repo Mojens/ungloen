@@ -9,7 +9,6 @@ if (isDeleteMode) {
   db.exec(`DROP TABLE IF EXISTS forum_comments;`);
 }
 
-// DDL
 db.exec(`
   CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -28,6 +27,9 @@ db.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     title TEXT NOT NULL,
+    subject TEXT NOT NULL,
+    likes INTEGER NOT NULL DEFAULT 0,
+    is_published BOOLEAN NOT NULL DEFAULT false,
     content TEXT NOT NULL,
     date TEXT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id)
@@ -47,10 +49,9 @@ db.exec(`
   );
 `);
 
-// DML
 if (isDeleteMode) {
   db.exec(`INSERT INTO users (first_name, last_name, email, password, phone) VALUES ('John', 'Doe', 'john_doe@emailprovider.com', '$2a$12$hxhnvxSh0THAcHji9Ac2k.9UWma2HzwviezFENVcmsHhWNod3bdmC', '${process.env.TEST_PHONE}');`);
-  db.exec(`INSERT INTO forum_posts (user_id, title, content, date) VALUES (1, 'First post', 'This is my first post', '04-05-2023');`);
-  db.exec(`INSERT INTO forum_comments (user_id, post_id, content, date) VALUES (1, 1, 'This is my first comment', '04-05-2023');`);
-
+  db.exec(`INSERT INTO forum_posts (user_id, title, subject, likes, is_published, content, date) VALUES (1, 'First Post', 'Årsopgørelse', 0, true, 'This is my first post', '2023-05-04');`);
+  db.exec(`INSERT INTO forum_comments (user_id, post_id, likes, content, date) VALUES (1, 1, 0, 'This is my first comment', '2023-05-04');`);
+  db.exec(`INSERT INTO forum_comments (user_id, post_id, likes, content, date) VALUES (1, 1, 0, 'This is my second comment', '2023-05-04');`);
 }
