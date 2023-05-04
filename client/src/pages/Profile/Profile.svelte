@@ -117,4 +117,9 @@
             on:click={handleUpdateProfile}
             >Opdater profil</button>
     </form>
+    <button
+        type="button"
+        class="btn btn-primary"
+        on:click={handleResetPassword}
+        >Nulstil adgangskode</button>
 </main>

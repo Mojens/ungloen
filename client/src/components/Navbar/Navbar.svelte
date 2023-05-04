@@ -13,6 +13,10 @@
             path: "/kontakt",
             name: "Kontakt",
         },
+        {
+            path: "/forum",
+            name: "Forum",
+        },
         $user
             ? {
                   path: "/log-ud",
@@ -33,9 +37,25 @@
 
     const LoggedNavigationLinksDropDown = [
         {
-            path: "/beregn-løn",
-            name: "Beregn Løn",
+            path: "/værktøjer",
+            name: "Alle værktøjer",
         },
+        {
+            path: "/værktøjer/beregn-månedsløn",
+            name: "Beregn måneds løn",
+        },
+        {
+            path: "/værktøjer/beregn-årsopgørelse",
+            name: "Beregn årsopgørelse",
+        },
+        {
+            path: "/værktøjer/beregn-feriepenge",
+            name: "Beregn feriepenge",
+        },
+        {
+            path: "/værktøjer/forum",
+            name: "Personlige opslag",
+        }
     ];
 
     async function handleLogout() {
@@ -129,6 +149,7 @@
         left: 0;
         background-color: white;
         border-radius: 8px;
+        display: block;
     }
     .dropdown-summary {
         margin-left: 10px;
