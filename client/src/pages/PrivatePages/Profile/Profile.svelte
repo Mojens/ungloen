@@ -1,8 +1,8 @@
 <script>
     import { onMount } from "svelte";
     import toastr from "toastr";
-    import { BASE_URL } from "../../stores/globalsStore.js";
-    import { user } from "../../stores/userStore.js";
+    import { BASE_URL } from "../../../stores/globalsStore.js";
+    import { user } from "../../../stores/userStore.js";
     let first_name = "";
     let last_name = "";
     let email = "";

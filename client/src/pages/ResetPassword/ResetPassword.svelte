@@ -5,9 +5,9 @@
 
     let token = "";
 
-    useParams().subscribe((value) => {
-        token = value.token;
-    });
+    const params = useParams();
+    token = $params.token;
+
     let password = "";
     let confirm_password = "";
 

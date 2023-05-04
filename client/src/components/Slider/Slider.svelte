@@ -27,7 +27,7 @@
 <style>
     .slider-container {
     position: relative;
-    height: 500px; /* adjust to your desired height */
+    height: 500px;
     width: 100%;
     overflow: hidden;
   }

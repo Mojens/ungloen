@@ -7,10 +7,11 @@
     import ForgotPassword from "./pages/ForgotPassword/ForgotPassword.svelte";
     import ResetPassword from "./pages/ResetPassword/ResetPassword.svelte";
     import PrivateRoute from "./router/PrivateRoute.svelte";
-    import Profile from "./pages/Profile/Profile.svelte";
+    import Profile from "./pages/PrivatePages/Profile/Profile.svelte";
     import Footer from "./components/Footer/Footer.svelte";
     import About from "./pages/About/About.svelte";
     import Contact from "./pages/Contact/Contact.svelte";
+    import Forum from "./pages/Forum/Forum.svelte";
 </script>
 
 
@@ -23,6 +24,7 @@
     <Route path="/nulstil-adgangskode/:token" component={ResetPassword} />
     <Route path="/om-os" component={About} />
     <Route path="/kontakt" component={Contact} />
+    <Route path="/forum" component={Forum} />
     <PrivateRoute path="/profil" let:location>
         <Profile />
     </PrivateRoute>
