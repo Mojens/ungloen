@@ -168,6 +168,48 @@ router.get('/api/likes/posts/forum/', async (req, res) => {
         return res.status(200).send(liked_posts);
     }
 });
+router.get('/api/likes/comments/forum/', async (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).send({
+            message: "Ikke logget ind",
+            status: 401
+        });
+    } else {
+        let liked_comments = await db.all('SELECT * FROM comments_likes WHERE user_id = ?', [req.session.user.id]);
+        return res.status(200).send(liked_comments);
+    }
+});
+router.post('/api/likes/comments/forum/:id', async (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).send({
+            message: "For at like en kommentar skal du være logget ind<br>Ellers du kan oprette en bruger",
+            status: 401
+        });
+    } else {
+        const [comment] = await db.all('SELECT * FROM forum_comments WHERE id = ?', [req.params.id]);
+        if (!comment) {
+            return res.status(404).send({
+                message: 'Kommentar ikke fundet',
+                status: 404
+            });
+        }
+        const [like] = await db.all('SELECT * FROM comments_likes WHERE user_id = ? AND comment_id = ?', [req.session.user.id, req.params.id]);
+        if (like) {
+            await db.run('DELETE FROM comments_likes WHERE user_id = ? AND comment_id = ?', [req.session.user.id, req.params.id]);
+            return res.status(201).send({
+                message: 'Kommentar unliked',
+                status: 201
+            });
+        } else {
+            await db.run('INSERT INTO comments_likes (user_id, comment_id) VALUES (?, ?)', [req.session.user.id, req.params.id]);
+            return res.status(200).send({
+                message: 'Kommentar liked',
+                status: 200
+            });
+        }
+    }
+});
+
 router.post('/api/likes/posts/forum/:id', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).send({

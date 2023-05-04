@@ -7,6 +7,7 @@
     let subject = "";
     let publishedPosts = [];
     let userPostLikes = [];
+    let userCommentLikes = [];
 
     async function getPublishedPosts() {
         const response = await fetch($BASE_URL + "/api/forum");
@@ -51,6 +52,26 @@
             userPostLikes = [];
         }
     }
+    async function getLikedComments() {
+        const response = await fetch($BASE_URL + "/api/likes/comments/forum/", {
+            credentials: "include",
+        });
+        const data = await response.json();
+        if (response.status === 200) {
+            if (data.length === 0) {
+                userCommentLikes[0] = {
+                    id: 0,
+                    comment_id: 0,
+                    user_id: 0,
+                };
+            } else {
+                userCommentLikes = data;
+            }
+        } else {
+            userCommentLikes = [];
+        }
+    }
+    getLikedComments();
     getLikedPost();
     const navigate = useNavigate();
     const location = useLocation();
@@ -66,6 +87,28 @@
         console.log(data);
         if (response.status === 200 || response.status === 201) {
             getLikedPost();
+            getPublishedPosts();
+        } else if (response.status === 401) {
+            toastr.error(data.message);
+            const from =
+                ($location.state && $location.state.from) || "/log-ind";
+            navigate(from, { replace: true });
+        } else {
+            toastr.error(data.message);
+        }
+    }
+    async function likeComment(post_id) {
+        const response = await fetch(
+            $BASE_URL + "/api/likes/comments/forum/" + post_id,
+            {
+                credentials: "include",
+                method: "POST",
+            }
+        );
+        const data = await response.json();
+        console.log(data);
+        if (response.status === 200 || response.status === 201) {
+            getLikedComments();
             getPublishedPosts();
         } else if (response.status === 401) {
             toastr.error(data.message);
@@ -168,6 +211,58 @@
                                             <p class="author">
                                                 Kommentaret af: {comment.author}
                                             </p>
+                                            {#if userCommentLikes.length <= 0}
+                                                <button
+                                                    class="like-button w-25"
+                                                    on:click={() =>
+                                                        likeComment(comment.id)}
+                                                >
+                                                    <span class="like-icon"
+                                                        >&#x2665;</span
+                                                    >
+                                                    <span class="like-count"
+                                                        >{comment.likes}</span
+                                                    >
+                                                </button>
+                                            {:else if userCommentLikes.length >= 1}
+                                                {#each userCommentLikes as userComment}
+                                                    {#if userComment.comment_id === comment.id}
+                                                        <button
+                                                            class="like-button-liked w-25"
+                                                            on:click={() =>
+                                                                likeComment(
+                                                                    comment.id
+                                                                )}
+                                                        >
+                                                            <span
+                                                                class="like-icon"
+                                                                >&#x2665</span
+                                                            >
+                                                            <span
+                                                                class="like-count-liked"
+                                                                >{comment.likes}</span
+                                                            >
+                                                        </button>
+                                                    {:else}
+                                                        <button
+                                                            class="like-button w-25"
+                                                            on:click={() =>
+                                                                likeComment(
+                                                                    comment.id
+                                                                )}
+                                                        >
+                                                            <span
+                                                                class="like-icon"
+                                                                >&#x2665</span
+                                                            >
+                                                            <span
+                                                                class="like-count"
+                                                                >{comment.likes}</span
+                                                            >
+                                                        </button>
+                                                    {/if}
+                                                {/each}
+                                            {/if}
                                         </li>
                                     {/each}
                                 </ul>
