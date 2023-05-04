@@ -198,6 +198,7 @@
                         {/if}
                         {#if post.comments}
                             <details class="down-m">
+                                <!-- svelte-ignore a11y-no-redundant-roles -->
                                 <summary role="button">Se Kommentar</summary>
                                 <ul class="post-list">
                                     {#each post.comments as comment}
