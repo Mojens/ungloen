@@ -105,6 +105,10 @@ main {
     width: 25%;
 }
 
+.w-15 {
+    width: 15%;
+}
+
 .border-raidus {
     border-radius: 5px;
 }

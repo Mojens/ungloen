@@ -1,5 +1,5 @@
 <script>
-    import { Link } from "svelte-navigator";
+    import { Link, useNavigate, useLocation } from "svelte-navigator";
     import { user } from "../../stores/userStore.js";
     import { BASE_URL } from "../../stores/globalsStore.js";
     import toastr from "toastr";
@@ -55,11 +55,14 @@
         {
             path: "/værktøjer/forum",
             name: "Personlige opslag",
-        }
+        },
     ];
+    const navigate = useNavigate();
+    const location = useLocation();
 
     async function handleLogout() {
         const response = await fetch($BASE_URL + "/api/logout", {
+            credentials: "include",
             method: "POST",
         });
         const data = await response.json();
@@ -68,6 +71,8 @@
             localStorage.removeItem("user");
             user.set(null);
             $user = null;
+            const from = ($location.state && $location.state.from) || "/";
+            navigate(from, { replace: true });
         } else {
             toastr.error(data.message);
         }

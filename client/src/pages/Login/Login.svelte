@@ -7,7 +7,7 @@
     const navigate = useNavigate();
     const location = useLocation();
 
-    let email = "";
+    let email = "john_doe@emailprovider.com";
     let password = "";
 
     async function handleLogin() {
