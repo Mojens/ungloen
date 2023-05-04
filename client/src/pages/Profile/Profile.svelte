@@ -1,6 +1,120 @@
 <script>
+    import { onMount } from "svelte";
+    import toastr from "toastr";
+    import { BASE_URL } from "../../stores/globalsStore.js";
+    import { user } from "../../stores/userStore.js";
+    let first_name = "";
+    let last_name = "";
+    let email = "";
+    let phone = "";
+
+    async function getUser() {
+        const response = await fetch($BASE_URL + `/api/users/${$user.id}`, {
+            method: "GET",
+            credentials: "include",
+        });
+        const data = await response.json();
+        if (response.status === 200) {
+            first_name = data.user.first_name;
+            last_name = data.user.last_name;
+            email = data.user.email;
+            phone = data.user.phone;
+        } else {
+            toastr.error(data.message);
+        }
+    }
+    async function handleUpdateProfile() {
+        const response = await fetch($BASE_URL + `/api/users/${$user.id}`, {
+            method: "PUT",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                first_name,
+                last_name,
+                email,
+            }),
+        });
+        const data = await response.json();
+        if (response.status === 200) {
+            toastr.success(data.message);
+            user.set(data.user);
+            localStorage.setItem("user", JSON.stringify(data.user));
+            getUser();
+        } else {
+            toastr.error(data.message);
+        }
+    }
+    async function handleResetPassword() {
+        const response = await fetch($BASE_URL + "/api/forgot-password", {
+            credentials: "include",
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                email,
+            }),
+        });
+        const data = await response.json();
+        if (response.status === 200) {
+            toastr.success(data.message);
+        } else {
+            toastr.error(data.message);
+        }
+    }
+    onMount(async () => {
+        await getUser();
+    });
 </script>
 
 <main class="container">
-    <h1>Dette er din profil</h1>
+    <hgroup>
+        <h1 class="title-contact">Profil</h1>
+        <h3>Du kan opdater dine bruger informationer her.</h3>
+    </hgroup>
+    <form>
+        <label for="first_name">Fornavn</label>
+        <input
+            type="text"
+            minlength="1"
+            id="first_name"
+            name="first_name"
+            bind:value={first_name}
+            required
+        />
+        <label for="last_name">Efternavn</label>
+        <input
+            type="text"
+            minlength="1"
+            id="last_name"
+            name="last_name"
+            bind:value={last_name}
+            required
+        />
+        <label for="email">Email</label>
+        <input
+            type="email"
+            id="email"
+            name="email"
+            bind:value={email}
+            required
+        />
+        <label for="phone">Telefonnummer</label>
+        <input
+            type="tel"
+            minlength="8"
+            maxlength="8"
+            id="phone"
+            name="phone"
+            bind:value={phone}
+            required
+        />
+        <button
+            type="button"
+            class="btn btn-primary"
+            on:click={handleUpdateProfile}
+            >Opdater profil</button>
+    </form>
 </main>
