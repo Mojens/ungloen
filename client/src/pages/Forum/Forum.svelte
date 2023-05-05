@@ -26,6 +26,7 @@
         const data = await response.json();
         if (response.status === 200) {
             toastr.success(data.message);
+            comment = "";
             getPublishedPosts();
         } else if (response.status === 401) {
             toastr.error(data.message);
@@ -34,6 +35,7 @@
             navigate(from, { replace: true });
         } else {
             toastr.error(data.message);
+            comment = "";
         }
     }
     async function getPublishedPosts() {
