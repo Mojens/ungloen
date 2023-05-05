@@ -2,6 +2,7 @@
     import { useNavigate, useLocation } from "svelte-navigator";
     import { onMount } from "svelte";
     import { BASE_URL } from "../../stores/globalsStore.js";
+    import ReadMore from "../../components/ReadMore/ReadMore.svelte";
     import toastr from "toastr";
 
     let comment = "";
@@ -172,20 +173,21 @@
             <option value="Løn">Løn</option>
         </select>
     </div>
-    <div>
+    <div id="post">
         {#if subject !== ""}
             <h2 class="down-m">Alle indlæg om: {subject}</h2>
             {#if publishedPosts.length === 0}
                 <p>Der er ingen indlæg med dette emne</p>
             {:else}
                 <p>
-                    Fundet <b>{publishedPosts.length}</b> indlæg om <b>{subject}</b>
+                    Fundet <b>{publishedPosts.length}</b> indlæg om
+                    <b>{subject}</b>
                 </p>
             {/if}
         {:else}
             <h2 class="down-m">Alle indlæg</h2>
             <p>
-               Fundet <b>{publishedPosts.length}</b> indlæg 
+                Fundet <b>{publishedPosts.length}</b> indlæg
             </p>
         {/if}
         <div>
@@ -195,7 +197,9 @@
                         <p class="post-id">#{post.id}</p>
                         <p class="date">Skrevet: <b>{post.date}</b></p>
                         <h2 class="down-m">{post.title}</h2>
-                        <p class="content">{post.content}</p>
+                        <p class="content">
+                            <ReadMore textContent={post.content} maxChars={175} readMoreLabel="Læs mere" readLessLabel="Læs mindre"/>
+                        </p>
                         <p class="author">Oprettet af {post.author}</p>
                         {#if userPostLikes.length <= 0}
                             <button

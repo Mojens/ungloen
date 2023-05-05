@@ -70,7 +70,7 @@ db.exec(`
 if (isDeleteMode) {
   db.exec(`INSERT INTO users (first_name, last_name, email, password, phone) VALUES ('John', 'Doe', 'john_doe@emailprovider.com', '$2a$12$hxhnvxSh0THAcHji9Ac2k.9UWma2HzwviezFENVcmsHhWNod3bdmC', '${process.env.TEST_PHONE}');`);
   db.exec(`INSERT INTO forum_posts (user_id, title, subject, is_published, content, date) VALUES (1, 'Test opslag', 'Årsopgørelse', true, 'Test indhold', '2021-01-01 00:00:00');`);
-  db.exec(`INSERT INTO forum_posts (user_id, title, subject, is_published, content, date) VALUES (1, 'Test opslag', 'Arv', true, 'Test indhold', '2021-01-01 00:00:00');`);
+  db.exec(`INSERT INTO forum_posts (user_id, title, subject, is_published, content, date) VALUES (1, 'Test opslag', 'Arv', true, '123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891', '2021-01-01 00:00:00');`);
   db.exec(`INSERT INTO forum_comments (user_id, post_id, content, date) VALUES (1, 1, 'Test kommentar', '2021-01-01 00:00:00');`);
   db.exec(`INSERT INTO posts_likes (user_id, post_id) VALUES (1, 1);`);
   db.exec(`INSERT INTO comments_likes (user_id, comment_id) VALUES (1, 1);`);

@@ -216,6 +216,12 @@ router.post('/api/comments/forum', async (req, res) => {
             });
         }
         const { comment, post_id } = req.body;
+        if (!comment || comment.length < 2) {
+            return res.status(400).send({
+                message: 'Kommentar skal være længere',
+                status: 400
+            });
+        };
         console.log(comment, post_id);
         const [post] = await db.all('SELECT * FROM forum_posts WHERE id = ?', [Number(post_id)]);
         if (!post) {
