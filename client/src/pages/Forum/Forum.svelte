@@ -10,7 +10,31 @@
     let userPostLikes = [];
     let userCommentLikes = [];
 
-    async function addComment(postId) {}
+    async function addComment(postId) {
+        const response = await fetch($BASE_URL + "/api/comments/forum", {
+            credentials: "include",
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                comment: comment,
+                post_id: postId,
+            }),
+        });
+        const data = await response.json();
+        if (response.status === 200) {
+            toastr.success(data.message);
+            getPublishedPosts();
+        } else if (response.status === 401) {
+            toastr.error(data.message);
+            const from =
+                ($location.state && $location.state.from) || "/log-ind";
+            navigate(from, { replace: true });
+        } else {
+            toastr.error(data.message);
+        }
+    }
     async function getPublishedPosts() {
         const response = await fetch($BASE_URL + "/api/forum");
         const data = await response.json();
@@ -25,7 +49,7 @@
             return getPublishedPosts();
         }
         const response = await fetch(
-            $BASE_URL + "/api/forum/subject/" + subject
+            $BASE_URL + "/api/subject/forum/" + subject
         );
         const data = await response.json();
         if (response.status === 200) {
@@ -174,29 +198,25 @@
                                 <span class="like-count">{post.likes}</span>
                             </button>
                         {:else if userPostLikes.length >= 1}
-                            {#each userPostLikes as like}
-                                {#if like.post_id === post.id}
-                                    <button
-                                        class="like-button-liked w-25"
-                                        on:click={() => likePost(post.id)}
+                            {#if userPostLikes.filter((like) => like.post_id === post.id).length > 0}
+                                <button
+                                    class="like-button-liked w-25"
+                                    on:click={() => likePost(post.id)}
+                                >
+                                    <span class="like-icon">&#x2665</span>
+                                    <span class="like-count-liked"
+                                        >{post.likes}</span
                                     >
-                                        <span class="like-icon">&#x2665</span>
-                                        <span class="like-count-liked"
-                                            >{post.likes}</span
-                                        >
-                                    </button>
-                                {:else}
-                                    <button
-                                        class="like-button w-25"
-                                        on:click={() => likePost(post.id)}
-                                    >
-                                        <span class="like-icon">&#x2665</span>
-                                        <span class="like-count"
-                                            >{post.likes}</span
-                                        >
-                                    </button>
-                                {/if}
-                            {/each}
+                                </button>
+                            {:else}
+                                <button
+                                    class="like-button w-25"
+                                    on:click={() => likePost(post.id)}
+                                >
+                                    <span class="like-icon">&#x2665</span>
+                                    <span class="like-count">{post.likes}</span>
+                                </button>
+                            {/if}
                         {/if}
                         <details class="down-m">
                             <!-- svelte-ignore a11y-no-redundant-roles -->
@@ -222,66 +242,61 @@
                                                         likeComment(comment.id)}
                                                 >
                                                     <span class="like-icon"
-                                                        >&#x2665;</span
+                                                        >♥</span
                                                     >
                                                     <span class="like-count"
                                                         >{comment.likes}</span
                                                     >
                                                 </button>
                                             {:else if userCommentLikes.length >= 1}
-                                                {#each userCommentLikes as userComment}
-                                                    {#if userComment.comment_id === comment.id}
-                                                        <button
-                                                            class="like-button-liked w-25"
-                                                            on:click={() =>
-                                                                likeComment(
-                                                                    comment.id
-                                                                )}
+                                                {#if userCommentLikes.filter((like) => like.comment_id === comment.id).length > 0}
+                                                    <button
+                                                        class="like-button-liked w-25"
+                                                        on:click={() =>
+                                                            likeComment(
+                                                                comment.id
+                                                            )}
+                                                    >
+                                                        <span class="like-icon"
+                                                            >♥</span
                                                         >
-                                                            <span
-                                                                class="like-icon"
-                                                                >&#x2665</span
-                                                            >
-                                                            <span
-                                                                class="like-count-liked"
-                                                                >{comment.likes}</span
-                                                            >
-                                                        </button>
-                                                    {:else}
-                                                        <button
-                                                            class="like-button w-25"
-                                                            on:click={() =>
-                                                                likeComment(
-                                                                    comment.id
-                                                                )}
+                                                        <span
+                                                            class="like-count-liked"
+                                                            >{comment.likes}</span
                                                         >
-                                                            <span
-                                                                class="like-icon"
-                                                                >&#x2665</span
-                                                            >
-                                                            <span
-                                                                class="like-count"
-                                                                >{comment.likes}</span
-                                                            >
-                                                        </button>
-                                                    {/if}
-                                                {/each}
+                                                    </button>
+                                                {:else}
+                                                    <button
+                                                        class="like-button w-25"
+                                                        on:click={() =>
+                                                            likeComment(
+                                                                comment.id
+                                                            )}
+                                                    >
+                                                        <span class="like-icon"
+                                                            >♥</span
+                                                        >
+                                                        <span class="like-count"
+                                                            >{comment.likes}</span
+                                                        >
+                                                    </button>
+                                                {/if}
                                             {/if}
                                         </li>
                                     {/each}
                                 </ul>
                             {/if}
-                            <form>
+                            <form
+                                on:submit|preventDefault={() =>
+                                    addComment(post.id)}
+                            >
                                 <label for="comment">Skriv en kommentar</label>
                                 <textarea
                                     bind:value={comment}
                                     id="comment"
                                     placeholder="Skriv en kommentar"
                                 />
-                                <button
-                                    class="btn btn-primary"
-                                    on:click={() => addComment(post.id)}
-                                >
+                                <button class="btn btn-primary" type="submit">
                                     Tilføj kommentar
                                 </button>
                             </form>

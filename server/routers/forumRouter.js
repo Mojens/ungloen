@@ -29,9 +29,6 @@ router.get('/api/forum', async (req, res) => {
 
                 const [comment_likes] = await db.all('SELECT COUNT(*) AS likes FROM comments_likes WHERE comment_id = ?', [comment.id]);
                 comment.likes = comment_likes.likes;
-
-                comment.user_id = undefined;
-                comment.post_id = undefined;
             }
             post.comments = comments;
         }
@@ -73,16 +70,13 @@ router.get('/api/forum/:id', async (req, res) => {
 
             const [comment_likes] = await db.all('SELECT COUNT(*) AS likes FROM comments_likes WHERE comment_id = ?', [comment.id]);
             comment.likes = comment_likes.likes;
-
-            comment.user_id = undefined;
-            comment.post_id = undefined;
         }
         post.comments = comments;
     }
     return res.status(200).send(post);
 });
 
-router.get('/api/forum/subject/:subject', async (req, res) => {
+router.get('/api/subject/forum/:subject', async (req, res) => {
     let posts = await db.all('SELECT * FROM forum_posts WHERE subject = ? ORDER BY date DESC', [req.params.subject]);
     if (posts.length <= 0) {
         return res.status(404).send({
@@ -105,8 +99,6 @@ router.get('/api/forum/subject/:subject', async (req, res) => {
                     const [user] = await db.all('SELECT first_name, last_name FROM users WHERE id = ?', [comment.user_id]);
                     const author = user.first_name + ' ' + user.last_name;
                     comment.author = author;
-                    comment.user_id = undefined;
-                    comment.post_id = undefined;
 
                     const [comment_likes] = await db.all('SELECT COUNT(*) AS likes FROM comments_likes WHERE comment_id = ?', [comment.id]);
                     comment.likes = comment_likes.likes;
@@ -207,6 +199,36 @@ router.post('/api/likes/comments/forum/:id', async (req, res) => {
                 status: 200
             });
         }
+    }
+});
+router.post('/api/comments/forum', async (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).send({
+            message: "For at kommentere skal du være logget ind<br>Ellers du kan oprette en bruger",
+            status: 401
+        });
+    } else {
+        const [user] = await db.all('SELECT * FROM users WHERE id = ?', [req.session.user.id]);
+        if (!user) {
+            return res.status(401).send({
+                message: 'Kunne ikke finde din bruger',
+                status: 401
+            });
+        }
+        const { comment, post_id } = req.body;
+        console.log(comment, post_id);
+        const [post] = await db.all('SELECT * FROM forum_posts WHERE id = ?', [Number(post_id)]);
+        if (!post) {
+            return res.status(404).send({
+                message: 'Opslag ikke fundet, kan være slettet',
+                status: 404
+            });
+        }
+        await db.run('INSERT INTO forum_comments (user_id, post_id, content, date) VALUES (?, ?, ?, ?)', [req.session.user.id, Number(post_id), comment, new Date().toISOString().slice(0, 19).replace('T', ' ')]);
+        return res.status(200).send({
+            message: 'Kommentar oprettet',
+            status: 200
+        });
     }
 });
 
