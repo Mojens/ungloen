@@ -177,9 +177,16 @@
             <h2 class="down-m">Alle indlæg om: {subject}</h2>
             {#if publishedPosts.length === 0}
                 <p>Der er ingen indlæg med dette emne</p>
+            {:else}
+                <p>
+                    Fundet <b>{publishedPosts.length}</b> indlæg om <b>{subject}</b>
+                </p>
             {/if}
         {:else}
             <h2 class="down-m">Alle indlæg</h2>
+            <p>
+               Fundet <b>{publishedPosts.length}</b> indlæg 
+            </p>
         {/if}
         <div>
             <ul class="post-list">
