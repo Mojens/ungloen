@@ -185,6 +185,7 @@
             <ul class="post-list">
                 {#each publishedPosts as post}
                     <li class="post-item">
+                        <p class="post-id">#{post.id}</p>
                         <p class="date">Skrevet: <b>{post.date}</b></p>
                         <h2 class="down-m">{post.title}</h2>
                         <p class="content">{post.content}</p>
@@ -337,6 +338,14 @@
         margin-top: 5px;
         font-size: small;
         float: right;
+    }
+    .post-id {
+        font-style: italic;
+        margin-top: 5px;
+        font-size: small;
+        float: left;
+        margin-bottom: 5px !important;
+        padding: 5px;
     }
     .like-button {
         display: flex;
