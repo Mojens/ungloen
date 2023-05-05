@@ -9,6 +9,8 @@ if (isDeleteMode) {
   db.exec(`DROP TABLE IF EXISTS forum_comments;`);
   db.exec(`DROP TABLE IF EXISTS posts_likes;`);
   db.exec(`DROP TABLE IF EXISTS comments_likes;`);
+
+  db.exec(`DROP TABLE IF EXISTS users_tax_data;`);
 }
 
 db.exec(`
@@ -66,6 +68,18 @@ db.exec(`
     FOREIGN KEY (comment_id) REFERENCES forum_comments(id)
   );
 `);
+db.exec(`
+    CREATE TABLE IF NOT EXISTS users_tax_data (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL UNIQUE,
+      zip_code INTEGER NOT NULL DEFAULT 0,
+      deduction_rate INTEGER NOT NULL DEFAULT 0,
+      monthly_deduction INTEGER NOT NULL DEFAULT 0,
+      city TEXT NOT NULL DEFAULT '',
+      address TEXT NOT NULL DEFAULT '',
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+`);
 
 if (isDeleteMode) {
   db.exec(`INSERT INTO users (first_name, last_name, email, password, phone) VALUES ('John', 'Doe', 'john_doe@emailprovider.com', '$2a$12$hxhnvxSh0THAcHji9Ac2k.9UWma2HzwviezFENVcmsHhWNod3bdmC', '${process.env.TEST_PHONE}');`);
@@ -74,4 +88,5 @@ if (isDeleteMode) {
   db.exec(`INSERT INTO forum_comments (user_id, post_id, content, date) VALUES (1, 1, 'Test kommentar', '2021-01-01 00:00:00');`);
   db.exec(`INSERT INTO posts_likes (user_id, post_id) VALUES (1, 1);`);
   db.exec(`INSERT INTO comments_likes (user_id, comment_id) VALUES (1, 1);`);
+  db.exec(`INSERT INTO users_tax_data (user_id, zip_code, deduction_rate, monthly_deduction, city, address) VALUES (1, 1234, 25, 1000, 'Testby', 'Testvej 1');`);
 }

@@ -66,7 +66,8 @@ router.post('/api/register', async (req, res) => {
                 const hashedPassword = await bcrypt.hash(password, 12);
                 const message = `Dette er en bekræftelse på oprettelsen af bruger: ${email}`;
                 sendSMS(message, phone);
-                await db.run('INSERT INTO users (first_name, last_name, email, password, phone) VALUES (?, ?, ?, ?, ?)', [first_name, last_name, email, hashedPassword, phone]);
+                const user = await db.run('INSERT INTO users (first_name, last_name, email, password, phone) VALUES (?, ?, ?, ?, ?)', [first_name, last_name, email, hashedPassword, phone]);
+                await db.run('INSERT INTO users_tax_data (user_id) VALUES (?)', [user.lastID]);
                 return res.status(200).send({
                     message: 'Du er nu oprettet som bruger, du vil modtage en SMS med bekræftelse',
                     status: 200,

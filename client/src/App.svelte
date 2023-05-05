@@ -12,6 +12,7 @@
     import About from "./pages/About/About.svelte";
     import Contact from "./pages/Contact/Contact.svelte";
     import Forum from "./pages/Forum/Forum.svelte";
+    import ProfilePersonalInfo from "./pages/PrivatePages/ProfilePersonalInfo/ProfilePersonalInfo.svelte";
 </script>
 
 
@@ -27,6 +28,9 @@
     <Route path="/forum" component={Forum} />
     <PrivateRoute path="/profil" let:location>
         <Profile />
+    </PrivateRoute>
+    <PrivateRoute path="/profil/personlig" let:location>
+        <ProfilePersonalInfo />
     </PrivateRoute>
 </Router>
 <Footer />

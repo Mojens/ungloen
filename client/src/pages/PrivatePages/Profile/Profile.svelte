@@ -9,7 +9,7 @@
     let phone = "";
 
     async function getUser() {
-        const response = await fetch($BASE_URL + `/api/users/${$user.id}`, {
+        const response = await fetch($BASE_URL + "/api/users/" + $user.id, {
             method: "GET",
             credentials: "include",
         });
@@ -24,7 +24,7 @@
         }
     }
     async function handleUpdateProfile() {
-        const response = await fetch($BASE_URL + `/api/users/${$user.id}`, {
+        const response = await fetch($BASE_URL + "/api/users/" + $user.id, {
             method: "PUT",
             credentials: "include",
             headers: {
@@ -74,6 +74,12 @@
         <h1 class="title-contact">Profil</h1>
         <h3>Du kan opdater dine bruger informationer her.</h3>
     </hgroup>
+    <nav aria-label="breadcrumb">
+        <ul>
+            <li><a href="/profil/personlig">Person oplysninger</a></li>
+            <li>Profil</li>
+        </ul>
+    </nav>
     <form>
         <label for="first_name">Fornavn</label>
         <input
@@ -114,12 +120,10 @@
         <button
             type="button"
             class="btn btn-primary"
-            on:click={handleUpdateProfile}
-            >Opdater profil</button>
+            on:click={handleUpdateProfile}>Opdater profil</button
+        >
     </form>
-    <button
-        type="button"
-        class="btn btn-primary"
-        on:click={handleResetPassword}
-        >Nulstil adgangskode</button>
+    <button type="button" class="btn btn-primary" on:click={handleResetPassword}
+        >Nulstil adgangskode</button
+    >
 </main>
