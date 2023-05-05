@@ -4,11 +4,13 @@
     import { BASE_URL } from "../../stores/globalsStore.js";
     import toastr from "toastr";
 
+    let comment = "";
     let subject = "";
     let publishedPosts = [];
     let userPostLikes = [];
     let userCommentLikes = [];
 
+    async function addComment(postId) {}
     async function getPublishedPosts() {
         const response = await fetch($BASE_URL + "/api/forum");
         const data = await response.json();
@@ -196,10 +198,11 @@
                                 {/if}
                             {/each}
                         {/if}
-                        {#if post.comments}
-                            <details class="down-m">
-                                <!-- svelte-ignore a11y-no-redundant-roles -->
-                                <summary role="button">Se Kommentar</summary>
+                        <details class="down-m">
+                            <!-- svelte-ignore a11y-no-redundant-roles -->
+                            <summary role="button">Se Kommentar</summary>
+                            {#if post.comments}
+                                <h2 class="down-m">Kommentar</h2>
                                 <ul class="post-list">
                                     {#each post.comments as comment}
                                         <li class="post-item">
@@ -267,8 +270,22 @@
                                         </li>
                                     {/each}
                                 </ul>
-                            </details>
-                        {/if}
+                            {/if}
+                            <form>
+                                <label for="comment">Skriv en kommentar</label>
+                                <textarea
+                                    bind:value={comment}
+                                    id="comment"
+                                    placeholder="Skriv en kommentar"
+                                />
+                                <button
+                                    class="btn btn-primary"
+                                    on:click={() => addComment(post.id)}
+                                >
+                                    Tilføj kommentar
+                                </button>
+                            </form>
+                        </details>
                     </li>
                 {/each}
             </ul>
