@@ -16,7 +16,6 @@ router.get('/api/forum', async (req, res) => {
         const [user] = await db.all('SELECT first_name, last_name FROM users WHERE id = ?', [post.user_id]);
         const author = user.first_name + ' ' + user.last_name;
         post.author = author;
-        post.user_id = undefined;
 
         const [post_likes] = await db.all('SELECT COUNT(*) AS likes FROM posts_likes WHERE post_id = ?', [post.id]);
         post.likes = post_likes.likes;
@@ -57,7 +56,6 @@ router.get('/api/forum/:id', async (req, res) => {
     const [post_likes] = await db.all('SELECT COUNT(*) AS likes FROM posts_likes WHERE post_id = ?', [post.id]);
     post.likes = post_likes.likes;
 
-    post.user_id = undefined;
     let comments = await db.all('SELECT * FROM forum_comments WHERE post_id = ?', [post.id]);
     if (comments.length > 0) {
         for (const comment of comments) {
@@ -89,7 +87,6 @@ router.get('/api/subject/forum/:subject', async (req, res) => {
             const [user] = await db.all('SELECT first_name, last_name FROM users WHERE id = ?', [post.user_id]);
             const author = user.first_name + ' ' + user.last_name;
             post.author = author;
-            post.user_id = undefined;
 
             const [post_likes] = await db.all('SELECT COUNT(*) AS likes FROM posts_likes WHERE post_id = ?', [post.id]);
             post.likes = post_likes.likes;
@@ -333,7 +330,7 @@ router.post('/api/forum', async (req, res) => {
         });
     }
     const date = getFormattedDate(new Date());
-    await db.run('INSERT INTO forum_posts (user_id, title, subject, is_published, content, date) VALUES (?, ?, ?, ?, ?, ?)', [1, title, subject, is_published, content, date]);
+    await db.run('INSERT INTO forum_posts (user_id, title, subject, is_published, content, date) VALUES (?, ?, ?, ?, ?, ?)', [req.session.user.id, title, subject, is_published, content, date]);
     return res.status(200).send({
         message: `Indlæg oprettet <br> Titel: ${title}`,
         status: 200

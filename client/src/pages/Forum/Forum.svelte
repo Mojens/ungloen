@@ -2,14 +2,61 @@
     import { useNavigate, useLocation } from "svelte-navigator";
     import { onMount } from "svelte";
     import { BASE_URL, forum_subjects } from "../../stores/globalsStore.js";
+    import { user } from "../../stores/userStore.js";
+    import { Confirm } from "svelte-confirm";
     import ReadMore from "../../components/ReadMore/ReadMore.svelte";
     import toastr from "toastr";
+    console.log($user);
 
     let comment = "";
     let subject = "";
     let publishedPosts = [];
     let userPostLikes = [];
     let userCommentLikes = [];
+    let post_owner = false;
+
+    let titleToEdit = "";
+    let contentToEdit = "";
+    let is_publishedToEdit = false;
+    let subjectToEdit = "";
+
+    async function deletePost(postId) {
+        const response = await fetch($BASE_URL + "/api/forum/" + postId, {
+            method: "DELETE",
+            credentials: "include",
+        });
+        const data = await response.json();
+        if (response.status === 200) {
+            toastr.success(data.message);
+            getPublishedPosts();
+        } else {
+            toastr.error(data.message);
+        }
+    }
+
+    async function updatePost(postId) {
+        const response = await fetch($BASE_URL + "/api/forum/" + postId, {
+            method: "PUT",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                title: titleToEdit,
+                content: contentToEdit,
+                is_published: is_publishedToEdit,
+                subject: subjectToEdit,
+            }),
+        });
+        const data = await response.json();
+        if (response.status === 200) {
+            toastr.success(data.message);
+            publishedPosts = [];
+            getPublishedPosts();
+        } else {
+            toastr.error(data.message);
+        }
+    }
 
     async function addComment(postId) {
         const response = await fetch($BASE_URL + "/api/comments/forum", {
@@ -167,10 +214,10 @@
             on:change={orderPostBySubject}
             id="subject"
         >
-        <option value="">Alle</option>
-        {#each $forum_subjects as subject}
-        <option value="{subject}">{subject}</option>
-        {/each}
+            <option value="">Alle</option>
+            {#each $forum_subjects as subject}
+                <option value={subject}>{subject}</option>
+            {/each}
         </select>
     </div>
     <div id="post">
@@ -194,11 +241,131 @@
             <ul class="post-list">
                 {#each publishedPosts as post}
                     <li class="post-item">
+                        {#if $user !== null}
+                            {#if post.user_id === $user.id}
+                                <div
+                                    class="admin-controls card-end"
+                                    id="admin-control-post-{post.id}"
+                                >
+                                    <Confirm
+                                        confirmTitle="Slet indlæg"
+                                        cancelTitle="Fortryd"
+                                        let:confirm={confirmThis}
+                                    >
+                                        <!-- svelte-ignore a11y-click-events-have-key-events -->
+                                        <!-- svelte-ignore a11y-missing-attribute -->
+                                        <a
+                                            class="right-m"
+                                            on:click={() =>
+                                                confirmThis(
+                                                    deletePost,
+                                                    post.id
+                                                )}><i class="fa fa-trash" /></a
+                                        >
+                                        <span slot="title">
+                                            Er du sikker på, at du vil slette
+                                            dette indlæg?
+                                        </span>
+                                        <span slot="description">
+                                            Du kan ikke fortryde denne handling!
+                                        </span>
+                                    </Confirm>
+                                    |
+                                    <Confirm
+                                        confirmTitle="Opdater"
+                                        cancelTitle="Fortryd"
+                                        let:confirm={confirmThis}
+                                    >
+                                        <!-- svelte-ignore a11y-click-events-have-key-events -->
+                                        <!-- svelte-ignore a11y-missing-attribute -->
+                                        <a
+                                            class="left-m"
+                                            on:click={() => {
+                                                titleToEdit = post.title;
+                                                contentToEdit = post.content;
+                                                is_publishedToEdit =
+                                                    post.is_published;
+                                                subjectToEdit = post.subject;
+                                                confirmThis(
+                                                    updatePost,
+                                                    post.id
+                                                );
+                                            }}><i class="fa fa-edit" /></a
+                                        >
+                                        <span slot="title">
+                                            Opdater indlæg
+                                        </span>
+                                        <span slot="description">
+                                            <p>
+                                                Efter du har opdateret
+                                                indlægget, kan du ikke fortryde
+                                            </p>
+                                            <form>
+                                                <label for="title">Titel</label>
+                                                <input
+                                                    type="text"
+                                                    id="title"
+                                                    name="title"
+                                                    bind:value={titleToEdit}
+                                                />
+                                                <label for="content"
+                                                    >Indhold</label
+                                                >
+                                                <textarea
+                                                    id="content"
+                                                    name="content"
+                                                    rows="4"
+                                                    cols="50"
+                                                    bind:value={contentToEdit}
+                                                />
+                                                <select
+                                                    bind:value={subjectToEdit}
+                                                    required
+                                                    id="subject"
+                                                >
+                                                    <option value="" disabled
+                                                        >Vælg et emne</option
+                                                    >
+                                                    {#each $forum_subjects as forum_subject}
+                                                        <option
+                                                            value={forum_subject}
+                                                            >{forum_subject}</option
+                                                        >
+                                                    {/each}
+                                                </select>
+                                                <fieldset>
+                                                    <label
+                                                        for="switch"
+                                                        class="w-75"
+                                                    >
+                                                        <input
+                                                            class="w-25"
+                                                            type="checkbox"
+                                                            id="switch"
+                                                            name="switch"
+                                                            role="switch"
+                                                            bind:checked={is_publishedToEdit}
+                                                        />
+                                                        Offentliggør mit indlæg
+                                                    </label>
+                                                </fieldset>
+                                            </form>
+                                        </span>
+                                    </Confirm>
+                                </div>
+                            {/if}
+                        {/if}
                         <p class="post-id">#{post.id}</p>
                         <p class="date">Skrevet: <b>{post.date}</b></p>
                         <h2 class="down-m">{post.title}</h2>
                         <p class="content">
-                            <ReadMore textContent={post.content} maxChars={175} readMoreLabel="Læs mere" readLessLabel="Læs mindre" maxWords={2000}/>
+                            <ReadMore
+                                textContent={post.content}
+                                maxChars={175}
+                                readMoreLabel="Læs mere"
+                                readLessLabel="Læs mindre"
+                                maxWords={2000}
+                            />
                         </p>
                         <p class="author">Oprettet af {post.author}</p>
                         {#if userPostLikes.length <= 0}
@@ -242,7 +409,13 @@
                                                 Skrevet: <b>{comment.date}</b>
                                             </p>
                                             <p class="content">
-                                                <ReadMore textContent={comment.content} maxChars={175} readMoreLabel="Læs mere" readLessLabel="Læs mindre" maxWords={2000} />
+                                                <ReadMore
+                                                    textContent={comment.content}
+                                                    maxChars={175}
+                                                    readMoreLabel="Læs mere"
+                                                    readLessLabel="Læs mindre"
+                                                    maxWords={2000}
+                                                />
                                             </p>
                                             <p class="author">
                                                 Kommentaret af: {comment.author}
@@ -332,7 +505,7 @@
         border: 1px solid #ccc;
         border-radius: 5px;
         list-style: none;
-        padding: 3%;
+        padding: 1.5%;
     }
 
     .post-item h2 {
