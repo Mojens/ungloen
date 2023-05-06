@@ -305,9 +305,6 @@ router.put('/api/forum/:id', async (req, res) => {
     }
 
     const { title, content, is_published } = req.body;
-    console.log("title", title);
-    console.log("content", content);
-    console.log("is_published", is_published);
     if (!title || !content || is_published === undefined) {
         return res.status(400).send({
             message: "Mangler titel, indhold eller info om offentliggørelse",
