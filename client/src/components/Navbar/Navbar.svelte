@@ -101,7 +101,7 @@
                     </li>
                 {:else}
                     <li>
-                        <Link to={link.path}>{link.name}</Link>
+                        <a href="{link.path}">{link.name}</a>
                     </li>
                 {/if}
             {/each}
@@ -114,7 +114,7 @@
                         {#each LoggedNavigationLinksDropDown as link}
                             {#if link}
                                 <li>
-                                    <Link to={link.path}>{link.name}</Link>
+                                    <a href="{link.path}">{link.name}</a>
                                 </li>
                             {/if}
                         {/each}
@@ -133,15 +133,15 @@
                 </li>
             {:else if link.name === "Log ind"}
                 <li>
-                    <Link to={link.path}>
+                    <a href="{link.path}">
                         <button class="btn btn-secondary">
                             {link.name}
                         </button>
-                    </Link>
+                    </a>
                 </li>
             {:else}
                 <li>
-                    <Link to={link.path}>{link.name}</Link>
+                    <a href="{link.path}">{link.name}</a>
                 </li>
             {/if}
         {/each}
