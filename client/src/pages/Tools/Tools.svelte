@@ -79,13 +79,12 @@
                 Angiv hvor mange timer du arbejder gennemsnitligt om måneden, og
                 se hvor meget du kan få udbetalt i feriepenge.
                 <footer>
+                    <p class="properties">Kræver du har en bruger</p>
                     <!-- svelte-ignore a11y-missing-attribute -->
                     <!-- svelte-ignore a11y-click-events-have-key-events -->
                     <a class="card-end" on:click={() => checkSession("/tjenester/beregn-feriepenge")}
                         ><i class="fa fa-arrow-circle-o-right fa-2x" /></a
                     >
-                    <p class="properties">Kræver du har en bruger</p>
-                    <p class="card-end">Beregn</p>
                 </footer>
             </article>
         </div>
