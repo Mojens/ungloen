@@ -52,6 +52,10 @@
         <h1 class="title-contact">Dine indlæg</h1>
         <h3>Her kan du Oprette, rediger og slette dine indlæg</h3>
     </hgroup>
+    <div id="create-post" class="card-end">
+        <button class="w-25"> Opret indlæg </button>
+    </div>
+
     <div id="posts-view">
         {#each posts as post}
             <details>
