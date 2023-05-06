@@ -1,4 +1,5 @@
 <script>
+    document.title = "UngLøn | Om os";
 </script>
 
 <main class="container">

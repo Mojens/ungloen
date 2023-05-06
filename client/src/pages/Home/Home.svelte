@@ -1,4 +1,5 @@
 <script>
+  document.title = "UngLøn | Forside";
   import Slider from "../../components/Slider/Slider.svelte";
   import Articles from "../../components/Articles/Articles.svelte";
   import { frontPageImages, carousel_articles } from "../../stores/globalsStore.js";

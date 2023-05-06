@@ -1,4 +1,5 @@
 <script>
+    document.title = "UngLøn | Vores tjenester";
     import { useNavigate, useLocation } from "svelte-navigator";
     import { BASE_URL, carousel_articles } from "../../stores/globalsStore.js";
     import Articles from "../../components/Articles/Articles.svelte";

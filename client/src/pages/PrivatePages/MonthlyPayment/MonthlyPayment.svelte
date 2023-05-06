@@ -1,4 +1,5 @@
 <script>
+    document.title = "UngLøn | Månedsløn";
 
 </script>
 <main class="container">

@@ -1,4 +1,5 @@
 <script>
+    document.title = "UngLøn | Profil";
     import { onMount } from "svelte";
     import toastr from "toastr";
     import { BASE_URL, user } from "../../../stores/globalsStore.js";

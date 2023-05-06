@@ -1,4 +1,5 @@
 <script>
+    document.title = "UngLøn | Glemt adgangskode";
     import toastr from "toastr";
     import { BASE_URL } from "../../stores/globalsStore.js";
 

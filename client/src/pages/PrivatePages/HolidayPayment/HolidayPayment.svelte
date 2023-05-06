@@ -1,4 +1,5 @@
 <script>
+    document.title = "UngLøn | Feriepenge";
 
 </script>
 <main class="container">

@@ -1,4 +1,5 @@
 <script>
+    document.title = "UngLøn | Opret dig";
     import toastr from "toastr";
     import { BASE_URL } from "../../stores/globalsStore.js";
 

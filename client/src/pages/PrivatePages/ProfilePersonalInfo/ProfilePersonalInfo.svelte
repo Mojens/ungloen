@@ -1,4 +1,5 @@
 <script>
+    document.title = "UngLøn | Personlige oplysninger";
     import { onMount } from "svelte";
     import { BASE_URL, user } from "../../../stores/globalsStore.js";
     import toastr from "toastr";

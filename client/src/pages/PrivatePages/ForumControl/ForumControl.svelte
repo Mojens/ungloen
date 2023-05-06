@@ -1,4 +1,5 @@
 <script>
+    document.title = "UngLøn | Dine Indlæg";
     import { BASE_URL, forum_subjects } from "../../../stores/globalsStore.js";
     import { onMount } from "svelte";
     import { Confirm } from "svelte-confirm";

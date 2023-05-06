@@ -1,4 +1,5 @@
 <script>
+    document.title = "UngLøn | Forum";
     import { useNavigate, useLocation } from "svelte-navigator";
     import { onMount } from "svelte";
     import { BASE_URL, forum_subjects, user } from "../../stores/globalsStore.js";

@@ -1,4 +1,5 @@
 <script>
+    document.title = "UngLøn | Log ind";
     import { useNavigate, useLocation } from "svelte-navigator";
     import { BASE_URL, user } from "../../stores/globalsStore.js";
     import toastr from "toastr";
