@@ -170,8 +170,6 @@
             <option value="">Alle</option>
             <option value="Årsopgørelse">Årsopgørelse</option>
             <option value="Skat">Skat</option>
-            <option value="Aktier">Aktier</option>
-            <option value="Arv">Arv</option>
             <option value="Løn">Løn</option>
         </select>
     </div>
@@ -200,7 +198,7 @@
                         <p class="date">Skrevet: <b>{post.date}</b></p>
                         <h2 class="down-m">{post.title}</h2>
                         <p class="content">
-                            <ReadMore textContent={post.content} maxChars={175} readMoreLabel="Læs mere" readLessLabel="Læs mindre"/>
+                            <ReadMore textContent={post.content} maxChars={175} readMoreLabel="Læs mere" readLessLabel="Læs mindre" maxWords={2000}/>
                         </p>
                         <p class="author">Oprettet af {post.author}</p>
                         {#if userPostLikes.length <= 0}
@@ -244,7 +242,7 @@
                                                 Skrevet: <b>{comment.date}</b>
                                             </p>
                                             <p class="content">
-                                                {comment.content}
+                                                <ReadMore textContent={comment.content} maxChars={175} readMoreLabel="Læs mere" readLessLabel="Læs mindre" maxWords={2000} />
                                             </p>
                                             <p class="author">
                                                 Kommentaret af: {comment.author}
@@ -408,7 +406,6 @@
 
     .like-count {
         display: inline-block;
-        background-color: #f7f7f7;
         border-radius: 50%;
         width: 40px;
         height: 20px;
@@ -420,7 +417,6 @@
     }
     .like-count-liked {
         display: inline-block;
-        background-color: #f7f7f7;
         border-radius: 50%;
         width: 40px;
         height: 20px;

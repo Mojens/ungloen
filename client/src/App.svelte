@@ -13,8 +13,12 @@
     import Contact from "./pages/Contact/Contact.svelte";
     import Forum from "./pages/Forum/Forum.svelte";
     import ProfilePersonalInfo from "./pages/PrivatePages/ProfilePersonalInfo/ProfilePersonalInfo.svelte";
+    import Tools from "./pages/Tools/Tools.svelte";
+    import MonthlyPayment from "./pages/PrivatePages/MonthlyPayment/MonthlyPayment.svelte";
+    import HolidayPayment from "./pages/PrivatePages/HolidayPayment/HolidayPayment.svelte";
+    import DrivingDeduction from "./pages/PrivatePages/DrivingDeduction/DrivingDeduction.svelte";
+    import ForumControl from "./pages/PrivatePages/ForumControl/ForumControl.svelte";
 </script>
-
 
 <Router>
     <Navbar />
@@ -26,11 +30,24 @@
     <Route path="/om-os" component={About} />
     <Route path="/kontakt" component={Contact} />
     <Route path="/forum" component={Forum} />
+    <Route path="/tjenester" component={Tools} />
     <PrivateRoute path="/profil" let:location>
         <Profile />
     </PrivateRoute>
     <PrivateRoute path="/profil/personlig" let:location>
         <ProfilePersonalInfo />
+    </PrivateRoute>
+    <PrivateRoute path="/tjenester/beregn-maanedsloen" let:location>
+        <MonthlyPayment />
+    </PrivateRoute>
+    <PrivateRoute path="/tjenester/beregn-koerselsfradrag" let:location>
+        <DrivingDeduction />
+    </PrivateRoute>
+    <PrivateRoute path="/tjenester/beregn-feriepenge" let:location>
+        <HolidayPayment />
+    </PrivateRoute>
+    <PrivateRoute path="/tjenester/forum" let:location>
+        <ForumControl />
     </PrivateRoute>
 </Router>
 <Footer />

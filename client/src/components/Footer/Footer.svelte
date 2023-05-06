@@ -34,10 +34,11 @@
         </div>
         <div class="center">
             <ul class="footer-links">
+                <li><a href="/tjenester">Tjenester</a></li>
                 <li><a href="/om-os">Om os</a></li>
                 <li><a href="/kontakt">Kontakt</a></li>
                 <li><a href="/log-ind">Log ind</a></li>
-                <li><a href="/opret-bruger">Opret bruger</a></li>
+
             </ul>
         </div>
         <div class="center">

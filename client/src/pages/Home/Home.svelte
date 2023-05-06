@@ -1,11 +1,12 @@
 <script>
   import Slider from "../../components/Slider/Slider.svelte";
+  import Articles from "../../components/Articles/Articles.svelte";
   import { frontPageImages } from "../../stores/imageStore.js";
   const photos = $frontPageImages;
 </script>
 
-<main>
-  <div class="container top-m">
+<main class="container top-m">
+  
     <div class="center">
       <hgroup>
         <h1 class="center top-m down-m title">UngLøn</h1>
@@ -55,5 +56,13 @@
         <button class="btn btn-primary">Opret dig selv idag!</button>
       </a>
     </div>
-  </div>
+  <div id="articles">
+    <hgroup>
+        <h2 class="title-contact">Relevante artikler</h2>
+        <h3>
+            Her kan du finde artikler, som vi har fundet som vi mener er relevante for dig.
+        </h3>
+    </hgroup>
+    <Articles amountToShow={2} amountOnScroll={1} />
+</div>
 </main>

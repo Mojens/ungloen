@@ -191,5 +191,18 @@ router.post('/api/check-token', async (req, res) => {
     return res.status(200)
 });
 
+router.get('/api/check-session', async (req, res) => {
+    if (!req.session.user) {
+        return res.status(400).send({
+            message: 'Ingen session fundet',
+            status: 400
+        });
+    }
+    return res.status(200).send({
+        message: 'Session fundet',
+        status: 200
+    })
+});
+
 
 export default router;

@@ -6,6 +6,10 @@
 
     $: notLoggedNavigationLinks = [
         {
+            path: "/tjenester",
+            name: "Tjenester",
+        },
+        {
             path: "/om-os",
             name: "Om os",
         },
@@ -37,24 +41,20 @@
 
     const LoggedNavigationLinksDropDown = [
         {
-            path: "/værktøjer",
-            name: "Alle værktøjer",
-        },
-        {
-            path: "/værktøjer/beregn-månedsløn",
+            path: "/tjenester/beregn-maanedsloen",
             name: "Beregn måneds løn",
         },
         {
-            path: "/værktøjer/beregn-årsopgørelse",
-            name: "Beregn årsopgørelse",
+            path: "/tjenester/beregn-koerselsfradrag",
+            name: "Beregn kørselsfradrag",
         },
         {
-            path: "/værktøjer/beregn-feriepenge",
+            path: "/tjenester/beregn-feriepenge",
             name: "Beregn feriepenge",
         },
         {
-            path: "/værktøjer/forum",
-            name: "Personlige opslag",
+            path: "/tjenester/forum",
+            name: "Personlige indlæg",
         },
     ];
     const navigate = useNavigate();
