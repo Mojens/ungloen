@@ -36,7 +36,6 @@ router.get('/api/forum', async (req, res) => {
     }
     return res.status(200).send(posts);
 });
-
 router.get('/api/forum/:id', async (req, res) => {
     const [post] = await db.all('SELECT * FROM forum_posts WHERE id = ?', [Number(req.params.id)]);
     if (!post) {
@@ -74,7 +73,6 @@ router.get('/api/forum/:id', async (req, res) => {
     }
     return res.status(200).send(post);
 });
-
 router.get('/api/subject/forum/:subject', async (req, res) => {
     let posts = await db.all('SELECT * FROM forum_posts WHERE subject = ? AND is_published = true ORDER BY date DESC', [req.params.subject]);
     if (posts.length <= 0) {
@@ -108,7 +106,6 @@ router.get('/api/subject/forum/:subject', async (req, res) => {
         return res.status(200).send(posts);
     }
 });
-
 router.get('/api/private/forum/', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).send({
@@ -125,7 +122,6 @@ router.get('/api/private/forum/', async (req, res) => {
         return res.status(200).send(posts);
     }
 });
-
 router.get('/api/private/forum/:id', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).send({
@@ -146,7 +142,6 @@ router.get('/api/private/forum/:id', async (req, res) => {
         return res.status(200).send(post);
     }
 });
-
 router.get('/api/likes/posts/forum/', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).send({
@@ -231,6 +226,67 @@ router.post('/api/comments/forum', async (req, res) => {
         await db.run('INSERT INTO forum_comments (user_id, post_id, content, date) VALUES (?, ?, ?, ?)', [req.session.user.id, Number(post_id), comment, new Date().toISOString().slice(0, 19).replace('T', ' ')]);
         return res.status(200).send({
             message: 'Kommentar oprettet',
+            status: 200
+        });
+    }
+});
+router.delete('/api/comments/forum/:id', async (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).send({
+            message: "For at slette en kommentar skal du være logget ind<br>Ellers du kan oprette en bruger",
+            status: 401
+        });
+    } else {
+        const [comment] = await db.all('SELECT * FROM forum_comments WHERE id = ?', [Number(req.params.id)]);
+        if (!comment) {
+            return res.status(404).send({
+                message: 'Kommentar ikke fundet',
+                status: 404
+            });
+        }
+        if (comment.user_id !== req.session.user.id) {
+            return res.status(401).send({
+                message: 'Du kan kun slette dine egne kommentarer',
+                status: 401
+            });
+        }
+        await db.run('DELETE FROM forum_comments WHERE id = ?', [Number(req.params.id)]);
+        return res.status(200).send({
+            message: 'Kommentar slettet',
+            status: 200
+        });
+    }
+});
+router.put('/api/comments/forum/:id', async (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).send({
+            message: "For at redigere en kommentar skal du være logget ind<br>Ellers du kan oprette en bruger",
+            status: 401
+        });
+    } else {
+        const [comment] = await db.all('SELECT * FROM forum_comments WHERE id = ?', [Number(req.params.id)]);
+        if (!comment) {
+            return res.status(404).send({
+                message: 'Kommentar ikke fundet',
+                status: 404
+            });
+        }
+        if (comment.user_id !== req.session.user.id) {
+            return res.status(401).send({
+                message: 'Du kan kun redigere dine egne kommentarer',
+                status: 401
+            });
+        }
+        const { content } = req.body;
+        if (!content || content.length < 2) {
+            return res.status(400).send({
+                message: 'Kommentar skal være længere',
+                status: 400
+            });
+        };
+        await db.run('UPDATE forum_comments SET content = ? WHERE id = ?', [content, Number(req.params.id)]);
+        return res.status(200).send({
+            message: 'Kommentar redigeret',
             status: 200
         });
     }

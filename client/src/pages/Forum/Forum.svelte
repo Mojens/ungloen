@@ -20,6 +20,43 @@
     let is_publishedToEdit = false;
     let subjectToEdit = "";
 
+    let commentToEdit = "";
+
+    async function deleteComment(commentId){
+        const response = await fetch($BASE_URL + "/api/comments/forum/" + commentId,{
+            method: "DELETE",
+            credentials: "include",
+        });
+        const data = await response.json();
+        if (response.status === 200) {
+            toastr.success(data.message);
+            publishedPosts = [];
+            getPublishedPosts();
+        } else {
+            toastr.error(data.message);
+        }
+    };
+    async function updateComment(commentId){
+        const response = await fetch($BASE_URL + "/api/comments/forum/" + commentId,{
+            method: "PUT",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                content: commentToEdit,
+            }),
+        });
+        const data = await response.json();
+        if (response.status === 200) {
+            toastr.success(data.message);
+            publishedPosts = [];
+            getPublishedPosts();
+        } else {
+            toastr.error(data.message);
+        }
+    };
+
     async function deletePost(postId) {
         const response = await fetch($BASE_URL + "/api/forum/" + postId, {
             method: "DELETE",
@@ -405,6 +442,75 @@
                                 <ul class="post-list">
                                     {#each post.comments as comment}
                                         <li class="post-item">
+                                            {#if comment.user_id === $user.id}
+                                            <div
+                                    class="admin-controls card-end"
+                                    id="admin-control-post-{post.id}"
+                                >
+                                    <Confirm
+                                        confirmTitle="Slet kommentar"
+                                        cancelTitle="Fortryd"
+                                        let:confirm={confirmThis}
+                                    >
+                                        <!-- svelte-ignore a11y-click-events-have-key-events -->
+                                        <!-- svelte-ignore a11y-missing-attribute -->
+                                        <a
+                                            class="right-m"
+                                            on:click={() =>
+                                                confirmThis(
+                                                    deleteComment,
+                                                    comment.id
+                                                )}><i class="fa fa-trash" /></a
+                                        >
+                                        <span slot="title">
+                                            Er du sikker på, at du vil slette
+                                            denne kommentar?
+                                        </span>
+                                        <span slot="description">
+                                            Du kan ikke fortryde denne handling!
+                                        </span>
+                                    </Confirm>
+                                    |
+                                    <Confirm
+                                        confirmTitle="Opdater"
+                                        cancelTitle="Fortryd"
+                                        let:confirm={confirmThis}
+                                    >
+                                        <!-- svelte-ignore a11y-click-events-have-key-events -->
+                                        <!-- svelte-ignore a11y-missing-attribute -->
+                                        <a
+                                            class="left-m"
+                                            on:click={() => {
+                                                commentToEdit = comment.content;
+                                                confirmThis(
+                                                    updateComment,
+                                                    comment.id
+                                                );
+                                            }}><i class="fa fa-edit" /></a
+                                        >
+                                        <span slot="title">
+                                            Opdater Kommentar
+                                        </span>
+                                        <span slot="description">
+                                            <p>
+                                                Efter du har opdateret
+                                                din kommentar, kan du ikke fortryde
+                                            </p>
+                                            <form>
+                                                <label for="title">Kommentar</label>
+                                                <textarea
+                                                    id="content"
+                                                    name="content"
+                                                    rows="4"
+                                                    cols="50"
+                                                    bind:value={commentToEdit}
+                                                />
+                                              
+                                            </form>
+                                        </span>
+                                    </Confirm>
+                                </div>
+                                            {/if}
                                             <p class="date">
                                                 Skrevet: <b>{comment.date}</b>
                                             </p>
