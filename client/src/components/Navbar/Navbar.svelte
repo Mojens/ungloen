@@ -81,6 +81,13 @@
 
 <nav>
     <ul>
+        <li>
+            <Link to="/">
+                <h1>💰 UngLøn</h1>
+            </Link>
+        </li>
+    </ul>
+    <ul>
         {#if $user}
             {#each LoggedNavigationLinks as link}
                 {#if link.name === "log ud"}
@@ -103,7 +110,7 @@
                     <summary aria-haspopup="listbox" class="dropdown-summary"
                         >Værktøjer</summary
                     >
-                    <ul role="listbox" class="dropdown-ul">
+                    <ul role="listbox" class="dropdown-ul z-index">
                         {#each LoggedNavigationLinksDropDown as link}
                             {#if link}
                                 <li>
@@ -115,13 +122,6 @@
                 </details>
             </li>
         {/if}
-    </ul>
-    <ul>
-        <li>
-            <Link to="/">
-                <h1>💰 UngLøn</h1>
-            </Link>
-        </li>
     </ul>
     <ul>
         {#each notLoggedNavigationLinks as link}
@@ -180,7 +180,7 @@
     }
 
     ul:last-child {
-        flex: 1;
+        flex: 2;
         margin-right: 0;
     }
 
@@ -191,5 +191,8 @@
     h1 {
         font-size: 1.5rem;
         margin: 0;
+    }
+    .z-index {
+        z-index: 100;
     }
 </style>

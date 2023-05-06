@@ -57,11 +57,28 @@
     }
 
     async function updatePost(postId) {
-        console.log(postId);
-        console.log(titleToEdit);
-        console.log(contentToEdit);
+        const response = await fetch($BASE_URL + "/api/forum/" + postId, {
+            method: "PUT",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                title: titleToEdit,
+                content: contentToEdit,
+                is_published: is_publishedToEdit,
+            }),
+        });
+        const data = await response.json();
+        if (response.status === 200) {
+            toastr.success(data.message);
+            getAllPosts();
+        } else {
+            toastr.error(data.message);
+        }
     }
     async function handleSubmitPost() {
+        console;
         console.log(is_published);
     }
 
@@ -114,7 +131,7 @@
                 <fieldset>
                     <label for="switch" class="w-25">
                         <input
-                        class="w-25"
+                            class="w-25"
                             type="checkbox"
                             id="switch"
                             name="switch"
@@ -199,7 +216,7 @@
                             <fieldset>
                                 <label for="switch" class="w-75">
                                     <input
-                                    class="w-25"
+                                        class="w-25"
                                         type="checkbox"
                                         id="switch"
                                         name="switch"

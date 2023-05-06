@@ -237,7 +237,6 @@ router.post('/api/comments/forum', async (req, res) => {
         });
     }
 });
-
 router.post('/api/likes/posts/forum/:id', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).send({
@@ -286,6 +285,38 @@ router.delete('/api/forum/:id', async (req, res) => {
     await db.run('DELETE FROM forum_posts WHERE id = ?', [Number(req.params.id)]);
     return res.status(200).send({
         message: `Indlæg slettet <br> Titel: ${post.title}`,
+        status: 200
+    });
+});
+router.put('/api/forum/:id', async (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).send({
+            message: "For at redigere et indlæg skal du være logget ind<br>Ellers du kan oprette en bruger",
+            status: 401
+        });
+    }
+
+    const post = await db.get('SELECT * FROM forum_posts WHERE id = ?', [Number(req.params.id)]);
+    if (!post || post.user_id !== req.session.user.id) {
+        return res.status(403).send({
+            message: "Du kan kun redigere dine egne indlæg",
+            status: 403
+        });
+    }
+
+    const { title, content, is_published } = req.body;
+    console.log("title", title);
+    console.log("content", content);
+    console.log("is_published", is_published);
+    if (!title || !content || is_published === undefined) {
+        return res.status(400).send({
+            message: "Mangler titel, indhold eller info om offentliggørelse",
+            status: 400
+        });
+    }
+    await db.run('UPDATE forum_posts SET title = ?, content = ?, is_published = ? WHERE id = ?', [title, content, is_published, Number(req.params.id)]);
+    return res.status(200).send({
+        message: `Indlæg redigeret <br> Titel: ${title}`,
         status: 200
     });
 });
