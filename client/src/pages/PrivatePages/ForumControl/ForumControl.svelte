@@ -2,6 +2,7 @@
     import { BASE_URL } from "../../../stores/globalsStore.js";
     import { onMount } from "svelte";
     import { Confirm } from "svelte-confirm";
+    import { forum_subjects } from "../../../stores/globalsStore.js";
     import toastr from "toastr";
 
     let posts = [];
@@ -9,10 +10,12 @@
     let titleToEdit = "";
     let contentToEdit = "";
     let is_publishedToEdit = false;
+    let subjectToEdit = "";
 
     let showForm = false;
     let title = "";
     let content = "";
+    let subject = "";
     let is_published = false;
 
     function toggleForm() {
@@ -67,6 +70,7 @@
                 title: titleToEdit,
                 content: contentToEdit,
                 is_published: is_publishedToEdit,
+                subject: subjectToEdit,
             }),
         });
         const data = await response.json();
@@ -78,8 +82,27 @@
         }
     }
     async function handleSubmitPost() {
-        console;
-        console.log(is_published);
+        const response = await fetch($BASE_URL + "/api/forum/", {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                title: title,
+                content: content,
+                is_published: is_published,
+                subject: subject,
+            }),
+        });
+        const data = await response.json();
+        if (response.status === 200) {
+            toastr.success(data.message);
+            getAllPosts();
+            toggleForm();
+        } else {
+            toastr.error(data.message);
+        }
     }
 
     onMount(() => {
@@ -92,7 +115,7 @@
         <h1 class="title-contact">Dine indlæg</h1>
         <h3>
             Her kan du Oprette, rediger, slette og gør dine indlæg private.
-            <br>
+            <br />
             Du kan klikke på en af dine indlæg for at se dine muligheder.
         </h3>
     </hgroup>
@@ -132,6 +155,14 @@
                     bind:value={content}
                     required
                 />
+
+                <label for="subject">Emne</label>
+                <select bind:value={subject} required id="subject">
+                    <option value="" disabled>Vælg et emne</option>
+                    {#each $forum_subjects as forum_subject}
+                        <option value={forum_subject}>{forum_subject}</option>
+                    {/each}
+                </select>
                 <fieldset>
                     <label for="switch" class="w-25">
                         <input
@@ -160,7 +191,9 @@
                         {#if post.is_published}
                             <span class="published">Offentliggjort</span>
                         {:else}
-                            <span class="not-published">Ikke offentliggjort</span>
+                            <span class="not-published"
+                                >Ikke offentliggjort</span
+                            >
                         {/if}
                     </p>
                     <br />
@@ -205,6 +238,7 @@
                             titleToEdit = post.title;
                             contentToEdit = post.content;
                             is_publishedToEdit = post.is_published;
+                            subjectToEdit = post.subject;
                             confirmThis(updatePost, post.id);
                         }}><i class="fa fa-edit" /></a
                     >
@@ -230,6 +264,14 @@
                                 cols="50"
                                 bind:value={contentToEdit}
                             />
+                            <select bind:value={subjectToEdit} required id="subject">
+                                <option value="" disabled>Vælg et emne</option>
+                                {#each $forum_subjects as forum_subject}
+                                    <option value={forum_subject}
+                                        >{forum_subject}</option
+                                    >
+                                {/each}
+                            </select>
                             <fieldset>
                                 <label for="switch" class="w-75">
                                     <input

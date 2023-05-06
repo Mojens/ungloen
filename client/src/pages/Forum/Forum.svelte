@@ -1,7 +1,7 @@
 <script>
     import { useNavigate, useLocation } from "svelte-navigator";
     import { onMount } from "svelte";
-    import { BASE_URL } from "../../stores/globalsStore.js";
+    import { BASE_URL, forum_subjects } from "../../stores/globalsStore.js";
     import ReadMore from "../../components/ReadMore/ReadMore.svelte";
     import toastr from "toastr";
 
@@ -167,10 +167,10 @@
             on:change={orderPostBySubject}
             id="subject"
         >
-            <option value="">Alle</option>
-            <option value="Årsopgørelse">Årsopgørelse</option>
-            <option value="Skat">Skat</option>
-            <option value="Løn">Løn</option>
+        <option value="">Alle</option>
+        {#each $forum_subjects as subject}
+        <option value="{subject}">{subject}</option>
+        {/each}
         </select>
     </div>
     <div id="post">

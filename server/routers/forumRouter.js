@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import db from "../database/connection.js";
+import getFormattedDate from '../util/dateFormatter.js';
 
 const router = Router();
 
@@ -77,7 +78,7 @@ router.get('/api/forum/:id', async (req, res) => {
 });
 
 router.get('/api/subject/forum/:subject', async (req, res) => {
-    let posts = await db.all('SELECT * FROM forum_posts WHERE subject = ? ORDER BY date DESC', [req.params.subject]);
+    let posts = await db.all('SELECT * FROM forum_posts WHERE subject = ? AND is_published = true ORDER BY date DESC', [req.params.subject]);
     if (posts.length <= 0) {
         return res.status(404).send({
             message: 'Ingen opslag fundet',
@@ -304,18 +305,40 @@ router.put('/api/forum/:id', async (req, res) => {
         });
     }
 
-    const { title, content, is_published } = req.body;
-    if (!title || !content || is_published === undefined) {
+    const { title, content, is_published, subject } = req.body;
+    if (!title || !content || is_published === undefined || !subject) {
         return res.status(400).send({
             message: "Mangler titel, indhold eller info om offentliggørelse",
             status: 400
         });
     }
-    await db.run('UPDATE forum_posts SET title = ?, content = ?, is_published = ? WHERE id = ?', [title, content, is_published, Number(req.params.id)]);
+    await db.run('UPDATE forum_posts SET title = ?, subject = ?, content = ?, is_published = ? WHERE id = ?', [title, subject, content, is_published, Number(req.params.id)]);
     return res.status(200).send({
         message: `Indlæg redigeret <br> Titel: ${title}`,
         status: 200
     });
+});
+router.post('/api/forum', async (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).send({
+            message: "For at oprette et indlæg skal du være logget ind",
+            status: 401
+        });
+    }
+    const { title, content, is_published, subject } = req.body;
+    if (!title || !content || is_published === undefined || !subject) {
+        return res.status(400).send({
+            message: "Mangler titel, indhold eller info om offentliggørelse",
+            status: 400
+        });
+    }
+    const date = getFormattedDate(new Date());
+    await db.run('INSERT INTO forum_posts (user_id, title, subject, is_published, content, date) VALUES (?, ?, ?, ?, ?, ?)', [1, title, subject, is_published, content, date]);
+    return res.status(200).send({
+        message: `Indlæg oprettet <br> Titel: ${title}`,
+        status: 200
+    });
+
 });
 
 
