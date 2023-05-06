@@ -5,7 +5,9 @@ const savedUser = JSON.parse(localStorage.getItem("user"));
 export const user = writable(savedUser || null);
 
 export const BASE_URL = readable("http://localhost:8080");
+
 export const forum_subjects = readable(["Årsopgørelse", "Skat", "Løn", "Andet"]);
+
 export const frontPageImages = readable([
     {
         src: "https://images.pexels.com/photos/1602726/pexels-photo-1602726.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
@@ -20,6 +22,7 @@ export const frontPageImages = readable([
         alt: "Kæreste par der shopper online",
     },
 ]);
+
 export const carousel_articles = readable([
     {
         title: "Officiel hjemmeside for SKAT",

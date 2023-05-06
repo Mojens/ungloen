@@ -113,7 +113,7 @@
                         {#each LoggedNavigationLinksDropDown as link}
                             {#if link}
                                 <li>
-                                    <Link to={link.path}>{link.name}</Link>
+                                    <a href="{link.path}">{link.name}</a>
                                 </li>
                             {/if}
                         {/each}
