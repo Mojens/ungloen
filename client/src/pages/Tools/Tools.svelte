@@ -1,6 +1,6 @@
 <script>
     import { useNavigate, useLocation } from "svelte-navigator";
-    import { BASE_URL } from "../../stores/globalsStore.js";
+    import { BASE_URL, carousel_articles } from "../../stores/globalsStore.js";
     import Articles from "../../components/Articles/Articles.svelte";
     import toastr from "toastr";
 
@@ -107,7 +107,7 @@
         </div>
     </div>
 
-    <Articles amountToShow={2} amountOnScroll={1} />
+    <Articles amountToShow={2} amountOnScroll={1} articles={$carousel_articles} />
 </main>
 
 <style>

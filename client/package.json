@@ -16,6 +16,7 @@
     "vite": "^4.2.0"
   },
   "dependencies": {
+    "lozad": "^1.16.0",
     "svelte-carousel": "^1.0.25",
     "svelte-confirm": "^0.0.0",
     "svelte-navigator": "^3.2.2",

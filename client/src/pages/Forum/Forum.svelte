@@ -1,12 +1,10 @@
 <script>
     import { useNavigate, useLocation } from "svelte-navigator";
     import { onMount } from "svelte";
-    import { BASE_URL, forum_subjects } from "../../stores/globalsStore.js";
-    import { user } from "../../stores/userStore.js";
+    import { BASE_URL, forum_subjects, user } from "../../stores/globalsStore.js";
     import { Confirm } from "svelte-confirm";
     import ReadMore from "../../components/ReadMore/ReadMore.svelte";
     import toastr from "toastr";
-    console.log($user);
 
     let comment = "";
     let subject = "";

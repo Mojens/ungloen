@@ -1,7 +1,6 @@
 <script>
     import { Link, useNavigate, useLocation } from "svelte-navigator";
-    import { user } from "../../stores/userStore.js";
-    import { BASE_URL } from "../../stores/globalsStore.js";
+    import { BASE_URL, user } from "../../stores/globalsStore.js";
     import toastr from "toastr";
 
     $: notLoggedNavigationLinks = [
@@ -101,7 +100,7 @@
                     </li>
                 {:else}
                     <li>
-                        <a href="{link.path}">{link.name}</a>
+                        <Link to={link.path}>{link.name}</Link>
                     </li>
                 {/if}
             {/each}
@@ -114,7 +113,7 @@
                         {#each LoggedNavigationLinksDropDown as link}
                             {#if link}
                                 <li>
-                                    <a href="{link.path}">{link.name}</a>
+                                    <Link to={link.path}>{link.name}</Link>
                                 </li>
                             {/if}
                         {/each}
@@ -133,15 +132,15 @@
                 </li>
             {:else if link.name === "Log ind"}
                 <li>
-                    <a href="{link.path}">
+                    <Link to={link.path}>
                         <button class="btn btn-secondary">
                             {link.name}
                         </button>
-                    </a>
+                    </Link>
                 </li>
             {:else}
                 <li>
-                    <a href="{link.path}">{link.name}</a>
+                    <Link to={link.path}>{link.name}</Link>
                 </li>
             {/if}
         {/each}

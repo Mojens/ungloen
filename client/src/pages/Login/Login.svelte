@@ -1,7 +1,6 @@
 <script>
     import { useNavigate, useLocation } from "svelte-navigator";
-    import { user } from "../../stores/userStore.js";
-    import { BASE_URL } from "../../stores/globalsStore.js";
+    import { BASE_URL, user } from "../../stores/globalsStore.js";
     import toastr from "toastr";
 
     const navigate = useNavigate();

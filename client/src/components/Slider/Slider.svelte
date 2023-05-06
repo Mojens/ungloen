@@ -1,45 +1,14 @@
 <script>
-  import { fade } from "svelte/transition";
-
-  export let carouselPhotos = [];
-
-  let index = 0;
-
-  const next = () => {
-    index = (index + 1) % carouselPhotos.length;
-  };
-
-  setInterval(next, 4000);
+    import Carousel from "svelte-carousel";
+    export let carouselPhotos = [];
 </script>
 
-<div class="slider-container">
-  {#each carouselPhotos as { src, alt }, i}
-    <img
-      class="slider-img"
-      transition:fade={{ delay: 0, duration: 500 }}
-      style="opacity: {i === index ? 1 : 0}"
-      {src}
-      {alt}
-    />
-  {/each}
+<div class="slider-container center" style="max-width: 1000px; margin:0 auto;">
+    <Carousel autoplay autoplayDuration={3500} arrows={false} dots={false} infinite={true}>
+        {#each carouselPhotos as { src, alt }, i}
+            <img class="slider-img" {src} {alt} style="max-width: 1000px; height: 550px;"/>
+        {/each}
+    </Carousel>
 </div>
 
-<style>
-    .slider-container {
-    position: relative;
-    height: 500px;
-    width: 100%;
-    overflow: hidden;
-  }
 
-  .slider-img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    object-fit: cover;
-    z-index: 1;
-    transition: opacity 0.5s ease-in-out;
-  }
-</style>

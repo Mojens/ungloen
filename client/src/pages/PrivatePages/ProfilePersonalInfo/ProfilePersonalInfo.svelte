@@ -1,7 +1,6 @@
 <script>
     import { onMount } from "svelte";
-    import { BASE_URL } from "../../../stores/globalsStore.js";
-    import { user } from "../../../stores/userStore.js";
+    import { BASE_URL, user } from "../../../stores/globalsStore.js";
     import toastr from "toastr";
 
     let zip_code = "";

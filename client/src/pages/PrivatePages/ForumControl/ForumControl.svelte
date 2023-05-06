@@ -1,8 +1,7 @@
 <script>
-    import { BASE_URL } from "../../../stores/globalsStore.js";
+    import { BASE_URL, forum_subjects } from "../../../stores/globalsStore.js";
     import { onMount } from "svelte";
     import { Confirm } from "svelte-confirm";
-    import { forum_subjects } from "../../../stores/globalsStore.js";
     import toastr from "toastr";
 
     let posts = [];
