@@ -267,6 +267,28 @@ router.post('/api/likes/posts/forum/:id', async (req, res) => {
         });
     }
 });
+router.delete('/api/forum/:id', async (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).send({
+            message: "For at slette et opslag skal du være logget ind<br>Ellers du kan oprette en bruger",
+            status: 401
+        });
+    }
+
+    const post = await db.get('SELECT * FROM forum_posts WHERE id = ?', [Number(req.params.id)]);
+    if (!post || post.user_id !== req.session.user.id) {
+        return res.status(403).send({
+            message: "Ikke tilladt",
+            status: 403
+        });
+    }
+
+    await db.run('DELETE FROM forum_posts WHERE id = ?', [Number(req.params.id)]);
+    return res.status(200).send({
+        message: `Indlæg slettet <br> Titel: ${post.title}`,
+        status: 200
+    });
+});
 
 
 
