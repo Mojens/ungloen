@@ -194,7 +194,7 @@ router.post('/api/check-token', async (req, res) => {
 router.get('/api/check-session', async (req, res) => {
     if (!req.session.user) {
         return res.status(400).send({
-            message: 'Ingen session fundet',
+            message: 'Du skal være logget ind, <br> for at kunne se dette indhold.',
             status: 400
         });
     }
