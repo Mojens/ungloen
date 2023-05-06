@@ -90,7 +90,11 @@
 <main class="container">
     <hgroup>
         <h1 class="title-contact">Dine indlæg</h1>
-        <h3>Her kan du Oprette, rediger, slette og gør dine indlæg private</h3>
+        <h3>
+            Her kan du Oprette, rediger, slette og gør dine indlæg private.
+            <br>
+            Du kan klikke på en af dine indlæg for at se dine muligheder.
+        </h3>
     </hgroup>
     <div id="create-post">
         <div id="create-btn-container" class="card-end">
@@ -150,7 +154,20 @@
     <div id="posts-view">
         {#each posts as post}
             <details>
-                <summary>#{post.id} <br />{post.title}</summary>
+                <summary>
+                    <p class="post-id">#{post.id}</p>
+                    <p class="card-end down-m-0">
+                        {#if post.is_published}
+                            <span class="published">Offentliggjort</span>
+                        {:else}
+                            <span class="not-published">Ikke offentliggjort</span>
+                        {/if}
+                    </p>
+                    <br />
+                    <h2 class="down-m top-m">
+                        {post.title}
+                    </h2>
+                </summary>
                 <h2 class="center">{post.title}</h2>
                 <p>
                     {post.content}
@@ -233,3 +250,24 @@
         {/each}
     </div>
 </main>
+
+<style>
+    .post-id {
+        font-style: italic;
+        margin-top: 5px;
+        font-size: small;
+        float: left;
+        margin-bottom: 5px !important;
+        padding: 5px;
+    }
+    .published {
+        color: green;
+        font-style: italic;
+        font-size: small;
+    }
+    .not-published {
+        color: red;
+        font-style: italic;
+        font-size: small;
+    }
+</style>

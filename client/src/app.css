@@ -78,6 +78,9 @@ h1 {
 .down-m {
     margin-bottom: 1% !important;
 }
+.down-m-0 {
+    margin-bottom: 0% !important;
+}
 
 .right-m {
     margin-right: 1% !important;
