@@ -8,6 +8,26 @@
 
     let titleToEdit = "";
     let contentToEdit = "";
+    let is_publishedToEdit = false;
+
+    let showForm = false;
+    let title = "";
+    let content = "";
+    let is_published = false;
+
+    function toggleForm() {
+        showForm = !showForm;
+        if (showForm) {
+            document.getElementById("new-post-btn").innerText = "Anuller";
+        } else {
+            document.getElementById("new-post-btn").innerText = "Nyt indlæg";
+            if (title !== "" || content !== "" || is_published !== false) {
+                title = "";
+                content = "";
+                is_published = false;
+            }
+        }
+    }
 
     async function getAllPosts() {
         const response = await fetch($BASE_URL + "/api/private/forum/", {
@@ -41,6 +61,9 @@
         console.log(titleToEdit);
         console.log(contentToEdit);
     }
+    async function handleSubmitPost() {
+        console.log(is_published);
+    }
 
     onMount(() => {
         getAllPosts();
@@ -50,10 +73,61 @@
 <main class="container">
     <hgroup>
         <h1 class="title-contact">Dine indlæg</h1>
-        <h3>Her kan du Oprette, rediger og slette dine indlæg</h3>
+        <h3>Her kan du Oprette, rediger, slette og gør dine indlæg private</h3>
     </hgroup>
-    <div id="create-post" class="card-end">
-        <button class="w-25"> Opret indlæg </button>
+    <div id="create-post">
+        <div id="create-btn-container" class="card-end">
+            <button
+                class="w-25"
+                id="new-post-btn"
+                on:click={() => toggleForm()}
+            >
+                Nyt indlæg
+            </button>
+        </div>
+        {#if showForm}
+            <form
+                class="new-post-form"
+                on:submit|preventDefault={handleSubmitPost}
+            >
+                <label for="title">Titel</label>
+                <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    min="3"
+                    max="50"
+                    placeholder="Hvad er Årsopgørelse?"
+                    bind:value={title}
+                    required
+                />
+                <label for="email">Indhold</label>
+                <textarea
+                    id="content"
+                    name="content"
+                    rows="4"
+                    cols="50"
+                    placeholder="Årsopgørelse er en opgørelse over din økonomi i det forgangne år. Den viser, hvor meget du har tjent, og hvor meget du har betalt i skat. Du kan se din årsopgørelse på skat.dk."
+                    bind:value={content}
+                    required
+                />
+                <fieldset>
+                    <label for="switch" class="w-25">
+                        <input
+                        class="w-25"
+                            type="checkbox"
+                            id="switch"
+                            name="switch"
+                            role="switch"
+                            bind:checked={is_published}
+                        />
+                        Offentliggør mit indlæg
+                    </label>
+                </fieldset>
+                <button type="submit">Opret indlæg</button>
+            </form>
+        {/if}
+        <hr />
     </div>
 
     <div id="posts-view">
@@ -96,6 +170,7 @@
                         on:click={() => {
                             titleToEdit = post.title;
                             contentToEdit = post.content;
+                            is_publishedToEdit = post.is_published;
                             confirmThis(updatePost, post.id);
                         }}><i class="fa fa-edit" /></a
                     >
@@ -121,6 +196,19 @@
                                 cols="50"
                                 bind:value={contentToEdit}
                             />
+                            <fieldset>
+                                <label for="switch" class="w-75">
+                                    <input
+                                    class="w-25"
+                                        type="checkbox"
+                                        id="switch"
+                                        name="switch"
+                                        role="switch"
+                                        bind:checked={is_publishedToEdit}
+                                    />
+                                    Offentliggør mit indlæg
+                                </label>
+                            </fieldset>
                         </form>
                     </span>
                 </Confirm>
