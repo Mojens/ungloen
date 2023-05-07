@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { sendForgotPasswordMail } from '../util/mailSender.js';
 import { sendSMS } from '../util/smsSender.js';
-import db from "../database/connection.js";
+import db from '../database/connection.js';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 

@@ -20,6 +20,7 @@
     "svelte-carousel": "^1.0.25",
     "svelte-confirm": "^0.0.0",
     "svelte-navigator": "^3.2.2",
+    "svelte-quicksearch-bar": "^1.0.5",
     "toastr": "^2.1.4"
   }
 }

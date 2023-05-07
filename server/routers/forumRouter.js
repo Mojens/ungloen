@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import db from "../database/connection.js";
+import db from '../database/connection.js';
 import getFormattedDate from '../util/dateFormatter.js';
 
 const router = Router();

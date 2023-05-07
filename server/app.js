@@ -11,7 +11,6 @@ app.use(cors({
     secret: process.env.CORS_SECRET
 }));
 
-
 import session from 'express-session';
 app.use(session({
     secret: process.env.SESSION_SECRET,
@@ -28,6 +27,9 @@ app.use(userRouter);
 
 import forumRouter from './routers/forumRouter.js';
 app.use(forumRouter);
+
+import taxRouter from './routers/taxRouter.js';
+app.use(taxRouter);
 
 
 
