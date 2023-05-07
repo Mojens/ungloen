@@ -1,4 +1,5 @@
 <script>
+    document.title = "UngLøn | Aktiver din bruger"
     import { BASE_URL } from "../../stores/globalsStore.js";
     import { useNavigate, useLocation } from "svelte-navigator";
     import toastr from "toastr";

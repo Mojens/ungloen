@@ -1,4 +1,5 @@
 <script>
+    document.title = "UngLøn | Send aktiveringskode"
 import { BASE_URL } from "../../stores/globalsStore.js";
 import toastr from "toastr";
 import { useNavigate, useLocation } from "svelte-navigator";
