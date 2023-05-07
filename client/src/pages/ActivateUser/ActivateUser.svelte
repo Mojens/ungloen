@@ -37,7 +37,7 @@
 </script>
 
 <main class="container">
-    <h1 class="title-contact down-m">Aktiver din bruger</h1>
+    <h1 class="title down-m">Aktiver din bruger</h1>
     <p class="down-m">
         Indtast venligst din aktiveringskode du har modtaget på SMS.
     </p>

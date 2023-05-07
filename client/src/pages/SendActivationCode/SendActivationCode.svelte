@@ -36,7 +36,7 @@ async function resendActivationCode(){
 </script>
 
 <main class="container">
-    <h1 class="title-contact down-m">Send aktiveringskode</h1>
+    <h1 class="title down-m">Send aktiveringskode</h1>
     <p class="down-m">
         Indtast venligst din Email og vi sender dig en ny aktiverings kode på SMS.
     </p>
