@@ -174,7 +174,7 @@ router.post('/api/forgot-password', async (req, res) => {
             const token = crypto.randomBytes(5).toString('hex');
             const token_expiration = Date.now() + 3600000;
             await db.run('UPDATE users SET token = ?, token_expiration = ? WHERE email = ?', [token, token_expiration, email]);
-            const message = `Nulstil adgangskode-link udløber om 1 time. http://localhost:5173/nulstil-adgangskode/${token}`;
+            const message = `Du har anmodet om at nulstille din adgangskode, tjek din email for at nulstille din adgangskode`;
             sendSMS(message, user.phone);
             return sendForgotPasswordMail(res, email, token);
         }
