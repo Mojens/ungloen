@@ -85,6 +85,10 @@
         <a href="/log-ind">Allerede oprettet?</a>
         <span id="form-link-divider">|</span>
         <a href="/opret-bruger">Opret en bruger</a>
+        <span id="form-link-divider">|</span>
+        <a href="/aktiver-bruger">Aktiver din bruger</a>
+        <span id="form-link-divider">|</span>
+        <a href="/send-aktiveringskode">Send aktiveringskode</a>
     </div>
 </main>
 

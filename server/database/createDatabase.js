@@ -21,6 +21,9 @@ db.exec(`
     email TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
     phone TEXT NOT NULL UNIQUE,
+    verified BOOLEAN NOT NULL DEFAULT 0,
+    verification_code TEXT,
+    verification_code_expiration TEXT,
     token TEXT,
     token_expiration TEXT
   );
@@ -32,7 +35,7 @@ db.exec(`
     user_id INTEGER NOT NULL,
     title TEXT NOT NULL,
     subject TEXT NOT NULL,
-    is_published BOOLEAN NOT NULL,
+    is_published BOOLEAN NOT NULL DEFAULT 0,
     content TEXT NOT NULL,
     date TEXT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id)
@@ -82,6 +85,6 @@ db.exec(`
 `);
 
 if (isDeleteMode) {
-  db.exec(`INSERT INTO users (first_name, last_name, email, password, phone) VALUES ('John', 'Doe', 'john_doe@emailprovider.com', '$2a$12$hxhnvxSh0THAcHji9Ac2k.9UWma2HzwviezFENVcmsHhWNod3bdmC', '${process.env.TEST_PHONE}');`);
-  db.exec(`INSERT INTO users (first_name, last_name, email, password, phone) VALUES ('Mohammad Adel', 'Murtada', '${process.env.PERSON_MAIL}', '$2a$12$ON71wiIzaBEJfxiN9s1UPuJ5.ThiQtr84XwSGaLDyefmyi7ZRIx0y', '${process.env.PERSONAL_PHONE}');`)
+  db.exec(`INSERT INTO users (first_name, last_name, email, password, phone, verified) VALUES ('John', 'Doe', 'john_doe@emailprovider.com', '$2a$12$hxhnvxSh0THAcHji9Ac2k.9UWma2HzwviezFENVcmsHhWNod3bdmC', '${process.env.TEST_PHONE}', 1);`);
+  // db.exec(`INSERT INTO users (first_name, last_name, email, password, phone) VALUES ('Mohammad Adel', 'Murtada', '${process.env.PERSON_MAIL}', '$2a$12$ON71wiIzaBEJfxiN9s1UPuJ5.ThiQtr84XwSGaLDyefmyi7ZRIx0y', '${process.env.PERSONAL_PHONE}');`)
 }

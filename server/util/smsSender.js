@@ -8,12 +8,11 @@ export async function sendSMS(message, phoneNumber) {
         sms_to_phone: phoneNumber
     };
     const formData = new URLSearchParams(sms_data).toString();
-    const response = await fetch(process.env.SMS_PROVIDER, {
+    await fetch(process.env.SMS_PROVIDER, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: formData
     });
-    const data = await response.json();
 }

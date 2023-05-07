@@ -1,6 +1,7 @@
 <script>
     document.title = "UngLøn | Opret dig";
     import toastr from "toastr";
+    import { useNavigate, useLocation } from "svelte-navigator";
     import { BASE_URL } from "../../stores/globalsStore.js";
 
     let email = "";
@@ -9,6 +10,9 @@
     let first_name = "";
     let last_name = "";
     let phone = "";
+
+    const navigate = useNavigate();
+    const location = useLocation();
 
     async function handleRegister() {
         phone.replace(" ", "");
@@ -34,7 +38,10 @@
         if (response.status === 200) {
             toastr.success(data.message);
             setTimeout(() => {
-                window.location.href = "/log-ind";
+                const from =
+                    ($location.state && $location.state.from) ||
+                    "/aktiver-bruger";
+                navigate(from, { replace: true });
             }, 1500);
         } else {
             toastr.error(data.message);
@@ -43,7 +50,7 @@
 </script>
 
 <main class="container">
-    <h1 class="title">Opret dig hos os idag !</h1>
+    <h1 class="title-contact">Opret dig hos os idag !</h1>
     <p class="p-end">
         Udfyld venligst dine oplysninger for at oprette en konto.
     </p>
@@ -122,7 +129,11 @@
     <div class="form-links">
         <a href="/log-ind">Allerede oprettet?</a>
         <span id="form-link-divider">|</span>
-        <a href="/opret-bruger">Opret en bruger</a>
+        <a href="/glemt-adgangskode">Glemt adgangskode?</a>
+        <span id="form-link-divider">|</span>
+        <a href="/aktiver-bruger">Aktiver din bruger</a>
+        <span id="form-link-divider">|</span>
+        <a href="/send-aktiveringskode">Send aktiveringskode</a>
     </div>
 </main>
 

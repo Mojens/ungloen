@@ -18,6 +18,8 @@
     import HolidayPayment from "./pages/PrivatePages/HolidayPayment/HolidayPayment.svelte";
     import DrivingDeduction from "./pages/PrivatePages/DrivingDeduction/DrivingDeduction.svelte";
     import ForumControl from "./pages/PrivatePages/ForumControl/ForumControl.svelte";
+    import ActivateUser from "./pages/ActivateUser/ActivateUser.svelte";
+    import SendActivationCode from "./pages/SendActivationCode/SendActivationCode.svelte";
 </script>
 
 <Router>
@@ -27,6 +29,8 @@
     <Route path="/opret-bruger" component={Register} />
     <Route path="/glemt-adgangskode" component={ForgotPassword} />
     <Route path="/nulstil-adgangskode/:token" component={ResetPassword} />
+    <Route path="/aktiver-bruger" component={ActivateUser} />
+    <Route path="/send-aktiveringskode" component={SendActivationCode} />
     <Route path="/om-os" component={About} />
     <Route path="/kontakt" component={Contact} />
     <Route path="/forum" component={Forum} />
