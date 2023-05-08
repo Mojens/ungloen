@@ -64,6 +64,7 @@ h1 {
     justify-content: center;
     align-items: center;
 }
+
 .card-end {
     display: flex;
     justify-content: flex-end;
@@ -78,6 +79,7 @@ h1 {
 .down-m {
     margin-bottom: 1% !important;
 }
+
 .down-m-0 {
     margin-bottom: 0% !important;
 }
@@ -91,7 +93,7 @@ h1 {
 }
 
 main {
-    margin-bottom: 10% !important;
+    margin-bottom: 5% !important;
 }
 
 .bg-primary {
@@ -121,12 +123,15 @@ main {
 .border-raidus {
     border-radius: 5px;
 }
+
 .title-contact {
     font-size: 3rem !important;
 }
+
 .inline-block {
     display: inline-block;
 }
+
 .confirm-dialog {
     font-family: sans-serif;
     position: fixed !important;
@@ -139,5 +144,17 @@ main {
     background: #FFF;
     max-width: 500px;
     width: calc(100% - 20px);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-  }
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+
+.p-36 {
+    font-size: 36px;
+}
+
+.p-58 {
+    font-size: 58px;
+}
+
+.p-24 {
+    font-size: 24px;
+}

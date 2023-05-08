@@ -1,6 +1,11 @@
 export function calculateMonthlyPayout(taxData) {
     const monthlyPayout = {};
+    monthlyPayout.payoutTime = taxData.payoutTime;
+    monthlyPayout.incomeType = taxData.incomeType;
     monthlyPayout.monthlyIncome = taxData.monthlyIncome;
+    monthlyPayout.headOrBiCard = taxData.headOrBiCard;
+    monthlyPayout.tax_rate = taxData.tax_rate;
+    monthlyPayout.laborContributionRate = 8;
     if (taxData.incomeType === "Løn") {
         const laborContribution = taxData.monthlyIncome * 0.08;
         if (taxData.headOrBiCard === "headCard" && taxData.payoutTime === "monthly") {
@@ -59,4 +64,11 @@ export function calculateMonthlyPayout(taxData) {
             return monthlyPayout;
         }
     }
+}
+
+export function calculateHolidayPayment(monthlyIncome){
+    const holidayData = {};
+    holidayData.holidayPayment = (monthlyIncome * 0.125)*12;
+    holidayData.vacationDays = 2.08 * 12;
+    return holidayData;
 }

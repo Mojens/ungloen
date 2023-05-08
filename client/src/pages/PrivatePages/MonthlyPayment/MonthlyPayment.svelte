@@ -10,13 +10,22 @@
     let payoutTime = "";
     let monthlyIncome = 0;
     let headOrBiCard = "";
+    let monthlyPayoutData = {};
 
     function toogleForm() {
+        monthlyPayoutData = {};
         if (incomeType !== "") {
             showForm = true;
         } else {
             showForm = false;
         }
+    }
+
+    function formatNumber(number) {
+        const formattedNumber = number.toLocaleString("da-DK", {
+            minimumFractionDigits: 2,
+        });
+        return formattedNumber;
     }
 
     async function getTaxData() {
@@ -32,33 +41,37 @@
     }
 
     async function calculateMonthlyPayout() {
-        console.log("Trækprocent", userPersonalData.tax_rate);
-        console.log("Fradrag", userPersonalData.monthly_deduction);
-        console.log("incomeType: " + incomeType);
-        console.log("payoutTime: " + payoutTime);
-        console.log("monthlyIncome: " + monthlyIncome);
-        console.log("headOrBiCard: " + headOrBiCard);
-        const taxData = {
-            tax_rate: userPersonalData.tax_rate,
-            monthly_deduction: userPersonalData.monthly_deduction,
-            incomeType: incomeType,
-            payoutTime: payoutTime,
-            monthlyIncome: monthlyIncome,
-            headOrBiCard: headOrBiCard,
-        };
+        let buttonElement = document.getElementById("calculate-payout");
+        buttonElement.setAttribute("aria-busy", "true");
+        buttonElement.setAttribute("class", "secondary");
         const response = await fetch($BASE_URL + "/api/tax/monthly-payout", {
             method: "POST",
             credentials: "include",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(taxData),
+            body: JSON.stringify({
+                tax_rate: userPersonalData.tax_rate,
+                monthly_deduction: userPersonalData.monthly_deduction,
+                incomeType: incomeType,
+                payoutTime: payoutTime,
+                monthlyIncome: monthlyIncome,
+                headOrBiCard: headOrBiCard,
+            }),
         });
         const data = await response.json();
         if (response.status === 200) {
-            toastr.success(data.message);
-            console.log(data.monthlyPayoutData);
+            setTimeout(() => {
+                monthlyPayoutData = data.monthlyPayoutData;
+                buttonElement.removeAttribute("aria-busy");
+                buttonElement.removeAttribute("class");
+                setTimeout(() => {
+                    window.location.href = "#udbetaling-output";
+                }, 200);
+            }, 1500);
         } else {
+            buttonElement.removeAttribute("aria-busy");
+            buttonElement.removeAttribute("class");
             toastr.error(data.message);
         }
     }
@@ -69,13 +82,14 @@
 </script>
 
 <main class="container">
-    {#if userPersonalData.tax_rate !== undefined && userPersonalData.monthly_deduction}
-    <hgroup>
-        <h1 class="title-contact">Beregn månedsløn</h1>
-        <h3>
-            Her kan du regne ud hvad du får udbetalt, før du får din lønseddel.
-        </h3>
-    </hgroup>
+    {#if userPersonalData.tax_rate && userPersonalData.monthly_deduction}
+        <hgroup>
+            <h1 class="title-contact">Beregn månedsløn</h1>
+            <h3>
+                Her kan du regne ud hvad du får udbetalt, før du får din
+                lønseddel.
+            </h3>
+        </hgroup>
         <div id="choose-income-type">
             <label for="incomeType">Indkomsttype</label>
             <select
@@ -188,16 +202,95 @@
                         />
                     </label>
                 </div>
-                <button type="submit">Beregn</button>
+                <button type="submit" id="calculate-payout">Beregn</button>
             </form>
         {/if}
     {:else}
         <hgroup>
-            <h1 class="title-contact">Kune ikke indlæse dine personoplysninger.</h1>
+            <h1 class="title-contact">
+                Kune ikke indlæse dine personoplysninger.
+            </h1>
             <h3>
-                Husk at indtaste alle dine felter under <a href="/profil/personlig">Dine personlige oplysninger</a>
+                Husk at indtaste alle felter under <a
+                    href="/profil/personlig">Dine personlige oplysninger</a
+                >
             </h3>
         </hgroup>
+    {/if}
+
+    {#if monthlyPayoutData.payout}
+        <div id="udbetaling-output" class="container">
+            <h2 class="title">Udbetaling</h2>
+            <p>Her kan du se hvad du får udbetalt, før du får din lønseddel.</p>
+
+            <div class="grid">
+                <div>{monthlyPayoutData.incomeType}</div>
+                <div>{formatNumber(monthlyPayoutData.monthlyIncome)} kr.</div>
+            </div>
+
+            {#if monthlyPayoutData.incomeType === "Løn"}
+                <div class="grid">
+                    <div>
+                        AM-bidrag: <b
+                            >{monthlyPayoutData.laborContributionRate}%</b
+                        >
+                        af {formatNumber(monthlyPayoutData.monthlyIncome)}
+                        kr.
+                    </div>
+                    <div>
+                        - {formatNumber(monthlyPayoutData.laborContribution)} kr.
+                    </div>
+                </div>
+            {/if}
+
+            <div class="grid">
+                <div>
+                    A-skat: <b>{monthlyPayoutData.tax_rate}%</b> af {formatNumber(
+                        monthlyPayoutData.AIncome
+                    )} kr.
+                </div>
+                <div>- {formatNumber(monthlyPayoutData.taxToPay)} kr.</div>
+            </div>
+
+            <hr />
+
+            <div class="grid">
+                {#if monthlyPayoutData.payoutTime === "monthly"}
+                    <div class="cell">
+                        Nettoudbetalt (efter skat) / måned:
+                        {#if monthlyPayoutData.headOrBiCard === "headCard"}
+                            <br />
+                            <small class="small"
+                                >Anvendt skattekort på denne indkomst: Hovedkort</small
+                            >
+                        {:else}
+                            <br />
+                            <small class="small"
+                                >Anvendt skattekort på denne indkomst: Bikort</small
+                            >
+                        {/if}
+                    </div>
+                {:else}
+                    <div class="cell">
+                        Nettoudbetalt (efter skat) / 2. uge:
+                        {#if monthlyPayoutData.headOrBiCard === "headCard"}
+                            <br />
+                            <small class="small"
+                                >Anvendt skattekort på denne indkomst: Hovedkort</small
+                            >
+                        {:else}
+                            <br />
+                            <small class="small"
+                                >Anvendt skattekort på denne indkomst: Bikort</small
+                            >
+                        {/if}
+                    </div>
+                {/if}
+                <div class="cell bold">
+                    <b>{formatNumber(monthlyPayoutData.payout)} kr.</b>
+                </div>
+            </div>
+        </div>
     {/if}
 </main>
 
@@ -206,5 +299,15 @@
         width: 20vw;
         overflow: visible;
         white-space: normal;
+    }
+    .small {
+        margin-top: 0;
+        padding-top: 0;
+        position: absolute;
+        font-size: x-small !important;
+        font-weight: bold;
+    }
+    .cell {
+        padding-bottom: 0;
     }
 </style>

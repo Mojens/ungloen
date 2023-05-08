@@ -1,6 +1,6 @@
 import db from '../database/connection.js';
 import { Router } from 'express';
-import { calculateMonthlyPayout } from '../util/taxCalculator.js';
+import { calculateMonthlyPayout, calculateHolidayPayment } from '../util/taxCalculator.js';
 const router = Router();
 
 
@@ -37,6 +37,23 @@ router.post('/api/tax/monthly-payout', async (req, res) => {
     return res.status(200).send({
         message: 'Udregning af månedlig udbetaling gennemført',
         monthlyPayoutData: monthlyPayoutData,
+        status: 200,
+    });
+});
+
+router.post('/api/tax/holiday-payment', async (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).send({
+            message: "Ikke logget ind",
+            status: 401
+        });
+    }
+    const { monthlyIncome } = req.body;
+    const holidayPaymentData = calculateHolidayPayment(Number(monthlyIncome));
+    console.log(holidayPaymentData);
+    return res.status(200).send({
+        message: 'Udregning af feriepenge gennemført',
+        holidayPaymentData: holidayPaymentData,
         status: 200,
     });
 });
