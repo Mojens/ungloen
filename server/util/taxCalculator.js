@@ -1,15 +1,4 @@
-const taxData = {
-    id: 1,
-    user_id: 1,
-    incomeType: "Pension",
-    headOrBiCard: "headCard",
-    payoutTime: "monthly",
-    monthlyIncome: 10000,
-    tax_rate: 50,
-    monthly_deduction: 1000,
-}
-
-function calculateMonthlyPayout(taxData) {
+export function calculateMonthlyPayout(taxData) {
     const monthlyPayout = {};
     monthlyPayout.monthlyIncome = taxData.monthlyIncome;
     if (taxData.incomeType === "Løn") {
@@ -71,4 +60,3 @@ function calculateMonthlyPayout(taxData) {
         }
     }
 }
-console.log(calculateMonthlyPayout(taxData));

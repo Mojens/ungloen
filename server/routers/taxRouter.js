@@ -1,5 +1,6 @@
 import db from '../database/connection.js';
 import { Router } from 'express';
+import { calculateMonthlyPayout } from '../util/taxCalculator.js';
 const router = Router();
 
 
@@ -13,13 +14,29 @@ router.get('/api/tax/data', async (req, res) => {
     const [taxData] = await db.all('SELECT * FROM users_tax_data WHERE user_id = ?', [req.session.user.id]);
     if (!taxData.tax_rate || !taxData.monthly_deduction || !taxData.zip_code || !taxData.city || !taxData.address) {
         return res.status(404).send({
-            message: 'Ingen personlige oplysninger fundet, <br> opdater dem <a href="/profil/personlig">her</a>',
+            message: 'Ingen personlige oplysninger fundet',
             status: 404
         });
     }
     return res.status(200).send({
         message: 'Personlige oplysninger fundet',
         taxData: taxData,
+        status: 200,
+    });
+});
+
+router.post('/api/tax/monthly-payout', async (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).send({
+            message: "Ikke logget ind",
+            status: 401
+        });
+    }
+    const taxData = req.body;
+    const monthlyPayoutData = calculateMonthlyPayout(taxData);
+    return res.status(200).send({
+        message: 'Udregning af månedlig udbetaling gennemført',
+        monthlyPayoutData: monthlyPayoutData,
         status: 200,
     });
 });
