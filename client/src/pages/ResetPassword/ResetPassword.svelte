@@ -1,10 +1,14 @@
 <script>
     document.title = "UngLøn | Nulstil adgangskode";
     import toastr from "toastr";
+    import { useNavigate, useLocation } from "svelte-navigator";
     import { BASE_URL } from "../../stores/globalsStore.js";
     import { useParams } from "svelte-navigator";
 
     let token = "";
+
+    const navigate = useNavigate();
+    const location = useLocation();
 
     const params = useParams();
     token = $params.token;
@@ -13,6 +17,9 @@
     let confirm_password = "";
 
     async function handleResetPassword() {
+        let buttonElement = document.getElementById("reset-password-btn");
+        buttonElement.setAttribute("aria-busy", "true");
+        buttonElement.setAttribute("class", "secondary");
         const response = await fetch($BASE_URL + "/api/reset-password", {
             credentials: "include",
             method: "POST",
@@ -27,12 +34,19 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-            toastr.success(data.message);
             setTimeout(() => {
-                window.location.href = "/log-ind";
+                buttonElement.removeAttribute("aria-busy");
+                buttonElement.removeAttribute("class");
+                toastr.success(data.message);
+                const from =
+                    ($location.state && $location.state.from) ||
+                    "/log-ind";
+                navigate(from, { replace: true });
             }, 2000);
         } else {
             toastr.error(data.message);
+            buttonElement.removeAttribute("aria-busy");
+            buttonElement.removeAttribute("class");
         }
     }
 
@@ -79,7 +93,9 @@
             placeholder="********"
             required
         />
-        <button type="submit">Nulstil adgangskode</button>
+        <button type="submit" id="reset-password-btn"
+            >Nulstil adgangskode</button
+        >
     </form>
     <div class="form-links">
         <a href="/log-ind">Allerede oprettet?</a>

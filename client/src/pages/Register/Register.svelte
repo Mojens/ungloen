@@ -50,6 +50,8 @@
             }, 1500);
         } else {
             toastr.error(data.message);
+            buttonElement.removeAttribute("aria-busy");
+            buttonElement.removeAttribute("class");
         }
     }
 </script>
