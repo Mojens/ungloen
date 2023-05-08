@@ -76,7 +76,7 @@ db.exec(`
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL UNIQUE,
       zip_code INTEGER NOT NULL DEFAULT 0,
-      deduction_rate INTEGER NOT NULL DEFAULT 0,
+      tax_rate INTEGER NOT NULL DEFAULT 0,
       monthly_deduction INTEGER NOT NULL DEFAULT 0,
       city TEXT NOT NULL DEFAULT '',
       address TEXT NOT NULL DEFAULT '',
@@ -86,5 +86,6 @@ db.exec(`
 
 if (isDeleteMode) {
   db.exec(`INSERT INTO users (first_name, last_name, email, password, phone, verified) VALUES ('John', 'Doe', 'john_doe@emailprovider.com', '$2a$12$hxhnvxSh0THAcHji9Ac2k.9UWma2HzwviezFENVcmsHhWNod3bdmC', '${process.env.TEST_PHONE}', 1);`);
+  db.exec(`INSERT INTO users_tax_data (user_id) VALUES (1)`);
   // db.exec(`INSERT INTO users (first_name, last_name, email, password, phone) VALUES ('Mohammad Adel', 'Murtada', '${process.env.PERSON_MAIL}', '$2a$12$ON71wiIzaBEJfxiN9s1UPuJ5.ThiQtr84XwSGaLDyefmyi7ZRIx0y', '${process.env.PERSONAL_PHONE}');`)
 }

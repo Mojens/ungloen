@@ -97,15 +97,15 @@ router.put('/api/tax/data/users/:id', async (req, res) => {
             status: 401
         });
     }
-    const { zip_code, city, address, deduction_rate, monthly_deduction } = req.body;
-    if (!zip_code || !city || !address || !deduction_rate || !monthly_deduction) {
+    const { zip_code, city, address, tax_rate, monthly_deduction } = req.body;
+    if (!zip_code || !city || !address || !tax_rate || !monthly_deduction) {
         return res.status(400).send({
             message: 'Venligst udfyld De felter der mangler',
             status: 400
         });
     }
-    await db.run('UPDATE users_tax_data SET zip_code = ?, city = ?, address = ?, deduction_rate = ?, monthly_deduction = ? WHERE user_id = ?',
-        [zip_code, city, address, deduction_rate, monthly_deduction, req.session.user.id]);
+    await db.run('UPDATE users_tax_data SET zip_code = ?, city = ?, address = ?, tax_rate = ?, monthly_deduction = ? WHERE user_id = ?',
+        [zip_code, city, address, tax_rate, monthly_deduction, req.session.user.id]);
     return res.status(200).send({
         message: 'Bruger personoplysninger opdateret',
         status: 200

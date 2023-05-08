@@ -7,7 +7,7 @@
     let zip_code = "";
     let city = "";
     let adress = "";
-    let deduction_rate = "";
+    let tax_rate = "";
     let monthly_deduction = "";
 
     async function getPersonalData() {
@@ -24,8 +24,8 @@
             if (data.userTaxData.zip_code !== 0) {
                 zip_code = data.userTaxData.zip_code;
             }
-            if (data.userTaxData.deduction_rate !== 0) {
-                deduction_rate = data.userTaxData.deduction_rate;
+            if (data.userTaxData.tax_rate !== 0) {
+                tax_rate = data.userTaxData.tax_rate;
             }
             if (data.userTaxData.monthly_deduction !== 0) {
                 monthly_deduction = data.userTaxData.monthly_deduction;
@@ -42,7 +42,7 @@
             zip_code: zip_code,
             city: city,
             address: adress,
-            deduction_rate: deduction_rate,
+            tax_rate: tax_rate,
             monthly_deduction: monthly_deduction,
         };
         console.log("NEWDATA",newData)
@@ -58,7 +58,7 @@
                     zip_code: zip_code,
                     city: city,
                     address: adress,
-                    deduction_rate: deduction_rate,
+                    tax_rate: tax_rate,
                     monthly_deduction: monthly_deduction,
                 }),
             }
@@ -123,7 +123,7 @@
             required
         />
         <div class="grid">
-            <label for="deduction_rate">
+            <label for="tax_rate">
                 Trækprocent
                 <!-- svelte-ignore a11y-missing-attribute -->
                 <a
@@ -139,11 +139,11 @@
                     min="30"
                     max="99"
                     step="0.01"
-                    id="deduction_rate"
-                    class="deduction_rate"
-                    name="deduction_rate"
+                    id="tax_rate"
+                    class="tax_rate"
+                    name="tax_rate"
                     placeholder="52"
-                    bind:value={deduction_rate}
+                    bind:value={tax_rate}
                     required
                 />
             </label>
@@ -154,9 +154,7 @@
                 <a
                     class="tooltip-large"
                     data-tooltip="
-                Dette fradrag, er et fradrag som alle personer kan få. &#10;
-                 Personfradraget fordeles ud hen over året, og bliver trukket som et månedsfradrag fra ens løn,
-                  inden man betaler A-skat. Personfradraget i 2020 er på 46.500 kr. per."
+                    Personfradraget er i år 2022 46.600 kr. pr. år for personer på 18 år eller ældre. For personer under 18 år er beløbet 37.300 kr."
                     ><i class="fa fa-question-circle" /></a
                 >
                 <input
