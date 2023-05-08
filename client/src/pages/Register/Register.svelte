@@ -15,6 +15,9 @@
     const location = useLocation();
 
     async function handleRegister() {
+        let buttonElement = document.getElementById("register-btn");
+        buttonElement.setAttribute("aria-busy", "true");
+        buttonElement.setAttribute("class", "secondary");
         phone.replace(" ", "");
         if (phone.includes("+45")) {
             phone = phone.replace("+45", "");
@@ -36,8 +39,10 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-            toastr.success(data.message);
             setTimeout(() => {
+                buttonElement.removeAttribute("aria-busy");
+                buttonElement.removeAttribute("class");
+                toastr.success(data.message);
                 const from =
                     ($location.state && $location.state.from) ||
                     "/aktiver-bruger";
@@ -124,7 +129,7 @@
             placeholder="********"
             required
         />
-        <button type="submit">Opret</button>
+        <button type="submit" id="register-btn">Opret</button>
     </form>
     <div class="form-links">
         <a href="/log-ind">Allerede oprettet?</a>

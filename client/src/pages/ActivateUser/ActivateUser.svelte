@@ -1,5 +1,5 @@
 <script>
-    document.title = "UngLøn | Aktiver din bruger"
+    document.title = "UngLøn | Aktiver din bruger";
     import { BASE_URL } from "../../stores/globalsStore.js";
     import { useNavigate, useLocation } from "svelte-navigator";
     import toastr from "toastr";
@@ -11,6 +11,10 @@
     let phone = "";
 
     async function verifyUser() {
+        let buttonElement = document.getElementById("activate-user-btn");
+        buttonElement.setAttribute("aria-busy", "true");
+        buttonElement.setAttribute("class", "secondary");
+
         const response = await fetch($BASE_URL + "/api/verify", {
             credentials: "include",
             method: "POST",
@@ -24,12 +28,14 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-            toastr.success(data.message);
             setTimeout(() => {
+                buttonElement.removeAttribute("aria-busy");
+                buttonElement.removeAttribute("class");
+                toastr.success(data.message);
                 const from =
                     ($location.state && $location.state.from) || "/log-ind";
                 navigate(from, { replace: true });
-            }, 1500);
+            }, 1000);
         } else {
             toastr.error(data.message);
         }
@@ -79,7 +85,7 @@
                 >
             </label>
         </div>
-        <button type="submit" class="btn btn-primary">Aktiver</button>
+        <button type="submit" id="activate-user-btn">Aktiver</button>
     </form>
     <div class="form-links">
         <a href="/log-ind">Er du allerede aktiveret?</a>

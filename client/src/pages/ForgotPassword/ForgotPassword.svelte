@@ -6,6 +6,9 @@
     let email = "";
 
     async function handleResetPassword() {
+        let buttonElement = document.getElementById("forgot-password-btn");
+        buttonElement.setAttribute("aria-busy", "true");
+        buttonElement.setAttribute("class", "secondary");
         const response = await fetch($BASE_URL + "/api/forgot-password", {
             credentials: "include",
             method: "POST",
@@ -19,6 +22,8 @@
         const data = await response.json();
         if (response.status === 200) {
             toastr.success(data.message);
+            buttonElement.removeAttribute("aria-busy");
+            buttonElement.removeAttribute("class");
         } else {
             toastr.error(data.message);
         }
@@ -41,7 +46,7 @@
             placeholder="john_doe@emailprovider.dk"
             required
         />
-        <button type="submit">Send link</button>
+        <button type="submit" id="forgot-password-btn">Send link</button>
     </form>
     <div class="form-links">
         <a href="/log-ind">Allerede oprettet?</a>

@@ -11,6 +11,9 @@
     let password = "";
 
     async function handleLogin() {
+        let buttonElement = document.getElementById("login-btn");
+        buttonElement.setAttribute("aria-busy", "true");
+        buttonElement.setAttribute("class", "secondary");
         const response = await fetch($BASE_URL + "/api/login", {
             credentials: "include",
             method: "POST",
@@ -24,13 +27,19 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-            localStorage.setItem("user", JSON.stringify(data.user));
-            toastr.success(data.message);
-            user.set(data.user);
-            const from = ($location.state && $location.state.from) || "/";
-            navigate(from, { replace: true });
+            setTimeout(() => {
+                buttonElement.removeAttribute("aria-busy");
+                buttonElement.removeAttribute("class");
+                localStorage.setItem("user", JSON.stringify(data.user));
+                toastr.success(data.message);
+                user.set(data.user);
+                const from = ($location.state && $location.state.from) || "/";
+                navigate(from, { replace: true });
+            }, 1000);
         } else {
             toastr.error(data.message);
+            buttonElement.removeAttribute("aria-busy");
+            buttonElement.removeAttribute("class");
         }
     }
 </script>
@@ -62,7 +71,7 @@
             placeholder="********"
             required
         />
-        <button type="submit">Log ind</button>
+        <button type="submit" id="login-btn">Log ind</button>
     </form>
     <div class="form-links">
         <a href="/glemt-adgangskode">Glemt adgangskode?</a>
@@ -72,7 +81,6 @@
         <a href="/aktiver-bruger">Aktiver din bruger</a>
         <span id="form-link-divider">|</span>
         <a href="/send-aktiveringskode">Send aktiveringskode</a>
-
     </div>
 </main>
 
