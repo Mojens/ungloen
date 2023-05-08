@@ -3,6 +3,9 @@
     import { BASE_URL } from "../../stores/globalsStore.js";
     let email = "";
     async function handleContact() {
+        let buttonElement = document.getElementById("footer-contact-btn");
+        buttonElement.setAttribute("aria-busy", "true");
+        buttonElement.setAttribute("class", "secondary");
         const response = await fetch($BASE_URL + "/api/footer/contact", {
             credentials: "include",
             method: "POST",
@@ -13,10 +16,16 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-            toastr.success(data.message);
-            email = "";
+            setTimeout(() => {
+                buttonElement.removeAttribute("aria-busy");
+                buttonElement.removeAttribute("class");
+                toastr.success(data.message);
+                email = "";
+            }, 1000);
         } else {
             toastr.error(data.message);
+            buttonElement.removeAttribute("aria-busy");
+            buttonElement.removeAttribute("class");
         }
     }
 </script>
@@ -38,7 +47,6 @@
                 <li><a href="/om-os">Om os</a></li>
                 <li><a href="/kontakt">Kontakt</a></li>
                 <li><a href="/log-ind">Log ind</a></li>
-
             </ul>
         </div>
         <div class="center">
@@ -50,7 +58,8 @@
                     bind:value={email}
                     placeholder="Din email.."
                 />
-                <button type="submit">Kontakt os</button>
+                <button type="submit" id="footer-contact-btn">Kontakt os</button
+                >
             </form>
         </div>
     </div>

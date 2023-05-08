@@ -38,14 +38,9 @@
     }
 
     async function handleUpdatePersonalData() {
-        const newData = {
-            zip_code: zip_code,
-            city: city,
-            address: adress,
-            tax_rate: tax_rate,
-            monthly_deduction: monthly_deduction,
-        };
-        console.log("NEWDATA",newData)
+        let buttonElement = document.getElementById("update-personal-data-btn");
+        buttonElement.setAttribute("aria-busy", "true");
+        buttonElement.setAttribute("class", "secondary");
         const response = await fetch(
             $BASE_URL + "/api/tax/data/users/" + $user.id,
             {
@@ -65,10 +60,16 @@
         );
         const data = await response.json();
         if (response.status === 200) {
-            toastr.success(data.message);
-            getPersonalData();
+            setTimeout(() => {
+                buttonElement.removeAttribute("aria-busy");
+                buttonElement.removeAttribute("class");
+                toastr.success(data.message);
+                getPersonalData();
+            }, 1000);
         } else {
             toastr.error(data.message);
+            buttonElement.removeAttribute("aria-busy");
+            buttonElement.removeAttribute("class");
         }
     }
     onMount(() => {
@@ -170,7 +171,9 @@
 
         <small>Vi vil aldrig dele dine oplysninger med andre.</small>
 
-        <button type="submit">Gem oplysninger</button>
+        <button type="submit" id="update-personal-data-btn"
+            >Gem oplysninger</button
+        >
     </form>
 </main>
 

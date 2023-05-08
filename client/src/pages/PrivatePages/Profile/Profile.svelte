@@ -24,6 +24,9 @@
         }
     }
     async function handleUpdateProfile() {
+        const buttonElement = document.getElementById("update-profile-btn");
+        buttonElement.setAttribute("aria-busy", "true");
+        buttonElement.setAttribute("class", "secondary");
         const response = await fetch($BASE_URL + "/api/users/" + $user.id, {
             method: "PUT",
             credentials: "include",
@@ -38,15 +41,24 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-            toastr.success(data.message);
-            user.set(data.user);
-            localStorage.setItem("user", JSON.stringify(data.user));
-            getUser();
+            setTimeout(() => {
+                buttonElement.removeAttribute("aria-busy");
+                buttonElement.removeAttribute("class");
+                toastr.success(data.message);
+                user.set(data.user);
+                localStorage.setItem("user", JSON.stringify(data.user));
+                getUser();
+            }, 1000);
         } else {
             toastr.error(data.message);
+            buttonElement.removeAttribute("aria-busy");
+            buttonElement.removeAttribute("class");
         }
     }
     async function handleResetPassword() {
+        let buttonElement = document.getElementById("reset-password-btn");
+        buttonElement.setAttribute("aria-busy", "true");
+        buttonElement.setAttribute("class", "secondary");
         const response = await fetch($BASE_URL + "/api/forgot-password", {
             credentials: "include",
             method: "POST",
@@ -59,8 +71,14 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-            toastr.success(data.message);
+            setTimeout(() => {
+                buttonElement.removeAttribute("aria-busy");
+                buttonElement.removeAttribute("class");
+                toastr.success(data.message);
+            }, 1000);
         } else {
+            buttonElement.removeAttribute("aria-busy");
+            buttonElement.removeAttribute("class");
             toastr.error(data.message);
         }
     }
@@ -119,11 +137,11 @@
         />
         <button
             type="button"
-            class="btn btn-primary"
+            id="update-profile-btn"
             on:click={handleUpdateProfile}>Opdater profil</button
         >
     </form>
-    <button type="button" class="btn btn-primary" on:click={handleResetPassword}
+    <button type="button" id="reset-password-btn" on:click={handleResetPassword}
         >Nulstil adgangskode</button
     >
 </main>
