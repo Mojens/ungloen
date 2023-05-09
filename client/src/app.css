@@ -164,11 +164,28 @@ main {
 .p-24 {
     font-size: 24px;
 }
+
 .input-disabled {
     cursor: default;
     border: 0;
     text-decoration: underline;
 }
+
 .input-date {
     cursor: pointer;
+}
+
+.double-underlines {
+    text-decoration: underline double #039BCE;
+}
+
+.one-underline {
+    text-decoration: underline #039BCE;
+}
+
+hr {
+    border: none;
+    height: 1px;
+    background-color: #ccc;
+    margin: 10px 0;
 }

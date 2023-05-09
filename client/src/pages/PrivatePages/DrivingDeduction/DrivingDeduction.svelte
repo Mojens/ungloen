@@ -1,12 +1,12 @@
 <script>
     document.title = "UngLøn | Kørselsfradrag";
-    import { BASE_URL } from "../../../stores/globalsStore.js";
+    import { BASE_URL, user } from "../../../stores/globalsStore.js";
     import { onMount } from "svelte";
     import toastr from "toastr";
 
     let destination = "";
     let origin = "";
-    let distance = 0;
+    let distance = "";
     let predictions = [];
 
     let startDate = new Date().getFullYear() + "-01-01";
@@ -22,6 +22,29 @@
 
     let drivingDeductionData = {};
 
+    function resetForm() {
+        setTimeout(() => {
+            document.getElementById("driving-deduction-form").scrollIntoView({
+                behavior: "smooth",
+            });
+            setTimeout(() => {
+                payForBridge = false;
+                isStorebaelt = false;
+                isOeresund = false;
+                vehicleType = "";
+                payBothWays = false;
+
+                drivingDeductionData = {};
+            }, 700);
+        }, 100);
+    }
+
+    function formatNumber(number) {
+        const formattedNumber = number.toLocaleString("da-DK", {
+            minimumFractionDigits: 2,
+        });
+        return formattedNumber;
+    }
     function formatDate(date) {
         let dateSplit = date.split("-");
         return dateSplit[2] + "/" + dateSplit[1] + "/" + dateSplit[0];
@@ -57,7 +80,6 @@
                 buttonElement.removeAttribute("aria-busy");
                 buttonElement.removeAttribute("class");
                 drivingDeductionData = data.drivingDeductionData;
-                console.log(drivingDeductionData);
                 toastr.success(data.message);
                 setTimeout(() => {
                     document
@@ -468,18 +490,127 @@
     </form>
     {#if drivingDeductionData.deductionTotal}
         <div id="driving-deduction-result">
-            <hgroup>
-                <h2 class="title down-m">Resultat</h2>
-                <h3 class="top-m">
-                    Dit kørselsfradrag er beregnet ud fra de oplysninger, du har
-                    indtastet.
-                </h3>
-            </hgroup>
+            <p>Resultat for: {$user.first_name + " " + $user.last_name}</p>
+            <h2 class="title down-m top-m h2-h3">Resultat</h2>
+            <h3 class="top-m h2-h3">
+                Dit kørselsfradrag er beregnet ud fra de oplysninger, du har
+                indtastet.
+            </h3>
             <h6>
-                Fradrag for perioden {formatDate(startDate)} til {formatDate(
-                    endDate
-                )}
+                Fradrag for perioden <b>{formatDate(startDate)}</b> til
+                <b>{formatDate(endDate)}</b>
             </h6>
+            <h4 class="down-m">Pr. Dag</h4>
+            <hr class="w-75 inline-block" />
+            <div class="grid">
+                <div class="inner-grid">
+                    <p>De første 24 km</p>
+                    <p>
+                        25 - {drivingDeductionData.distanceWithDeduction.distance} km
+                    </p>
+                    {#if drivingDeductionData.bridgeData.length > 1}
+                        <p>Storebæltsbroen</p>
+
+                        <p>Øresundsbroen</p>
+                    {:else if drivingDeductionData.bridgeData.length === 1}
+                        {#if drivingDeductionData.bridgeData[0].bridge === "Storebælt"}
+                            <p>Storebæltsbroen</p>
+                        {:else if drivingDeductionData.bridgeData[0].bridge === "Øresund"}
+                            <p>Øresundsbroen</p>
+                        {/if}
+                    {/if}
+                    <p>Fradrag i alt</p>
+                </div>
+                <div class="inner-grid left-m">
+                    <p>{formatNumber(0)}&nbsp;&nbsp;&nbsp;kr.</p>
+                    <p>
+                        {formatNumber(
+                            drivingDeductionData.distanceWithDeduction
+                                .pricePrDay
+                        )}&nbsp;&nbsp;&nbsp;kr.
+                    </p>
+                    {#if drivingDeductionData.bridgeData.length > 1}
+                        <p>
+                            {formatNumber(
+                                drivingDeductionData.bridgeData[0].pricePrDay
+                            )}&nbsp;&nbsp;&nbsp;kr.
+                        </p>
+
+                        <p>
+                            {formatNumber(
+                                drivingDeductionData.bridgeData[1].pricePrDay
+                            )}&nbsp;&nbsp;&nbsp;kr.
+                        </p>
+                    {:else if drivingDeductionData.bridgeData.length === 1}
+                        {#if drivingDeductionData.bridgeData[0].bridge === "Storebælt"}
+                            <p>
+                                {formatNumber(
+                                    drivingDeductionData.bridgeData[0]
+                                        .pricePrDay
+                                )}&nbsp;&nbsp;&nbsp;kr.
+                            </p>
+                        {:else if drivingDeductionData.bridgeData[0].bridge === "Øresund"}
+                            <p>
+                                {formatNumber(
+                                    drivingDeductionData.bridgeData[0]
+                                        .pricePrDay
+                                )}&nbsp;&nbsp;&nbsp;kr.
+                            </p>
+                        {/if}
+                    {/if}
+                    {#if drivingDeductionData.bridgeData.length <= 0}
+                        <p class="one-underline">
+                            {formatNumber(
+                                drivingDeductionData.distanceWithDeduction
+                                    .pricePrDay
+                            )}&nbsp;&nbsp;&nbsp;kr.
+                        </p>
+                    {/if}
+                    {#if drivingDeductionData.bridgeData.length > 0}
+                        <p class="one-underline">
+                            {formatNumber(
+                                drivingDeductionData.deductionPrDay
+                            )}&nbsp;&nbsp;&nbsp;kr.
+                        </p>
+                    {/if}
+                </div>
+            </div>
+            <hr class="w-75 inline-block" />
+            <h3 class="top-m down-m h2-h3">Fradrag over periode</h3>
+            <div class="grid">
+                {#if drivingDeductionData.bridgeData.length > 0}
+                    <div class="inner-grid">
+                        <p>
+                            {drivingDeductionData.distanceWithDeduction.distance} dage med transport ×
+                            <b
+                                >{formatNumber(
+                                    drivingDeductionData.deductionPrDay
+                                )}</b
+                            > kr/dag
+                        </p>
+                    </div>
+                {:else}
+                    <div class="inner-grid">
+                        <p>
+                            {drivingDeductionData.distanceWithDeduction.distance} dage med transport × {formatNumber(
+                                drivingDeductionData.distanceWithDeduction
+                                    .pricePrDay
+                            )} kr/dag
+                        </p>
+                    </div>
+                {/if}
+                <div class="inner-grid left-m">
+                    <p class="double-underlines">
+                        {formatNumber(drivingDeductionData.deductionTotal)}&nbsp;&nbsp;&nbsp;kr.
+                    </p>
+                </div>
+            </div>
+            <div>
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <a on:click={() => resetForm()} id="new-calculation">
+                    Ny bergning
+                </a>
+            </div>
         </div>
     {/if}
 </main>
@@ -526,6 +657,23 @@
             border-radius: 8px;
             padding: 16px;
         }
+        #driving-deduction-result hr {
+            border: none;
+            height: 1px;
+            background-color: #000000;
+            margin: 10px 0;
+        }
+        .inner-grid p {
+            color: #16212a;
+        }
+        #driving-deduction-result p,
+        h4,
+        h6 {
+            color: #16212a !important;
+        }
+        .h2-h3 {
+            color: #16212a !important;
+        }
     }
 
     .suggestions-ul {
@@ -554,5 +702,18 @@
         font-size: 1.5rem;
         font-weight: 600;
         margin-bottom: 1rem;
+    }
+    #driving-deduction-result {
+        background-color: white;
+        border-radius: 5px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+        padding: 20px;
+        margin: 20px;
+    }
+
+    #new-calculation {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
     }
 </style>
