@@ -134,7 +134,7 @@
         const data = await response.json();
         if (response.status === 200) {
             setTimeout(() => {
-                distance = Math.floor(data.distance);
+                distance = Math.floor(data.distance).toString();
                 toastr.success("Afstand fundet");
                 buttonElement.removeAttribute("aria-busy");
                 buttonElement.removeAttribute("class");
