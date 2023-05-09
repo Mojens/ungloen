@@ -33,9 +33,13 @@
                 buttonElement.removeAttribute("aria-busy");
                 buttonElement.setAttribute("class", "w-25");
                 setTimeout(() => {
-                    window.location.href = "#vacation-output";
-                }, 200);
-            }, 1500);
+                    document
+                        .getElementById("vacation-output")
+                        .scrollIntoView({
+                            behavior: "smooth",
+                        });
+                }, 100);
+            }, 1350);
         } else {
             buttonElement.removeAttribute("aria-busy");
             buttonElement.setAttribute("class", "w-25");

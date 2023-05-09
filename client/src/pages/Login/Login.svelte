@@ -35,7 +35,7 @@
                 user.set(data.user);
                 const from = ($location.state && $location.state.from) || "/";
                 navigate(from, { replace: true });
-            }, 1000);
+            }, 500);
         } else {
             toastr.error(data.message);
             buttonElement.removeAttribute("aria-busy");

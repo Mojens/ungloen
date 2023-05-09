@@ -66,9 +66,13 @@
                 buttonElement.removeAttribute("aria-busy");
                 buttonElement.removeAttribute("class");
                 setTimeout(() => {
-                    window.location.href = "#udbetaling-output";
-                }, 200);
-            }, 1500);
+                    document
+                        .getElementById("udbetaling-output")
+                        .scrollIntoView({
+                            behavior: "smooth",
+                        });
+                }, 100);
+            }, 1350);
         } else {
             buttonElement.removeAttribute("aria-busy");
             buttonElement.removeAttribute("class");

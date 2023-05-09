@@ -164,3 +164,9 @@ main {
 .p-24 {
     font-size: 24px;
 }
+.input-disabled {
+    cursor: default;
+}
+.input-date {
+    cursor: pointer;
+}

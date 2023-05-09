@@ -17,7 +17,7 @@ export async function calculateDistance(origin, destination) {
     return distance / 1000;
   } catch (e) {
     console.error(e.response.data.error_message);
-    return "Kunne ikke beregne afstand";
+    return null;
   }
 }
 export async function autocompletePlaces(input) {

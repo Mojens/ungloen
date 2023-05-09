@@ -16,7 +16,6 @@
             }
         );
         const data = await response.json();
-        console.log(data);
         if (response.status === 200) {
             if (data.taxData.zip_code !== 0) {
                 zip_code = data.taxData.zip_code;
