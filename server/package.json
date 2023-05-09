@@ -12,6 +12,7 @@
   "author": "Mohammad M.",
   "license": "MIT",
   "dependencies": {
+    "@googlemaps/google-maps-services-js": "^3.3.30",
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",

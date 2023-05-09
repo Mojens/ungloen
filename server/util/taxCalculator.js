@@ -65,7 +65,6 @@ export function calculateMonthlyPayout(taxData) {
         }
     }
 }
-
 export function calculateHolidayPayment(monthlyIncome){
     const holidayData = {};
     holidayData.holidayPayment = (monthlyIncome * 0.125)*12;
