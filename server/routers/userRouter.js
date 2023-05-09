@@ -75,41 +75,4 @@ router.post('/api/contact', async (req, res) => {
     sendContactMail(res, email, name, message, title)
 });
 
-router.get('/api/tax/data/users/:id', async (req, res) => {
-    if (!req.session.user || req.session.user.id !== Number(req.params.id)) {
-        return res.status(401).send({
-            message: 'Ingen adgang',
-            status: 401
-        });
-    }
-    const [userTaxData] = await db.all('SELECT * FROM users_tax_data WHERE user_id = ?', [req.session.user.id]);
-    return res.status(200).send({
-        message: 'Bruger skatteoplysninger hentet',
-        userTaxData: userTaxData,
-        status: 200
-    });
-});
-
-router.put('/api/tax/data/users/:id', async (req, res) => {
-    if (!req.session.user || req.session.user.id !== Number(req.params.id)) {
-        return res.status(401).send({
-            message: 'Ingen adgang',
-            status: 401
-        });
-    }
-    const { zip_code, city, address, tax_rate, monthly_deduction } = req.body;
-    if (!zip_code || !city || !address || !tax_rate || !monthly_deduction) {
-        return res.status(400).send({
-            message: 'Venligst udfyld De felter der mangler',
-            status: 400
-        });
-    }
-    await db.run('UPDATE users_tax_data SET zip_code = ?, city = ?, address = ?, tax_rate = ?, monthly_deduction = ? WHERE user_id = ?',
-        [zip_code, city, address, tax_rate, monthly_deduction, req.session.user.id]);
-    return res.status(200).send({
-        message: 'Bruger personoplysninger opdateret',
-        status: 200
-    });
-});
-
 export default router;

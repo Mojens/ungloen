@@ -31,6 +31,9 @@ app.use(forumRouter);
 import taxRouter from './routers/taxRouter.js';
 app.use(taxRouter);
 
+import googleRouter from './routers/googleMapsRouter.js';
+app.use(googleRouter);
+
 
 
 app.listen(process.env.PORT, (err) => {

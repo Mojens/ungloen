@@ -11,27 +11,24 @@
     let monthly_deduction = "";
 
     async function getPersonalData() {
-        const response = await fetch(
-            $BASE_URL + "/api/tax/data/users/" + $user.id,
-            {
-                method: "GET",
+        const response = await fetch($BASE_URL + "/api/tax/data",{
                 credentials: "include",
             }
         );
         const data = await response.json();
         console.log(data);
         if (response.status === 200) {
-            if (data.userTaxData.zip_code !== 0) {
-                zip_code = data.userTaxData.zip_code;
+            if (data.taxData.zip_code !== 0) {
+                zip_code = data.taxData.zip_code;
             }
-            if (data.userTaxData.tax_rate !== 0) {
-                tax_rate = data.userTaxData.tax_rate;
+            if (data.taxData.tax_rate !== 0) {
+                tax_rate = data.taxData.tax_rate;
             }
-            if (data.userTaxData.monthly_deduction !== 0) {
-                monthly_deduction = data.userTaxData.monthly_deduction;
+            if (data.taxData.monthly_deduction !== 0) {
+                monthly_deduction = data.taxData.monthly_deduction;
             }
-            city = data.userTaxData.city;
-            adress = data.userTaxData.address;
+            city = data.taxData.city;
+            adress = data.taxData.address;
         } else {
             toastr.error(data.message);
         }
