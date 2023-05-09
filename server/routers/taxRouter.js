@@ -1,6 +1,6 @@
 import db from '../database/connection.js';
 import { Router } from 'express';
-import { calculateMonthlyPayout, calculateHolidayPayment } from '../util/taxCalculator.js';
+import { calculateMonthlyPayout, calculateHolidayPayment, calculateDrivingDeduction } from '../util/taxCalculator.js';
 const router = Router();
 
 
@@ -59,6 +59,28 @@ router.post('/api/tax/holiday-payment', async (req, res) => {
     return res.status(200).send({
         message: 'Udregning af feriepenge gennemført',
         holidayPaymentData: holidayPaymentData,
+        status: 200,
+    });
+});
+
+router.post('/api/tax/driving-deduction', async (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).send({
+            message: "Ikke logget ind",
+            status: 401
+        });
+    }
+    const { drivingData } = req.body;
+    if (drivingData.payForBridge && (!drivingData.isStorebaelt && !drivingData.isOeresund) || drivingData.payForBridge && drivingData.vehicleType === "") {
+        return res.status(400).send({
+            message: 'Hvis du kører over en betalingsbro, skal du fuldføre formen',
+            status: 400
+        });
+    }
+    const drivingDeductionData = calculateDrivingDeduction(drivingData);
+    return res.status(200).send({
+        message: 'Udregning af feriepenge gennemført',
+        drivingDeductionData: drivingDeductionData,
         status: 200,
     });
 });

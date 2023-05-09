@@ -12,27 +12,56 @@
     let startDate = new Date().getFullYear() + "-01-01";
     let endDate = new Date().getFullYear() + "-12-31";
     let averageWorkDays = 0;
-    let workDaysInTransport = "";
 
+    let workDaysInTransport = "";
     let payForBridge = false;
-    let isStorebaeltsbroen = false;
-    let isOeresundsbroen = false;
-    let typeOfTransport = "";
+    let isStorebaelt = false;
+    let isOeresund = false;
+    let vehicleType = "";
     let payBothWays = false;
 
-    function onChangeTest() {
-        console.log("destination", destination);
-        console.log("origin", origin);
-        console.log("distance", distance);
-        console.log("startDate", startDate);
-        console.log("endDate", endDate);
-        console.log("averageWorkDays", averageWorkDays);
-        console.log("workDaysInTransport", workDaysInTransport);
-        console.log("payForBridge", payForBridge);
-        console.log("storebæltsbroen", isStorebaeltsbroen);
-        console.log("øresundsbroen", isOeresundsbroen);
-        console.log("typeOfTransport", typeOfTransport);
-        console.log("payBothWays", payBothWays);
+    let drivingDeductionData = {};
+
+    async function calculateDrivingDeduction() {
+        let buttonElement = document.getElementById(
+            "handle-driving-deduction-btn"
+        );
+        buttonElement.setAttribute("aria-busy", "true");
+        buttonElement.setAttribute("class", "secondary");
+        const response = await fetch($BASE_URL + "/api/tax/driving-deduction", {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                drivingData: {
+                    distance,
+                    workDaysInTransport,
+                    payForBridge,
+                    isStorebaelt,
+                    isOeresund,
+                    vehicleType,
+                    payBothWays,
+                },
+            }),
+        });
+        const data = await response.json();
+        if (response.status === 200) {
+            setTimeout(() => {
+                buttonElement.removeAttribute("aria-busy");
+                buttonElement.removeAttribute("class");
+                drivingDeductionData = data.drivingDeductionData;
+                console.log(drivingDeductionData);
+                toastr.success(data.message);
+            }, 850);
+        } else {
+            setTimeout(() => {
+                buttonElement.removeAttribute("aria-busy");
+                buttonElement.removeAttribute("class");
+                toastr.error(data.message);
+            }, 400);
+        }
     }
 
     function getWorkDays() {
@@ -186,7 +215,10 @@
             </button>
         </form>
     </details>
-    <form id="driving-deduction-form">
+    <form
+        id="driving-deduction-form"
+        on:submit|preventDefault={calculateDrivingDeduction}
+    >
         <hgroup>
             <h2>Kørselsfradrag</h2>
             <h3>Udfyld felterne forneden og se din kørselsfradrag</h3>
@@ -320,17 +352,16 @@
                 </label>
             </fieldset>
             {#if payForBridge}
-            <hr />
+                <hr />
             {/if}
-            {#if payForBridge }
+            {#if payForBridge}
                 <fieldset class="inline-block">
                     <legend> Vælg betalingsbro </legend>
                     <label for="storebaeltsbroen">
                         Storebæltsbroen
                         <input
                             type="checkbox"
-                            bind:checked={isStorebaeltsbroen}
-                            on:change={onChangeTest}
+                            bind:checked={isStorebaelt}
                             id="storebaeltsbroen"
                             name="storebaeltsbroen"
                         />
@@ -339,40 +370,40 @@
                         Øresundsbroen
                         <input
                             type="checkbox"
-                            bind:checked={isOeresundsbroen}
-                            on:change={onChangeTest}
+                            bind:checked={isOeresund}
                             id="oeresundsbro"
                             name="oeresundsbro"
                         />
                     </label>
                 </fieldset>
                 <hr />
-                {#if isStorebaeltsbroen || isOeresundsbroen}
-                    <div class="">
+                {#if isStorebaelt || isOeresund}
+                    <div>
                         <fieldset class="inline-block">
                             <legend
                                 >Hvilket transportmiddel betaler du for?</legend
                             >
                             <label for="Bil" class="inline-block right-m">
                                 <input
-                                    bind:group={typeOfTransport}
-                                    on:change={onChangeTest}
+                                    bind:group={vehicleType}
                                     type="radio"
                                     id="Bil"
                                     name="Bil"
                                     value="Bil"
+                                    checked
                                 />
                                 Bil
                             </label>
-                            <label for="Motorcykel" class="inline-block right-m">
+                            <label
+                                for="Motorcykel"
+                                class="inline-block right-m"
+                            >
                                 <input
-                                    bind:group={typeOfTransport}
-                                    on:change={onChangeTest}
+                                    bind:group={vehicleType}
                                     type="radio"
                                     id="Motorcykel"
                                     name="Motorcykel"
                                     value="Motorcykel"
-                                    checked
                                 />
                                 Motorcykel
                             </label>
@@ -381,13 +412,11 @@
                                 class="inline-block"
                             >
                                 <input
-                                    bind:group={typeOfTransport}
-                                    on:change={onChangeTest}
+                                    bind:group={vehicleType}
                                     type="radio"
                                     id="Tog/Offentlig transport"
                                     name="Tog/Offentlig transport"
                                     value="Tog/Offentlig transport"
-                                    checked
                                 />
                                 Tog/Offentlig transport
                             </label>
@@ -401,7 +430,6 @@
                             >
                                 <input
                                     bind:group={payBothWays}
-                                    on:change={onChangeTest}
                                     type="radio"
                                     id="payBothWaysTrue"
                                     name="payBothWaysTrue"
@@ -412,7 +440,6 @@
                             <label for="payBothWaysFalse" class="inline-block">
                                 <input
                                     bind:group={payBothWays}
-                                    on:change={onChangeTest}
                                     type="radio"
                                     id="payBothWaysFalse"
                                     name="payBothWaysFalse"
@@ -428,6 +455,9 @@
         </div>
         <button id="handle-driving-deduction-btn">Udregn Kørselsfradrag</button>
     </form>
+    {#if drivingDeductionData.deductionTotal}
+        
+    {/if}
 </main>
 
 <style>

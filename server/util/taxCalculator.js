@@ -65,9 +65,139 @@ export function calculateMonthlyPayout(taxData) {
         }
     }
 }
-export function calculateHolidayPayment(monthlyIncome){
+export function calculateHolidayPayment(monthlyIncome) {
     const holidayData = {};
-    holidayData.holidayPayment = (monthlyIncome * 0.125)*12;
+    holidayData.holidayPayment = (monthlyIncome * 0.125) * 12;
     holidayData.vacationDays = 2.08 * 12;
     return holidayData;
+}
+
+const bridgeAndTaxData = [
+    {
+        bridge: "Storebælt",
+        vehiclePrices: [
+            {
+                vehicleType: "Bil",
+                price: 110,
+            },
+            {
+                vehicleType: "Motorcykel",
+                price: 110,
+            },
+            {
+                vehicleType: "Tog/Offentlig transport",
+                price: 15,
+            }
+        ]
+    },
+    {
+        bridge: "Øresund",
+        vehiclePrices: [
+            {
+                vehicleType: "Bil",
+                price: 50,
+            },
+            {
+                vehicleType: "Motorcykel",
+                price: 50,
+            },
+            {
+                vehicleType: "Tog/Offentlig transport",
+                price: 8,
+            }
+        ]
+    },
+    {
+        deductionPrDay: 2.16,
+    }
+];
+export function calculateDrivingDeduction(drivingData) {
+    const drivingDeductionData = {
+        first24kmDeduction: 0,
+        distanceWithDeduction: {
+            distance: `25 - ${drivingData.distance}`,
+            pricePrDay: Number(((drivingData.distance - 24) * bridgeAndTaxData[2].deductionPrDay))
+        },
+        bridgeData: []
+    };
+    if (drivingData.payForBridge) {
+        if (drivingData.vehicleType === "Bil") {
+            if (drivingData.isOeresund && drivingData.isStorebaelt) {
+                drivingDeductionData.bridgeData.push({ bridge: "Storebælt" }, { bridge: "Øresund" });
+
+                drivingDeductionData.bridgeData[0].pricePrDay = drivingData.payBothWays ? bridgeAndTaxData[0].vehiclePrices[0].price * 2 : bridgeAndTaxData[0].vehiclePrices[0].price;
+                drivingDeductionData.bridgeData[1].pricePrDay = drivingData.payBothWays ? bridgeAndTaxData[1].vehiclePrices[0].price * 2 : bridgeAndTaxData[1].vehiclePrices[0].price;
+
+                drivingDeductionData.deductionTotal = drivingData.workDaysInTransport * (drivingDeductionData.distanceWithDeduction.pricePrDay + drivingDeductionData.bridgeData[0].pricePrDay + drivingDeductionData.bridgeData[1].pricePrDay)
+            } else if
+                (drivingData.isStorebaelt) {
+                drivingDeductionData.bridgeData.push({
+                    bridge: "Storebælt",
+                })
+                drivingDeductionData.bridgeData[0].pricePrDay = drivingData.payBothWays ? bridgeAndTaxData[0].vehiclePrices[0].price * 2 : bridgeAndTaxData[0].vehiclePrices[0].price;
+
+                drivingDeductionData.DeductionTotal = drivingData.workDaysInTransport * (drivingDeductionData.distanceWithDeduction.pricePrDay + drivingDeductionData.bridgeData[0].pricePrDay)
+            } else if (drivingData.isOeresund) {
+                drivingDeductionData.bridgeData.push({
+                    bridge: "Øresund",
+                })
+                drivingDeductionData.bridgeData[0].pricePrDay = drivingData.payBothWays ? bridgeAndTaxData[1].vehiclePrices[0].price * 2 : bridgeAndTaxData[1].vehiclePrices[0].price;
+
+                drivingDeductionData.deductionTotal = drivingData.workDaysInTransport * (drivingDeductionData.distanceWithDeduction.pricePrDay + drivingDeductionData.bridgeData[0].pricePrDay)
+            }
+            return drivingDeductionData;
+        } else if (drivingData.vehicleType === "Motorcykel") {
+            if (drivingData.isOeresund && drivingData.isStorebaelt) {
+                drivingDeductionData.bridgeData.push({ bridge: "Storebælt" }, { bridge: "Øresund" });
+
+                drivingDeductionData.bridgeData[0].pricePrDay = drivingData.payBothWays ? bridgeAndTaxData[0].vehiclePrices[1].price * 2 : bridgeAndTaxData[0].vehiclePrices[1].price;
+                drivingDeductionData.bridgeData[1].pricePrDay = drivingData.payBothWays ? bridgeAndTaxData[1].vehiclePrices[1].price * 2 : bridgeAndTaxData[1].vehiclePrices[1].price;
+
+                drivingDeductionData.deductionTotal = drivingData.workDaysInTransport * (drivingDeductionData.distanceWithDeduction.pricePrDay + drivingDeductionData.bridgeData[0].pricePrDay + drivingDeductionData.bridgeData[1].pricePrDay)
+            } else if
+                (drivingData.isStorebaelt) {
+                drivingDeductionData.bridgeData.push({
+                    bridge: "Storebælt",
+                })
+                drivingDeductionData.bridgeData[0].pricePrDay = drivingData.payBothWays ? bridgeAndTaxData[0].vehiclePrices[1].price * 2 : bridgeAndTaxData[0].vehiclePrices[1].price;
+
+                drivingDeductionData.deductionTotal = drivingData.workDaysInTransport * (drivingDeductionData.distanceWithDeduction.pricePrDay + drivingDeductionData.bridgeData[0].pricePrDay)
+            } else if (drivingData.isOeresund) {
+                drivingDeductionData.bridgeData.push({
+                    bridge: "Øresund",
+                })
+                drivingDeductionData.bridgeData[0].pricePrDay = bridgeAndTaxData[1].vehiclePrices[1].price * (drivingData.payBothWays ? 2 : 1);
+
+                drivingDeductionData.deductionTotal = drivingData.workDaysInTransport * (drivingDeductionData.distanceWithDeduction.pricePrDay + drivingDeductionData.bridgeData[0].pricePrDay)
+            }
+            return drivingDeductionData;
+        } else if (drivingData.vehicleType === "Tog/Offentlig transport") {
+            if (drivingData.isOeresund && drivingData.isStorebaelt) {
+                drivingDeductionData.bridgeData.push({ bridge: "Storebælt" }, { bridge: "Øresund" });
+
+                drivingDeductionData.bridgeData[0].pricePrDay = drivingData.payBothWays ? bridgeAndTaxData[0].vehiclePrices[2].price * 2 : bridgeAndTaxData[0].vehiclePrices[2].price;
+                drivingDeductionData.bridgeData[1].pricePrDay = drivingData.payBothWays ? bridgeAndTaxData[1].vehiclePrices[2].price * 2 : bridgeAndTaxData[1].vehiclePrices[2].price;
+
+                drivingDeductionData.deductionTotal = drivingData.workDaysInTransport * (drivingDeductionData.distanceWithDeduction.pricePrDay + drivingDeductionData.bridgeData[0].pricePrDay + drivingDeductionData.bridgeData[1].pricePrDay)
+            } else if
+                (drivingData.isStorebaelt) {
+                drivingDeductionData.bridgeData.push({
+                    bridge: "Storebælt",
+                })
+                drivingDeductionData.bridgeData[0].pricePrDay = drivingData.payBothWays ? bridgeAndTaxData[0].vehiclePrices[2].price * 2 : bridgeAndTaxData[0].vehiclePrices[2].price;
+
+                drivingDeductionData.deductionTotal = drivingData.workDaysInTransport * (drivingDeductionData.distanceWithDeduction.pricePrDay + drivingDeductionData.bridgeData[0].pricePrDay)
+            } else if (drivingData.isOeresund) {
+                drivingDeductionData.bridgeData.push({
+                    bridge: "Øresund",
+                })
+                drivingDeductionData.bridgeData[0].pricePrDay = drivingData.payBothWays ? bridgeAndTaxData[1].vehiclePrices[2].price * 2 : bridgeAndTaxData[1].vehiclePrices[2].price;
+                drivingDeductionData.deductionTotal = drivingData.workDaysInTransport * (drivingDeductionData.distanceWithDeduction.pricePrDay + drivingDeductionData.bridgeData[0].pricePrDay)
+            }
+            return drivingDeductionData;
+        }
+    } else {
+        drivingDeductionData.deductionTotal = drivingData.workDaysInTransport * drivingDeductionData.distanceWithDeduction.pricePrDay;
+        return drivingDeductionData;
+    }
 }
