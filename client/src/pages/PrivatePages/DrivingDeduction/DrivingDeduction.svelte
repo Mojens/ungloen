@@ -22,6 +22,11 @@
 
     let drivingDeductionData = {};
 
+    function formatDate(date) {
+        let dateSplit = date.split("-");
+        return dateSplit[2] + "/" + dateSplit[1] + "/" + dateSplit[0];
+    }
+
     async function calculateDrivingDeduction() {
         let buttonElement = document.getElementById(
             "handle-driving-deduction-btn"
@@ -54,13 +59,18 @@
                 drivingDeductionData = data.drivingDeductionData;
                 console.log(drivingDeductionData);
                 toastr.success(data.message);
+                setTimeout(() => {
+                    document
+                        .getElementById("driving-deduction-result")
+                        .scrollIntoView({
+                            behavior: "smooth",
+                        });
+                }, 100);
             }, 850);
         } else {
-            setTimeout(() => {
-                buttonElement.removeAttribute("aria-busy");
-                buttonElement.removeAttribute("class");
-                toastr.error(data.message);
-            }, 400);
+            buttonElement.removeAttribute("aria-busy");
+            buttonElement.removeAttribute("class");
+            toastr.error(data.message);
         }
     }
 
@@ -169,6 +179,7 @@
         </h3>
     </hgroup>
     <details>
+        <!-- svelte-ignore a11y-no-redundant-roles -->
         <summary role="button" class="contrast">
             Udregn afstand mellem hjem og arbejde
         </summary>
@@ -456,7 +467,20 @@
         <button id="handle-driving-deduction-btn">Udregn Kørselsfradrag</button>
     </form>
     {#if drivingDeductionData.deductionTotal}
-        
+        <div id="driving-deduction-result">
+            <hgroup>
+                <h2 class="title down-m">Resultat</h2>
+                <h3 class="top-m">
+                    Dit kørselsfradrag er beregnet ud fra de oplysninger, du har
+                    indtastet.
+                </h3>
+            </hgroup>
+            <h6>
+                Fradrag for perioden {formatDate(startDate)} til {formatDate(
+                    endDate
+                )}
+            </h6>
+        </div>
     {/if}
 </main>
 

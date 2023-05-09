@@ -72,7 +72,7 @@
                             behavior: "smooth",
                         });
                 }, 100);
-            }, 1350);
+            }, 850);
         } else {
             buttonElement.removeAttribute("aria-busy");
             buttonElement.removeAttribute("class");
