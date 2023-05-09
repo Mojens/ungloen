@@ -158,6 +158,7 @@
                                     id="every2week"
                                     name="every2week"
                                     value="every2week"
+                                    checked
                                     bind:group={payoutTime}
                                 />
                                 Hver anden uge
@@ -211,8 +212,8 @@
                 Kune ikke indlæse dine personoplysninger.
             </h1>
             <h3>
-                Husk at indtaste alle felter under <a
-                    href="/profil/personlig">Dine personlige oplysninger</a
+                Husk at indtaste alle felter under <a href="/profil/personlig"
+                    >Dine personlige oplysninger</a
                 >
             </h3>
         </hgroup>
@@ -236,6 +237,15 @@
                         >
                         af {formatNumber(monthlyPayoutData.monthlyIncome)}
                         kr.
+                        <!-- svelte-ignore a11y-missing-attribute -->
+                        <a
+                            class="tooltip-large"
+                            data-tooltip="
+                        Arbejdsmarkedsbidrag (AM-bidrag) er en skat på 8 %, som du betaler af alt løn.
+                        Din arbejdsgiver trækker AM-bidraget af din løn, efter at ATP og eget pensionsbidrag er fratrukket,
+                        men før den øvrige skat trækkes.
+                        "><i class="fa fa-question-circle" /></a
+                        >
                     </div>
                     <div>
                         - {formatNumber(monthlyPayoutData.laborContribution)} kr.
@@ -248,6 +258,15 @@
                     A-skat: <b>{monthlyPayoutData.tax_rate}%</b> af {formatNumber(
                         monthlyPayoutData.AIncome
                     )} kr.
+                    <!-- svelte-ignore a11y-missing-attribute -->
+                    <a
+                        class="tooltip-large"
+                        data-tooltip="
+                        Regnestykket for A-skat er:
+                        (Indkomst før AM-bidrag) - (AM-bidrag) - (Fradrag) = (A-indkomst)
+                        Hvis du ikke er lønmodtager betaler du ikke AM-bidrag, og hvis du har valgt bikort bliver fradraget ikke tælt med.
+                        "><i class="fa fa-question-circle" /></a
+                    >
                 </div>
                 <div>- {formatNumber(monthlyPayoutData.taxToPay)} kr.</div>
             </div>
@@ -295,11 +314,6 @@
 </main>
 
 <style>
-    .tooltip-large::before {
-        width: 20vw;
-        overflow: visible;
-        white-space: normal;
-    }
     .small {
         margin-top: 0;
         padding-top: 0;

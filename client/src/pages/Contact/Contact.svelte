@@ -9,6 +9,9 @@
     let message = "";
 
     async function handleContact() {
+        let buttonElement = document.getElementById("contact-btn");
+        buttonElement.setAttribute("aria-busy", "true");
+        buttonElement.setAttribute("class", "secondary");
         const response = await fetch($BASE_URL + "/api/contact", {
             credentials: "include",
             method: "POST",
@@ -24,13 +27,19 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-            toastr.success(data.message);
-            name = "";
-            email = "";
-            title = "";
-            message = "";
+            setTimeout(() => {
+                toastr.success(data.message);
+                name = "";
+                email = "";
+                title = "";
+                message = "";
+                buttonElement.removeAttribute("aria-busy");
+                buttonElement.removeAttribute("class");
+            }, 500);
         } else {
             toastr.error(data.message);
+            buttonElement.removeAttribute("aria-busy");
+            buttonElement.removeAttribute("class");
         }
     }
 </script>
@@ -79,7 +88,7 @@
                     required
                 />
 
-                <button type="submit" class="btn btn-primary">Kontakt</button>
+                <button type="submit" id="contact-btn">Kontakt</button>
             </form>
         </div>
         <div class="col-62 left-m">

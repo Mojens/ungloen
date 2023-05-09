@@ -33,6 +33,12 @@ router.post('/api/tax/monthly-payout', async (req, res) => {
         });
     }
     const taxData = req.body;
+    if (taxData.incomeType === "Løn" && taxData.payoutTime === "") {
+        return res.status(400).send({
+            message: 'Vælg venligst din lønperiode',
+            status: 400
+        });
+    }
     const monthlyPayoutData = calculateMonthlyPayout(taxData);
     return res.status(200).send({
         message: 'Udregning af månedlig udbetaling gennemført',
@@ -50,7 +56,6 @@ router.post('/api/tax/holiday-payment', async (req, res) => {
     }
     const { monthlyIncome } = req.body;
     const holidayPaymentData = calculateHolidayPayment(Number(monthlyIncome));
-    console.log(holidayPaymentData);
     return res.status(200).send({
         message: 'Udregning af feriepenge gennemført',
         holidayPaymentData: holidayPaymentData,

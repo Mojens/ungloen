@@ -15,6 +15,12 @@ h1 {
     z-index: 8000;
 }
 
+.tooltip-large::before {
+    width: 20vw;
+    overflow: visible;
+    white-space: normal;
+}
+
 .toast {
     position: relative;
     top: 0;

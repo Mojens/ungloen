@@ -82,6 +82,9 @@
         }
     }
     async function handleSubmitPost() {
+        let buttonElement = document.getElementById("submit-btn");
+        buttonElement.setAttribute("aria-busy", "true");
+        buttonElement.setAttribute("class", "secondary");
         const response = await fetch($BASE_URL + "/api/forum/", {
             method: "POST",
             credentials: "include",
@@ -97,11 +100,17 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-            toastr.success(data.message);
-            getAllPosts();
-            toggleForm();
+            setTimeout(() => {
+                toastr.success(data.message);
+                getAllPosts();
+                toggleForm();
+                buttonElement.removeAttribute("aria-busy");
+                buttonElement.removeAttribute("class");
+            }, 1000);
         } else {
             toastr.error(data.message);
+            buttonElement.removeAttribute("aria-busy");
+            buttonElement.removeAttribute("class");
         }
     }
 
@@ -176,7 +185,7 @@
                         Offentliggør mit indlæg
                     </label>
                 </fieldset>
-                <button type="submit">Opret indlæg</button>
+                <button type="submit" id="submit-btn">Opret indlæg</button>
             </form>
         {/if}
         <hr />
@@ -264,7 +273,11 @@
                                 cols="50"
                                 bind:value={contentToEdit}
                             />
-                            <select bind:value={subjectToEdit} required id="subject">
+                            <select
+                                bind:value={subjectToEdit}
+                                required
+                                id="subject"
+                            >
                                 <option value="" disabled>Vælg et emne</option>
                                 {#each $forum_subjects as forum_subject}
                                     <option value={forum_subject}
