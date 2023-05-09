@@ -506,7 +506,8 @@
                 <div class="inner-grid">
                     <p>De første 24 km</p>
                     <p>
-                        25 - {drivingDeductionData.distanceWithDeduction.distance} km
+                        25 - {drivingDeductionData.distanceWithDeduction
+                            .distance} km
                     </p>
                     {#if drivingDeductionData.bridgeData.length > 1}
                         <p>Storebæltsbroen</p>
@@ -559,7 +560,7 @@
                         {/if}
                     {/if}
                     {#if drivingDeductionData.bridgeData.length <= 0}
-                        <p class="one-underline">
+                        <p class="bold">
                             {formatNumber(
                                 drivingDeductionData.distanceWithDeduction
                                     .pricePrDay
@@ -567,7 +568,7 @@
                         </p>
                     {/if}
                     {#if drivingDeductionData.bridgeData.length > 0}
-                        <p class="one-underline">
+                        <p class="bold">
                             {formatNumber(
                                 drivingDeductionData.deductionPrDay
                             )}&nbsp;&nbsp;&nbsp;kr.
@@ -581,7 +582,8 @@
                 {#if drivingDeductionData.bridgeData.length > 0}
                     <div class="inner-grid">
                         <p>
-                            {drivingDeductionData.distanceWithDeduction.distance} dage med transport ×
+                            {drivingDeductionData.distanceWithDeduction
+                                .distance} dage med transport ×
                             <b
                                 >{formatNumber(
                                     drivingDeductionData.deductionPrDay
@@ -592,16 +594,22 @@
                 {:else}
                     <div class="inner-grid">
                         <p>
-                            {drivingDeductionData.distanceWithDeduction.distance} dage med transport × {formatNumber(
-                                drivingDeductionData.distanceWithDeduction
-                                    .pricePrDay
-                            )} kr/dag
+                            {drivingDeductionData.distanceWithDeduction
+                                .distance} dage med transport ×
+                            <b
+                                >{formatNumber(
+                                    drivingDeductionData.distanceWithDeduction
+                                        .pricePrDay
+                                )}</b
+                            > kr/dag
                         </p>
                     </div>
                 {/if}
                 <div class="inner-grid left-m">
-                    <p class="double-underlines">
-                        {formatNumber(drivingDeductionData.deductionTotal)}&nbsp;&nbsp;&nbsp;kr.
+                    <p class="down-m bold">
+                        {formatNumber(
+                            drivingDeductionData.deductionTotal
+                        )}&nbsp;&nbsp;&nbsp;kr.
                     </p>
                 </div>
             </div>

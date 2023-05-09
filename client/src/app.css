@@ -177,10 +177,12 @@ main {
 
 .double-underlines {
     text-decoration: underline double #039BCE;
+    padding-bottom: 5px;
 }
 
 .one-underline {
     text-decoration: underline #039BCE;
+    padding-bottom: 5px;
 }
 
 hr {
@@ -188,4 +190,7 @@ hr {
     height: 1px;
     background-color: #ccc;
     margin: 10px 0;
+}
+.bold {
+    font-weight: bold;
 }
