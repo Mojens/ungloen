@@ -6,7 +6,7 @@
 
     let destination = "";
     let origin = "";
-    let distance = "";
+    let distance = 0;
     let predictions = [];
 
     let startDate = new Date().getFullYear() + "-01-01";
@@ -73,7 +73,7 @@
         const data = await response.json();
         if (response.status === 200) {
             setTimeout(() => {
-                distance = data.distance;
+                distance = Math.floor(data.distance);
                 toastr.success("Afstand fundet");
                 buttonElement.removeAttribute("aria-busy");
                 buttonElement.removeAttribute("class");
@@ -131,51 +131,61 @@
 
 <main class="container">
     <hgroup>
-        <h1 class="title-contact">Bereng kørselsfradrag</h1>
-        <h3>Her kan du regne din kørselsfradrag ud.</h3>
+        <h1 class="title-contact down-m">Bereng kørselsfradrag</h1>
+        <h3 class="top-m">
+            Går du og tænker, "Hvad mon min kørselsfrdag er?" eller søger du
+            efter et værktøj der kan hjælpe dig med at se din kørselsfrdag, så
+            du kan få penge tilbage ? Så er dette det helt rigtige værktøj til
+            dig.
+        </h3>
     </hgroup>
-    <form class="address-form" on:submit|preventDefault={getDistance}>
-        <hgroup>
-            <h2>Arbejdsadresse</h2>
-            <h3>
-                hvis du ikke kender den præcise kilometer afstand fra dit hjem
-                til din arbejdsplads, kan du søge efter din arbejdsplads
-                addresse herunder og få den præcise afstand.
-            </h3>
-        </hgroup>
-        <label for="destination">Beregn afstand </label>
-        <input
-            class="down-m"
-            on:input={() => setTimeout(() => autocomplete(), 100)}
-            bind:value={destination}
-            type="text"
-            name="destination"
-            id="destination"
-            placeholder="Guldbergsgade 29N, 2200 København N"
-            required
-        />
-        {#if predictions.length > 0}
-            <div class="autocom-box">
-                <ul class="suggestions-ul">
-                    {#each predictions as prediction}
-                        <!-- svelte-ignore a11y-click-events-have-key-events -->
-                        <li
-                            class="suggestion-item"
-                            on:click={() => {
-                                destination = prediction.description;
-                                predictions = [];
-                            }}
-                        >
-                            {prediction.description}
-                        </li>
-                    {/each}
-                </ul>
-            </div>
-        {/if}
-        <button id="address-distance-btn" type="submit">
-            Beregn afstand
-        </button>
-    </form>
+    <details>
+        <summary role="button" class="contrast">
+            Udregn afstand mellem hjem og arbejde
+        </summary>
+        <form class="address-form" on:submit|preventDefault={getDistance}>
+            <hgroup>
+                <h2>Arbejdsadresse</h2>
+                <h3>
+                    hvis du ikke kender den præcise kilometer afstand fra dit
+                    hjem til din arbejdsplads, kan du søge efter din
+                    arbejdsplads addresse herunder og få den præcise afstand.
+                </h3>
+            </hgroup>
+            <label for="destination">Beregn afstand </label>
+            <input
+                class="down-m"
+                on:input={() => setTimeout(() => autocomplete(), 100)}
+                bind:value={destination}
+                type="text"
+                name="destination"
+                id="destination"
+                placeholder="Guldbergsgade 29N, 2200 København N"
+                required
+            />
+            {#if predictions.length > 0}
+                <div class="autocom-box">
+                    <ul class="suggestions-ul">
+                        {#each predictions as prediction}
+                            <!-- svelte-ignore a11y-click-events-have-key-events -->
+                            <li
+                                class="suggestion-item"
+                                on:click={() => {
+                                    destination = prediction.description;
+                                    predictions = [];
+                                }}
+                            >
+                                {prediction.description}
+                            </li>
+                        {/each}
+                    </ul>
+                </div>
+            {/if}
+            <button id="address-distance-btn" type="submit">
+                Beregn afstand
+            </button>
+        </form>
+    </details>
     <form id="driving-deduction-form">
         <hgroup>
             <h2>Kørselsfradrag</h2>
@@ -198,7 +208,6 @@
             type="number"
             name="workDistance"
             id="workDistance"
-            step="0.01"
             placeholder="Kilometer til arbejde"
             bind:value={distance}
             required
@@ -246,7 +255,7 @@
                 >
                 <input
                     bind:value={averageWorkDays}
-                    class="down-m input-disabled"
+                    class="down-m input-disabled center"
                     type="text"
                     name="averageWorkDays"
                     id="averageWorkDays"
@@ -277,7 +286,7 @@
             </label>
         </div>
         <div class="inline-block">
-            <fieldset>
+            <fieldset class="inline-block">
                 <legend
                     >Kører du over en betalingsbro?
                     <!-- svelte-ignore a11y-missing-attribute -->
@@ -310,9 +319,11 @@
                     nej
                 </label>
             </fieldset>
+            {#if payForBridge}
             <hr />
-            {#if payForBridge === true}
-                <fieldset>
+            {/if}
+            {#if payForBridge }
+                <fieldset class="inline-block">
                     <legend> Vælg betalingsbro </legend>
                     <label for="storebaeltsbroen">
                         Storebæltsbroen
@@ -337,86 +348,94 @@
                 </fieldset>
                 <hr />
                 {#if isStorebaeltsbroen || isOeresundsbroen}
-                    <fieldset class="inline-block">
-                        <legend>Hvilket transportmiddel betaler du for?</legend>
-                        <label for="Bil" class="inline-block right-m">
-                            <input
-                                bind:group={typeOfTransport}
-                                on:change={onChangeTest}
-                                type="radio"
-                                id="Bil"
-                                name="Bil"
-                                value="Bil"
-                            />
-                            Bil
-                        </label>
-                        <label for="Motorcykel" class="inline-block">
-                            <input
-                                bind:group={typeOfTransport}
-                                on:change={onChangeTest}
-                                type="radio"
-                                id="Motorcykel"
-                                name="Motorcykel"
-                                value="Motorcykel"
-                                checked
-                            />
-                            Motorcykel
-                        </label>
-                        <label
-                            for="Tog/Offentlig transport"
-                            class="inline-block"
-                        >
-                            <input
-                                bind:group={typeOfTransport}
-                                on:change={onChangeTest}
-                                type="radio"
-                                id="Tog/Offentlig transport"
-                                name="Tog/Offentlig transport"
-                                value="Tog/Offentlig transport"
-                                checked
-                            />
-                            Tog/Offentlig transport
-                        </label>
-                    </fieldset>
-                    <hr />
-                    <fieldset>
-                        <legend>Betaler du begge veje?</legend>
-                        <label
-                            for="payBothWaysTrue"
-                            class="inline-block right-m"
-                        >
-                            <input
-                                bind:group={payBothWays}
-                                on:change={onChangeTest}
-                                type="radio"
-                                id="payBothWaysTrue"
-                                name="payBothWaysTrue"
-                                value={true}
-                            />
-                            Ja
-                        </label>
-                        <label for="payBothWaysFalse" class="inline-block">
-                            <input
-                                bind:group={payBothWays}
-                                on:change={onChangeTest}
-                                type="radio"
-                                id="payBothWaysFalse"
-                                name="payBothWaysFalse"
-                                value={false}
-                                checked
-                            />
-                            Nej
-                        </label>
-                    </fieldset>
+                    <div class="">
+                        <fieldset class="inline-block">
+                            <legend
+                                >Hvilket transportmiddel betaler du for?</legend
+                            >
+                            <label for="Bil" class="inline-block right-m">
+                                <input
+                                    bind:group={typeOfTransport}
+                                    on:change={onChangeTest}
+                                    type="radio"
+                                    id="Bil"
+                                    name="Bil"
+                                    value="Bil"
+                                />
+                                Bil
+                            </label>
+                            <label for="Motorcykel" class="inline-block right-m">
+                                <input
+                                    bind:group={typeOfTransport}
+                                    on:change={onChangeTest}
+                                    type="radio"
+                                    id="Motorcykel"
+                                    name="Motorcykel"
+                                    value="Motorcykel"
+                                    checked
+                                />
+                                Motorcykel
+                            </label>
+                            <label
+                                for="Tog/Offentlig transport"
+                                class="inline-block"
+                            >
+                                <input
+                                    bind:group={typeOfTransport}
+                                    on:change={onChangeTest}
+                                    type="radio"
+                                    id="Tog/Offentlig transport"
+                                    name="Tog/Offentlig transport"
+                                    value="Tog/Offentlig transport"
+                                    checked
+                                />
+                                Tog/Offentlig transport
+                            </label>
+                        </fieldset>
+                        <hr />
+                        <fieldset>
+                            <legend>Betaler du begge veje?</legend>
+                            <label
+                                for="payBothWaysTrue"
+                                class="inline-block right-m"
+                            >
+                                <input
+                                    bind:group={payBothWays}
+                                    on:change={onChangeTest}
+                                    type="radio"
+                                    id="payBothWaysTrue"
+                                    name="payBothWaysTrue"
+                                    value={true}
+                                />
+                                Ja
+                            </label>
+                            <label for="payBothWaysFalse" class="inline-block">
+                                <input
+                                    bind:group={payBothWays}
+                                    on:change={onChangeTest}
+                                    type="radio"
+                                    id="payBothWaysFalse"
+                                    name="payBothWaysFalse"
+                                    value={false}
+                                    checked
+                                />
+                                Nej
+                            </label>
+                        </fieldset>
+                    </div>
                 {/if}
             {/if}
         </div>
+        <button id="handle-driving-deduction-btn">Udregn Kørselsfradrag</button>
     </form>
 </main>
 
 <style>
     .address-form {
         position: relative;
+        border: #11191f 4px solid;
+        border-radius: 8px;
+        padding: 16px;
     }
     .autocom-box {
         position: absolute;
@@ -446,6 +465,12 @@
         .suggestion-item:hover,
         .suggestion-item:focus {
             background-color: #16212a;
+        }
+        .address-form {
+            position: relative;
+            border: white 4px solid;
+            border-radius: 8px;
+            padding: 16px;
         }
     }
 
