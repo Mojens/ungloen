@@ -1,6 +1,7 @@
 <script>
     document.title = "UngLøn | Månedsløn";
-    import { BASE_URL, incomeTypes } from "../../../stores/globalsStore.js";
+    import { BASE_URL } from "../../../stores/globalsStore.js";
+    import { incomeTypes } from "../../../stores/taxStore.js";
     import { onMount } from "svelte";
     import toastr from "toastr";
 
@@ -29,7 +30,7 @@
     }
 
     async function getTaxData() {
-        const response = await fetch($BASE_URL + "/api/tax/data", {
+        const response = await fetch($BASE_URL + "/api/private/users/tax/data", {
             credentials: "include",
         });
         const data = await response.json();
@@ -44,7 +45,7 @@
         let buttonElement = document.getElementById("calculate-payout");
         buttonElement.setAttribute("aria-busy", "true");
         buttonElement.setAttribute("class", "secondary");
-        const response = await fetch($BASE_URL + "/api/tax/monthly-payout", {
+        const response = await fetch($BASE_URL + "/api/private/tax/monthly-payout", {
             method: "POST",
             credentials: "include",
             headers: {

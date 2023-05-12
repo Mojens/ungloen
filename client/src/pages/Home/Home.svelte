@@ -2,7 +2,7 @@
   document.title = "UngLøn | Forside";
   import Slider from "../../components/Slider/Slider.svelte";
   import Articles from "../../components/Articles/Articles.svelte";
-  import { frontPageImages, carousel_articles } from "../../stores/globalsStore.js";
+  import { frontPageImages, carousel_articles } from "../../stores/sliderStore.js";
 </script>
 
 <main class="container top-m">
@@ -53,7 +53,9 @@
         mere selvsikker i forhold til din økonomi.
       </p>
       <a href="/opret-bruger">
-        <button class="btn btn-primary">Opret dig selv idag!</button>
+        <button type="button">
+          Opret dig selv idag!
+        </button>
       </a>
     </div>
 

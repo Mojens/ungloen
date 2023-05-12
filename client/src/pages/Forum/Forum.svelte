@@ -2,11 +2,8 @@
     document.title = "UngLøn | Forum";
     import { useNavigate, useLocation } from "svelte-navigator";
     import { onMount } from "svelte";
-    import {
-        BASE_URL,
-        forum_subjects,
-        user,
-    } from "../../stores/globalsStore.js";
+    import { BASE_URL, user } from "../../stores/globalsStore.js";
+    import { forum_subjects } from "../../stores/taxStore.js";
     import { Confirm } from "svelte-confirm";
     import ReadMore from "../../components/ReadMore/ReadMore.svelte";
     import toastr from "toastr";
@@ -16,7 +13,6 @@
     let publishedPosts = [];
     let userPostLikes = [];
     let userCommentLikes = [];
-    let post_owner = false;
 
     let titleToEdit = "";
     let contentToEdit = "";
@@ -27,7 +23,7 @@
 
     async function deleteComment(commentId) {
         const response = await fetch(
-            $BASE_URL + "/api/comments/forum/" + commentId,
+            $BASE_URL + "/api/private/forum/comments/" + commentId,
             {
                 method: "DELETE",
                 credentials: "include",
@@ -44,7 +40,7 @@
     }
     async function updateComment(commentId) {
         const response = await fetch(
-            $BASE_URL + "/api/comments/forum/" + commentId,
+            $BASE_URL + "/api/private/forum/comments/" + commentId,
             {
                 method: "PUT",
                 credentials: "include",
@@ -67,7 +63,7 @@
     }
 
     async function deletePost(postId) {
-        const response = await fetch($BASE_URL + "/api/forum/" + postId, {
+        const response = await fetch($BASE_URL + "/api/private/forum/posts/" + postId, {
             method: "DELETE",
             credentials: "include",
         });
@@ -81,7 +77,7 @@
     }
 
     async function updatePost(postId) {
-        const response = await fetch($BASE_URL + "/api/forum/" + postId, {
+        const response = await fetch($BASE_URL + "/api/private/forum/posts/" + postId, {
             method: "PUT",
             credentials: "include",
             headers: {
@@ -108,7 +104,7 @@
         let buttonElement = document.getElementById("add-comment-btn");
         buttonElement.setAttribute("aria-busy", "true");
         buttonElement.setAttribute("class", "secondary");
-        const response = await fetch($BASE_URL + "/api/comments/forum", {
+        const response = await fetch($BASE_URL + "/api/private/forum/comments", {
             credentials: "include",
             method: "POST",
             headers: {
@@ -145,7 +141,7 @@
         }
     }
     async function getPublishedPosts() {
-        const response = await fetch($BASE_URL + "/api/forum");
+        const response = await fetch($BASE_URL + "/api/forum/posts");
         const data = await response.json();
         if (response.status === 200) {
             publishedPosts = data;
@@ -158,18 +154,18 @@
             return getPublishedPosts();
         }
         const response = await fetch(
-            $BASE_URL + "/api/subject/forum/" + subject
+            $BASE_URL + "/api/forum/posts/subject/" + subject
         );
         const data = await response.json();
         if (response.status === 200) {
             publishedPosts = data;
         } else {
             publishedPosts = [];
-            toastr.error(data.message);
         }
     }
     async function getLikedPost() {
-        const response = await fetch($BASE_URL + "/api/likes/posts/forum/", {
+        const response = await fetch($BASE_URL + "/api/private/forum/posts/likes", {
+            method: "GET",
             credentials: "include",
         });
         const data = await response.json();
@@ -188,7 +184,7 @@
         }
     }
     async function getLikedComments() {
-        const response = await fetch($BASE_URL + "/api/likes/comments/forum/", {
+        const response = await fetch($BASE_URL + "/api/private/forum/comments/likes", {
             credentials: "include",
         });
         const data = await response.json();
@@ -212,7 +208,7 @@
     const location = useLocation();
     async function likePost(post_id) {
         const response = await fetch(
-            $BASE_URL + "/api/likes/posts/forum/" + post_id,
+            $BASE_URL + "/api/private/forum/posts/likes/" + post_id,
             {
                 credentials: "include",
                 method: "POST",
@@ -234,7 +230,7 @@
     }
     async function likeComment(post_id) {
         const response = await fetch(
-            $BASE_URL + "/api/likes/comments/forum/" + post_id,
+            $BASE_URL + "/api/private/forum/comments/likes/" + post_id,
             {
                 credentials: "include",
                 method: "POST",

@@ -11,7 +11,7 @@
     let monthly_deduction = "";
 
     async function getPersonalData() {
-        const response = await fetch($BASE_URL + "/api/tax/data",{
+        const response = await fetch($BASE_URL + "/api/private/users/tax/data",{
                 credentials: "include",
             }
         );
@@ -38,7 +38,7 @@
         buttonElement.setAttribute("aria-busy", "true");
         buttonElement.setAttribute("class", "secondary");
         const response = await fetch(
-            $BASE_URL + "/api/tax/data/users/" + $user.id,
+            $BASE_URL + "/api/private/tax/data/users/" + $user.id,
             {
                 method: "PUT",
                 credentials: "include",

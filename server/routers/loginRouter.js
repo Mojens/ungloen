@@ -7,7 +7,7 @@ import crypto from 'crypto';
 
 const router = Router();
 
-router.post('/api/login', async (req, res) => {
+router.post('/api/auth/login', async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
         return res.status(400).send({
@@ -46,7 +46,7 @@ router.post('/api/login', async (req, res) => {
     }
 });
 
-router.post('/api/verify', async (req, res) => {
+router.post('/api/auth/verify', async (req, res) => {
     const { verification_code, phone } = req.body;
     if (!verification_code || !phone) {
         return res.status(400).send({
@@ -84,7 +84,7 @@ router.post('/api/verify', async (req, res) => {
     }
 });
 
-router.post('/api/resend-verification', async (req, res) => {
+router.post('/api/auth/resend-verification', async (req, res) => {
     const { email } = req.body;
     if (!email) {
         return res.status(400).send({
@@ -118,7 +118,7 @@ router.post('/api/resend-verification', async (req, res) => {
     }
 });
 
-router.post('/api/register', async (req, res) => {
+router.post('/api/auth/register', async (req, res) => {
     const { first_name, last_name, email, password, confirm_password, phone } = req.body;
     if (!first_name || !last_name || !email || !password || !confirm_password || !phone) {
         return res.status(400).send({
@@ -157,7 +157,7 @@ router.post('/api/register', async (req, res) => {
     }
 });
 
-router.post('/api/logout', (req, res) => {
+router.post('/api/auth/logout', (req, res) => {
     req.session.destroy()
     return res.status(200).send({
         message: 'Du er nu logget ud',
@@ -165,7 +165,7 @@ router.post('/api/logout', (req, res) => {
     })
 });
 
-router.post('/api/forgot-password', async (req, res) => {
+router.post('/api/auth/forgot-password', async (req, res) => {
     const { email } = req.body;
     if (!email) {
         return res.status(400).send({
@@ -190,7 +190,7 @@ router.post('/api/forgot-password', async (req, res) => {
     }
 });
 
-router.post('/api/reset-password', async (req, res) => {
+router.post('/api/auth/reset-password', async (req, res) => {
     const { token, password, confirm_password } = req.body;
     if (!password || !confirm_password) {
         return res.status(400).send({
@@ -247,7 +247,7 @@ router.post('/api/reset-password', async (req, res) => {
 
 });
 
-router.post('/api/check-token', async (req, res) => {
+router.post('/api/auth/check-token', async (req, res) => {
     const { token } = req.body;
     if (!token) {
         return res.status(400).send({
@@ -278,7 +278,7 @@ router.post('/api/check-token', async (req, res) => {
     return res.status(200)
 });
 
-router.get('/api/private/check-session', async (req, res) => {
+router.get('/api/private/auth/check-session', async (req, res) => {
     if (!req.session.user) {
         return res.status(400).send({
             message: 'Du skal være logget ind, <br> for at kunne se dette indhold.',

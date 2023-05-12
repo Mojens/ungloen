@@ -1,7 +1,8 @@
 <script>
     document.title = "UngLøn | Vores tjenester";
     import { useNavigate, useLocation } from "svelte-navigator";
-    import { BASE_URL, carousel_articles } from "../../stores/globalsStore.js";
+    import { BASE_URL } from "../../stores/globalsStore.js";
+    import { carousel_articles } from "../../stores/sliderStore.js";
     import Articles from "../../components/Articles/Articles.svelte";
     import toastr from "toastr";
 
@@ -10,7 +11,7 @@
     const location = useLocation();
 
     async function checkSession(redirectLocation) {
-        const response = await fetch($BASE_URL + "/api/check-session", {
+        const response = await fetch($BASE_URL + "/api/private/auth/check-session", {
             method: "GET",
             credentials: "include",
         });
@@ -44,8 +45,6 @@
 
                 <footer>
                     <p class="properties">Kræver du har en bruger</p>
-                    <!-- svelte-ignore a11y-click-events-have-key-events -->
-                    <!-- svelte-ignore a11y-missing-attribute -->
                     <a class="card-end" on:click={() => checkSession("/tjenester/beregn-maanedsloen")}
                         ><i class="fa fa-arrow-circle-o-right fa-2x" /></a
                     >
@@ -61,8 +60,6 @@
                 og indtast det ind i din forskudsopgørelse.
                 <footer>
                     <p class="properties">Kræver du har en bruger</p>
-                    <!-- svelte-ignore a11y-missing-attribute -->
-                    <!-- svelte-ignore a11y-click-events-have-key-events -->
                     <a class="card-end" on:click={() => checkSession("/tjenester/beregn-koerselsfradrag")}
                         ><i class="fa fa-arrow-circle-o-right fa-2x" /></a
                     >
@@ -81,8 +78,6 @@
                 se hvor meget du kan få udbetalt i feriepenge.
                 <footer>
                     <p class="properties">Kræver du har en bruger</p>
-                    <!-- svelte-ignore a11y-missing-attribute -->
-                    <!-- svelte-ignore a11y-click-events-have-key-events -->
                     <a class="card-end" on:click={() => checkSession("/tjenester/beregn-feriepenge")}
                         ><i class="fa fa-arrow-circle-o-right fa-2x" /></a
                     >
@@ -98,8 +93,6 @@
                 indlæg, kommentere på andres indlæg og blive klogere på din økonomi.
                 <footer>
                     <p class="properties">Kræver du har en bruger</p>
-                    <!-- svelte-ignore a11y-missing-attribute -->
-                    <!-- svelte-ignore a11y-click-events-have-key-events -->
                     <a class="card-end" on:click={() => checkSession("/tjenester/forum")}
                         ><i class="fa fa-arrow-circle-o-right fa-2x" /></a
                     >

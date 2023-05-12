@@ -53,7 +53,7 @@ router.put('/api/private/users/:id', async (req, res) => {
     });
 });
 
-router.post('/api/footer/contact', async (req, res) => {
+router.post('/api/contact/footer', async (req, res) => {
     const { email } = req.body;
     if (!email) {
         return res.status(400).send({

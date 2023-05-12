@@ -3,6 +3,7 @@
     import { BASE_URL } from "../../stores/globalsStore.js";
     import { useNavigate, useLocation } from "svelte-navigator";
     import toastr from "toastr";
+    import AuthLinks from "../../components/AuthLinks/AuthLinks.svelte";
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -15,7 +16,7 @@
         buttonElement.setAttribute("aria-busy", "true");
         buttonElement.setAttribute("class", "secondary");
 
-        const response = await fetch($BASE_URL + "/api/verify", {
+        const response = await fetch($BASE_URL + "/api/auth/verify", {
             credentials: "include",
             method: "POST",
             headers: {
@@ -87,15 +88,7 @@
         </div>
         <button type="submit" id="activate-user-btn">Aktiver</button>
     </form>
-    <div class="form-links">
-        <a href="/log-ind">Er du allerede aktiveret?</a>
-        <span id="form-link-divider">|</span>
-        <a href="/opret-bruger">Opret en bruger</a>
-        <span id="form-link-divider">|</span>
-        <a href="/glemt-adgangskode">Glemt adgangskode?</a>
-        <span id="form-link-divider">|</span>
-        <a href="/send-aktiveringskode">Send aktiveringskode</a>
-    </div>
+    <AuthLinks path={$location.pathname} />
 </main>
 
 <style>

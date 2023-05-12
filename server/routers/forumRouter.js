@@ -73,7 +73,7 @@ router.get('/api/forum/posts/:id', async (req, res) => {
     }
     return res.status(200).send(post);
 });
-router.get('/api/subject/forum/posts/:subject', async (req, res) => {
+router.get('/api/forum/posts/subject/:subject', async (req, res) => {
     let posts = await db.all('SELECT * FROM forum_posts WHERE subject = ? AND is_published = true ORDER BY date DESC', [req.params.subject]);
     if (posts.length <= 0) {
         return res.status(404).send({
@@ -122,6 +122,18 @@ router.get('/api/private/forum/posts', async (req, res) => {
         return res.status(200).send(posts);
     }
 });
+// /api/likes/posts/forum/
+router.get('/api/private/forum/posts/likes/', async (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).send({
+            message: "Ikke logget ind",
+            status: 401
+        });
+    } else {
+        let liked_posts = await db.all('SELECT * FROM posts_likes WHERE user_id = ?', [req.session.user.id]);
+        return res.status(200).send(liked_posts);
+    }
+});
 router.get('/api/private/forum/posts/:id', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).send({
@@ -142,20 +154,8 @@ router.get('/api/private/forum/posts/:id', async (req, res) => {
         return res.status(200).send(post);
     }
 });
-// /api/likes/posts/forum/
-router.get('/api/private/likes/posts/forum', async (req, res) => {
-    if (!req.session.user) {
-        return res.status(401).send({
-            message: "Ikke logget ind",
-            status: 401
-        });
-    } else {
-        let liked_posts = await db.all('SELECT * FROM posts_likes WHERE user_id = ?', [req.session.user.id]);
-        return res.status(200).send(liked_posts);
-    }
-});
 // /api/likes/comments/forum/
-router.get('/api/private/likes/comments/forum', async (req, res) => {
+router.get('/api/private/forum/comments/likes', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).send({
             message: "Ikke logget ind",
@@ -167,7 +167,7 @@ router.get('/api/private/likes/comments/forum', async (req, res) => {
     }
 });
 // /api/likes/comments/forum/:id
-router.post('/api/private/likes/comments/forum/:id', async (req, res) => {
+router.post('/api/private/forum/comments/likes/:id', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).send({
             message: "For at like en kommentar skal du være logget ind<br>Ellers du kan oprette en bruger",
@@ -198,7 +198,7 @@ router.post('/api/private/likes/comments/forum/:id', async (req, res) => {
     }
 });
 // /api/comments/forum
-router.post('/api/private/comments/forum', async (req, res) => {
+router.post('/api/private/forum/comments', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).send({
             message: "For at kommentere skal du være logget ind<br>Ellers du kan oprette en bruger",
@@ -235,7 +235,7 @@ router.post('/api/private/comments/forum', async (req, res) => {
     }
 });
 // /api/comments/forum/:id
-router.delete('/api/private/comments/forum/:id', async (req, res) => {
+router.delete('/api/private/forum/comments/:id', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).send({
             message: "For at slette en kommentar skal du være logget ind<br>Ellers du kan oprette en bruger",
@@ -263,7 +263,7 @@ router.delete('/api/private/comments/forum/:id', async (req, res) => {
     }
 });
 // /api/comments/forum/:id
-router.put('/api/private/comments/forum/:id', async (req, res) => {
+router.put('/api/private/forum/comments/:id', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).send({
             message: "For at redigere en kommentar skal du være logget ind<br>Ellers du kan oprette en bruger",
@@ -298,7 +298,7 @@ router.put('/api/private/comments/forum/:id', async (req, res) => {
     }
 });
 // /api/likes/posts/forum/:id
-router.post('/api/private/likes/posts/forum/:id', async (req, res) => {
+router.post('/api/private/forum/posts/likes/:id', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).send({
             message: "For at like et opslag skal du være logget ind<br>Ellers du kan oprette en bruger",

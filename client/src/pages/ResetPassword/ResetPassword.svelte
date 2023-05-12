@@ -20,7 +20,7 @@
         let buttonElement = document.getElementById("reset-password-btn");
         buttonElement.setAttribute("aria-busy", "true");
         buttonElement.setAttribute("class", "secondary");
-        const response = await fetch($BASE_URL + "/api/reset-password", {
+        const response = await fetch($BASE_URL + "/api/auth/reset-password", {
             credentials: "include",
             method: "POST",
             headers: {
@@ -42,7 +42,7 @@
                     ($location.state && $location.state.from) ||
                     "/log-ind";
                 navigate(from, { replace: true });
-            }, 2000);
+            }, 1000);
         } else {
             toastr.error(data.message);
             buttonElement.removeAttribute("aria-busy");
@@ -51,7 +51,7 @@
     }
 
     async function checkToken() {
-        const response = await fetch($BASE_URL + "/api/check-token", {
+        const response = await fetch($BASE_URL + "/api/private/auth/check-session", {
             credentials: "include",
             method: "POST",
             headers: {
@@ -97,15 +97,6 @@
             >Nulstil adgangskode</button
         >
     </form>
-    <div class="form-links">
-        <a href="/log-ind">Allerede oprettet?</a>
-        <span id="form-link-divider">|</span>
-        <a href="/opret-bruger">Opret en bruger</a>
-        <span id="form-link-divider">|</span>
-        <a href="/aktiver-bruger">Aktiver din bruger</a>
-        <span id="form-link-divider">|</span>
-        <a href="/send-aktiveringskode">Send aktiveringskode</a>
-    </div>
 </main>
 
 <style>

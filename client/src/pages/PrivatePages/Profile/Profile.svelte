@@ -9,7 +9,7 @@
     let phone = "";
 
     async function getUser() {
-        const response = await fetch($BASE_URL + "/api/users/" + $user.id, {
+        const response = await fetch($BASE_URL + "/api/private/users/" + $user.id, {
             method: "GET",
             credentials: "include",
         });
@@ -27,7 +27,7 @@
         const buttonElement = document.getElementById("update-profile-btn");
         buttonElement.setAttribute("aria-busy", "true");
         buttonElement.setAttribute("class", "secondary");
-        const response = await fetch($BASE_URL + "/api/users/" + $user.id, {
+        const response = await fetch($BASE_URL + "/api/private/users/" + $user.id, {
             method: "PUT",
             credentials: "include",
             headers: {
@@ -59,7 +59,7 @@
         let buttonElement = document.getElementById("reset-password-btn");
         buttonElement.setAttribute("aria-busy", "true");
         buttonElement.setAttribute("class", "secondary");
-        const response = await fetch($BASE_URL + "/api/forgot-password", {
+        const response = await fetch($BASE_URL + "/api/auth/forgot-password", {
             credentials: "include",
             method: "POST",
             headers: {

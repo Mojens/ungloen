@@ -1,6 +1,7 @@
 <script>
     document.title = "UngLøn | Dine Indlæg";
-    import { BASE_URL, forum_subjects } from "../../../stores/globalsStore.js";
+    import { BASE_URL } from "../../../stores/globalsStore.js";
+    import { forum_subjects } from "../../../stores/taxStore.js";
     import { onMount } from "svelte";
     import { Confirm } from "svelte-confirm";
     import toastr from "toastr";
@@ -33,7 +34,7 @@
     }
 
     async function getAllPosts() {
-        const response = await fetch($BASE_URL + "/api/private/forum/", {
+        const response = await fetch($BASE_URL + "/api/private/forum/posts", {
             method: "GET",
             credentials: "include",
         });
@@ -46,7 +47,7 @@
     }
 
     async function deletePost(postId) {
-        const response = await fetch($BASE_URL + "/api/forum/" + postId, {
+        const response = await fetch($BASE_URL + "/api/private/forum/posts/" + postId, {
             method: "DELETE",
             credentials: "include",
         });
@@ -60,7 +61,7 @@
     }
 
     async function updatePost(postId) {
-        const response = await fetch($BASE_URL + "/api/forum/" + postId, {
+        const response = await fetch($BASE_URL + "/api/private/forum/posts/" + postId, {
             method: "PUT",
             credentials: "include",
             headers: {
@@ -85,7 +86,7 @@
         let buttonElement = document.getElementById("submit-btn");
         buttonElement.setAttribute("aria-busy", "true");
         buttonElement.setAttribute("class", "secondary");
-        const response = await fetch($BASE_URL + "/api/forum/", {
+        const response = await fetch($BASE_URL + "/api/private/forum/posts/", {
             method: "POST",
             credentials: "include",
             headers: {

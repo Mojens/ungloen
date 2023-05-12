@@ -56,7 +56,7 @@
         );
         buttonElement.setAttribute("aria-busy", "true");
         buttonElement.setAttribute("class", "secondary");
-        const response = await fetch($BASE_URL + "/api/tax/driving-deduction", {
+        const response = await fetch($BASE_URL + "/api/private/tax/driving-deduction", {
             method: "POST",
             credentials: "include",
             headers: {
@@ -120,7 +120,7 @@
         let buttonElement = document.getElementById("address-distance-btn");
         buttonElement.setAttribute("aria-busy", "true");
         buttonElement.setAttribute("class", "secondary");
-        const response = await fetch($BASE_URL + "/api/googlemaps/distance", {
+        const response = await fetch($BASE_URL + "/api/private/googlemaps/distance", {
             method: "POST",
             credentials: "include",
             headers: {
@@ -154,7 +154,7 @@
     }
 
     async function getPersonalData() {
-        const response = await fetch($BASE_URL + "/api/tax/data", {
+        const response = await fetch($BASE_URL + "/api/private/users/tax/data", {
             credentials: "include",
         });
         const data = await response.json();
@@ -171,7 +171,7 @@
             return;
         }
         const response = await fetch(
-            $BASE_URL + "/api/googlemaps/autocomplete?input=" + destination,
+            $BASE_URL + "/api/private/googlemaps/autocomplete?input=" + destination,
             {
                 credentials: "include",
             }
@@ -582,8 +582,7 @@
                 {#if drivingDeductionData.bridgeData.length > 0}
                     <div class="inner-grid">
                         <p>
-                            {drivingDeductionData.distanceWithDeduction
-                                .distance} dage med transport ×
+                            {workDaysInTransport} dage med transport ×
                             <b
                                 >{formatNumber(
                                     drivingDeductionData.deductionPrDay
@@ -594,8 +593,7 @@
                 {:else}
                     <div class="inner-grid">
                         <p>
-                            {drivingDeductionData.distanceWithDeduction
-                                .distance} dage med transport ×
+                            {workDaysInTransport} dage med transport ×
                             <b
                                 >{formatNumber(
                                     drivingDeductionData.distanceWithDeduction

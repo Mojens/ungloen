@@ -18,7 +18,7 @@ app.use(session({
     saveUninitialized: true,
     cookie: { secure: false }
 }));
-
+/*
 function checkSession(req, res, next) {
     if (!req.session.user) {
         return res.status(401).send({ 
@@ -29,7 +29,7 @@ function checkSession(req, res, next) {
     next();
 }          
 app.use('/api/private', checkSession);      
-
+*/
 
 
 

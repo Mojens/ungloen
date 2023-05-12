@@ -3,6 +3,7 @@
     import { BASE_URL } from "../../stores/globalsStore.js";
     import toastr from "toastr";
     import { useNavigate, useLocation } from "svelte-navigator";
+    import AuthLinks from "../../components/AuthLinks/AuthLinks.svelte";
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -13,7 +14,7 @@
         let buttonElement = document.getElementById("send-activation-code-btn");
         buttonElement.setAttribute("aria-busy", "true");
         buttonElement.setAttribute("class", "secondary");
-        const response = await fetch($BASE_URL + "/api/resend-verification", {
+        const response = await fetch($BASE_URL + "/api/auth/resend-verification", {
             credentials: "include",
             method: "POST",
             headers: {
@@ -71,15 +72,7 @@
             >Send aktiveringskode</button
         >
     </form>
-    <div class="form-links">
-        <a href="/log-ind">Er du allerede aktiveret?</a>
-        <span id="form-link-divider">|</span>
-        <a href="/opret-bruger">Opret en bruger</a>
-        <span id="form-link-divider">|</span>
-        <a href="/glemt-adgangskode">Glemt adgangskode?</a>
-        <span id="form-link-divider">|</span>
-        <a href="/aktiver-bruger">Har du allerede en aktiveringskode?</a>
-    </div>
+    <AuthLinks path={$location.pathname} />
 </main>
 
 <style>

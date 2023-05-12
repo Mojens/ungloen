@@ -3,6 +3,7 @@
     import toastr from "toastr";
     import { useNavigate, useLocation } from "svelte-navigator";
     import { BASE_URL } from "../../stores/globalsStore.js";
+    import AuthLinks from "../../components/AuthLinks/AuthLinks.svelte";
 
     let email = "";
     let password = "";
@@ -22,7 +23,7 @@
         if (phone.includes("+45")) {
             phone = phone.replace("+45", "");
         }
-        const response = await fetch($BASE_URL + "/api/register", {
+        const response = await fetch($BASE_URL + "/api/auth/register", {
             credentials: "include",
             method: "POST",
             headers: {
@@ -133,15 +134,7 @@
         />
         <button type="submit" id="register-btn">Opret</button>
     </form>
-    <div class="form-links">
-        <a href="/log-ind">Allerede oprettet?</a>
-        <span id="form-link-divider">|</span>
-        <a href="/glemt-adgangskode">Glemt adgangskode?</a>
-        <span id="form-link-divider">|</span>
-        <a href="/aktiver-bruger">Aktiver din bruger</a>
-        <span id="form-link-divider">|</span>
-        <a href="/send-aktiveringskode">Send aktiveringskode</a>
-    </div>
+    <AuthLinks path={$location.pathname} />
 </main>
 
 <style>

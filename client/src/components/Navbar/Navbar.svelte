@@ -29,7 +29,7 @@
                   path: "/log-ind",
                   name: "Log ind",
               },
-    ].filter(Boolean);
+    ];
 
     const LoggedNavigationLinks = [
         {
@@ -60,7 +60,7 @@
     const location = useLocation();
 
     async function handleLogout() {
-        const response = await fetch($BASE_URL + "/api/logout", {
+        const response = await fetch($BASE_URL + "/api/auth/logout", {
             credentials: "include",
             method: "POST",
         });

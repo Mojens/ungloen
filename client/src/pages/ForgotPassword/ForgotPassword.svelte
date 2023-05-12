@@ -2,6 +2,7 @@
     document.title = "UngLøn | Glemt adgangskode";
     import toastr from "toastr";
     import { BASE_URL } from "../../stores/globalsStore.js";
+    import AuthLinks from "../../components/AuthLinks/AuthLinks.svelte";
 
     let email = "";
 
@@ -9,7 +10,7 @@
         let buttonElement = document.getElementById("forgot-password-btn");
         buttonElement.setAttribute("aria-busy", "true");
         buttonElement.setAttribute("class", "secondary");
-        const response = await fetch($BASE_URL + "/api/forgot-password", {
+        const response = await fetch($BASE_URL + "/api/auth/forgot-password", {
             credentials: "include",
             method: "POST",
             headers: {
@@ -48,15 +49,7 @@
         />
         <button type="submit" id="forgot-password-btn">Send link</button>
     </form>
-    <div class="form-links">
-        <a href="/log-ind">Allerede oprettet?</a>
-        <span id="form-link-divider">|</span>
-        <a href="/opret-bruger">Opret en bruger</a>
-        <span id="form-link-divider">|</span>
-        <a href="/aktiver-bruger">Aktiver din bruger</a>
-        <span id="form-link-divider">|</span>
-        <a href="/send-aktiveringskode">Send aktiveringskode</a>
-    </div>
+    <AuthLinks path={location.pathname}/>
 </main>
 
 <style>
