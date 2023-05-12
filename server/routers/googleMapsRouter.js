@@ -5,7 +5,7 @@ import dotenv from 'dotenv/config';
 
 const router = Router();
 
-router.get('/api/googlemaps/autocomplete', async (req, res) => {
+router.get('/api/private/googlemaps/autocomplete', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).send({
             message: "Ikke logget ind",
@@ -28,7 +28,7 @@ router.get('/api/googlemaps/autocomplete', async (req, res) => {
     }
 });
 
-router.post('/api/googlemaps/distance', async (req, res) => {
+router.post('/api/private/googlemaps/distance', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).send({
             message: "Ikke logget ind",
@@ -36,9 +36,7 @@ router.post('/api/googlemaps/distance', async (req, res) => {
         });
     }
     const { origin, destination } = req.body;
-    console.log(origin, destination)
     const distance = await calculateDistance(origin, destination);
-    console.log(distance)
     if (distance !== null) {
         return res.status(200).send({
             message: 'Afstanden fundet',

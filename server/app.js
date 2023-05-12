@@ -19,6 +19,20 @@ app.use(session({
     cookie: { secure: false }
 }));
 
+function checkSession(req, res, next) {
+    if (!req.session.user) {
+        return res.status(401).send({ 
+            message: "Du er ikke logget ind",
+            status: 401
+        });             
+    }
+    next();
+}          
+app.use('/api/private', checkSession);      
+
+
+
+
 import loginRouter from './routers/loginRouter.js';
 app.use(loginRouter);
 

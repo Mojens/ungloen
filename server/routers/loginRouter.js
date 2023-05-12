@@ -66,6 +66,13 @@ router.post('/api/verify', async (req, res) => {
                 status: 400
             });
         } else {
+            const isVerification_code_correct = await bcrypt.compare(verification_code, user.verification_code);
+            if (!isVerification_code_correct) {
+                return res.send(400).send({
+                    message: "Din aktiveringskode er ikke korrekt, anmod om en ny hvis du ikke kan finde din egen",
+                    status: 400
+                });
+            }
             await db.run('UPDATE users SET verified = 1, verification_code = NULL, verification_code_expiration = NULL WHERE id = ?', [user.id]);
             const message = `Hej ${user.first_name} ${user.last_name}, din bruger er nu aktiveret hos UngLøn`;
             await sendSMS(message, user.phone);
@@ -99,7 +106,8 @@ router.post('/api/resend-verification', async (req, res) => {
         } else {
             const verification_code = crypto.randomBytes(4).toString('hex');
             const verification_code_expiration = Date.now() + (24 * 60 * 60 * 1000);
-            await db.run('UPDATE users SET verification_code = ?, verification_code_expiration = ? WHERE id = ?', [verification_code, verification_code_expiration, user.id]);
+            const hashed_verification_code = await bcrypt.hash(verification_code, 12)
+            await db.run('UPDATE users SET verification_code = ?, verification_code_expiration = ? WHERE id = ?', [hashed_verification_code, verification_code_expiration, user.id]);
             const message = `Din aktiveringskode udløber om 24 timer: ${verification_code}`;
             sendSMS(message, user.phone);
             return res.status(200).send({
@@ -134,10 +142,11 @@ router.post('/api/register', async (req, res) => {
             } else {
                 const hashedPassword = await bcrypt.hash(password, 12);
                 const verification_code = crypto.randomBytes(4).toString('hex');
+                const hashed_verification_code = await bcrypt.hash(verification_code, 12);
                 const verification_code_expiration = Date.now() + (24 * 60 * 60 * 1000);
                 const message = `Din aktiveringskode udløber om 24 timer: ${verification_code}`;
                 sendSMS(message, phone);
-                const user = await db.run('INSERT INTO users (first_name, last_name, email, password, phone, verification_code, verification_code_expiration) VALUES (?, ?, ?, ?, ?, ?, ?)', [first_name, last_name, email, hashedPassword, phone, verification_code, verification_code_expiration]);
+                const user = await db.run('INSERT INTO users (first_name, last_name, email, password, phone, verification_code, verification_code_expiration) VALUES (?, ?, ?, ?, ?, ?, ?)', [first_name, last_name, email, hashedPassword, phone, hashed_verification_code, verification_code_expiration]);
                 await db.run('INSERT INTO users_tax_data (user_id) VALUES (?)', [user.lastID]);
                 return res.status(200).send({
                     message: 'Du er nu oprettet som bruger, du vil modtage en SMS med aktiveringskoden',
@@ -171,9 +180,9 @@ router.post('/api/forgot-password', async (req, res) => {
                 status: 400
             });
         } else {
-            const token = crypto.randomBytes(5).toString('hex');
+            const token = crypto.randomBytes(10).toString('hex');
             const token_expiration = Date.now() + 3600000;
-            await db.run('UPDATE users SET token = ?, token_expiration = ? WHERE email = ?', [token, token_expiration, email]);
+            await db.run('UPDATE users SET token = ?, token_expiration = ? WHERE LOWER(email) = ?', [token, token_expiration, email.toLowerCase()]);
             const message = `Du har anmodet om at nulstille din adgangskode, tjek din email for at nulstille din adgangskode`;
             sendSMS(message, user.phone);
             return sendForgotPasswordMail(res, email, token);
@@ -212,7 +221,7 @@ router.post('/api/reset-password', async (req, res) => {
                 if (token !== user.token) {
                     return res.status(400).send({
                         message: 'Noget gik galt',
-                        error: 'Invalid Token',
+                        error: 'Din token virker ikke, anmod om en ny',
                         status: 400
                     });
                 } else {
@@ -253,6 +262,13 @@ router.post('/api/check-token', async (req, res) => {
             status: 400
         });
     }
+    if (token !== user.token) {
+        return res.status(400).send({
+            message: 'Noget gik galt',
+            error: 'Din token virker ikke, anmod om en ny',
+            status: 400
+        });
+    }
     if (Number(user.token_expiration) < Date.now()) {
         return res.status(400).send({
             message: 'Link er udløbet',
@@ -262,7 +278,7 @@ router.post('/api/check-token', async (req, res) => {
     return res.status(200)
 });
 
-router.get('/api/check-session', async (req, res) => {
+router.get('/api/private/check-session', async (req, res) => {
     if (!req.session.user) {
         return res.status(400).send({
             message: 'Du skal være logget ind, <br> for at kunne se dette indhold.',

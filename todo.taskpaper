@@ -1,0 +1,17 @@
+1.
+    Implementer loading button component istedet for at hente det med id og set attributes osv.
+2.
+    Check endpoint URL med SERVER
+3.
+    implementer AuthLinks på de forskellige sider der handler om authentication
+4.
+    Check global variables
+5.
+    Der skal ikke bruges 
+        const from =($location.state && $location.state.from) || "/aktiver-bruger";
+    Man kan bare nøjes med at skrive den sådan her
+        navigate("/aktiver-bruger", { replace: true });
+6.
+    Check med isAuthenticated, og måske bruge den med user istedet for localstorage?
+7.
+    

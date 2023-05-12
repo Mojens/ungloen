@@ -9,7 +9,6 @@ if (isDeleteMode) {
   db.exec(`DROP TABLE IF EXISTS forum_comments;`);
   db.exec(`DROP TABLE IF EXISTS posts_likes;`);
   db.exec(`DROP TABLE IF EXISTS comments_likes;`);
-
   db.exec(`DROP TABLE IF EXISTS users_tax_data;`);
 }
 

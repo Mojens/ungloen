@@ -6,8 +6,8 @@ import dotenv from 'dotenv/config';
 
 const router = Router();
 
-router.get('/api/users/:id', async (req, res) => {
-    if (!req.session.user || req.session.user.id !== Number(req.params.id)) {
+router.get('/api/private/users/:id', async (req, res) => {
+    if (req.session.user.id !== Number(req.params.id)) {
         return res.status(401).send({
             message: 'Ingen adgang',
             status: 401
@@ -28,9 +28,9 @@ router.get('/api/users/:id', async (req, res) => {
     }
 })
 
-router.put('/api/users/:id', async (req, res) => {
+router.put('/api/private/users/:id', async (req, res) => {
     const { first_name, last_name, email } = req.body;
-    if (!req.session.user || req.session.user.id !== Number(req.params.id)) {
+    if (req.session.user.id !== Number(req.params.id)) {
         return res.status(401).send({
             message: 'Ingen adgang',
             status: 401
@@ -61,7 +61,7 @@ router.post('/api/footer/contact', async (req, res) => {
             status: 400
         });
     }
-    sendFooterContactMail(res, email);
+    return sendFooterContactMail(res, email);
 });
 
 router.post('/api/contact', async (req, res) => {
@@ -72,7 +72,7 @@ router.post('/api/contact', async (req, res) => {
             status: 400
         });
     }
-    sendContactMail(res, email, name, message, title)
+    return sendContactMail(res, email, name, message, title)
 });
 
 export default router;

@@ -33,7 +33,7 @@ export function sendForgotPasswordMail(res, email, token) {
             });
         } else {
             return res.status(200).send({
-                message: 'Email og SMS er sendt',
+                message: 'Email er sendt',
                 status: 200
             });
         }

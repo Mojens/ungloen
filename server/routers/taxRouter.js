@@ -4,7 +4,7 @@ import { calculateMonthlyPayout, calculateHolidayPayment, calculateDrivingDeduct
 const router = Router();
 
 
-router.get('/api/tax/data', async (req, res) => {
+router.get('/api/private/users/tax/data', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).send({
             message: "Ikke logget ind",
@@ -25,7 +25,7 @@ router.get('/api/tax/data', async (req, res) => {
     });
 });
 
-router.post('/api/tax/monthly-payout', async (req, res) => {
+router.post('/api/private/tax/monthly-payout', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).send({
             message: "Ikke logget ind",
@@ -47,7 +47,7 @@ router.post('/api/tax/monthly-payout', async (req, res) => {
     });
 });
 
-router.post('/api/tax/holiday-payment', async (req, res) => {
+router.post('/api/private/tax/holiday-payment', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).send({
             message: "Ikke logget ind",
@@ -63,7 +63,7 @@ router.post('/api/tax/holiday-payment', async (req, res) => {
     });
 });
 
-router.post('/api/tax/driving-deduction', async (req, res) => {
+router.post('/api/private/tax/driving-deduction', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).send({
             message: "Ikke logget ind",
@@ -85,8 +85,8 @@ router.post('/api/tax/driving-deduction', async (req, res) => {
     });
 });
 
-router.put('/api/tax/data/users/:id', async (req, res) => {
-    if (!req.session.user || req.session.user.id !== Number(req.params.id)) {
+router.put('/api/private/tax/data/users/:id', async (req, res) => {
+    if (req.session.user.id !== Number(req.params.id)) {
         return res.status(401).send({
             message: 'Ingen adgang',
             status: 401

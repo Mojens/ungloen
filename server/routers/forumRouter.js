@@ -4,7 +4,7 @@ import getFormattedDate from '../util/dateFormatter.js';
 
 const router = Router();
 
-router.get('/api/forum', async (req, res) => {
+router.get('/api/forum/posts', async (req, res) => {
     let posts = await db.all('SELECT * FROM forum_posts WHERE is_published = true');
     if (posts.length === 0) {
         return res.status(404).send({
@@ -36,7 +36,7 @@ router.get('/api/forum', async (req, res) => {
     }
     return res.status(200).send(posts);
 });
-router.get('/api/forum/:id', async (req, res) => {
+router.get('/api/forum/posts/:id', async (req, res) => {
     const [post] = await db.all('SELECT * FROM forum_posts WHERE id = ?', [Number(req.params.id)]);
     if (!post) {
         return res.status(404).send({
@@ -73,7 +73,7 @@ router.get('/api/forum/:id', async (req, res) => {
     }
     return res.status(200).send(post);
 });
-router.get('/api/subject/forum/:subject', async (req, res) => {
+router.get('/api/subject/forum/posts/:subject', async (req, res) => {
     let posts = await db.all('SELECT * FROM forum_posts WHERE subject = ? AND is_published = true ORDER BY date DESC', [req.params.subject]);
     if (posts.length <= 0) {
         return res.status(404).send({
@@ -106,7 +106,7 @@ router.get('/api/subject/forum/:subject', async (req, res) => {
         return res.status(200).send(posts);
     }
 });
-router.get('/api/private/forum/', async (req, res) => {
+router.get('/api/private/forum/posts', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).send({
             message: "Unauthorized",
@@ -122,7 +122,7 @@ router.get('/api/private/forum/', async (req, res) => {
         return res.status(200).send(posts);
     }
 });
-router.get('/api/private/forum/:id', async (req, res) => {
+router.get('/api/private/forum/posts/:id', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).send({
             message: "Ikke logget ind",
@@ -142,7 +142,8 @@ router.get('/api/private/forum/:id', async (req, res) => {
         return res.status(200).send(post);
     }
 });
-router.get('/api/likes/posts/forum/', async (req, res) => {
+// /api/likes/posts/forum/
+router.get('/api/private/likes/posts/forum', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).send({
             message: "Ikke logget ind",
@@ -153,7 +154,8 @@ router.get('/api/likes/posts/forum/', async (req, res) => {
         return res.status(200).send(liked_posts);
     }
 });
-router.get('/api/likes/comments/forum/', async (req, res) => {
+// /api/likes/comments/forum/
+router.get('/api/private/likes/comments/forum', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).send({
             message: "Ikke logget ind",
@@ -164,7 +166,8 @@ router.get('/api/likes/comments/forum/', async (req, res) => {
         return res.status(200).send(liked_comments);
     }
 });
-router.post('/api/likes/comments/forum/:id', async (req, res) => {
+// /api/likes/comments/forum/:id
+router.post('/api/private/likes/comments/forum/:id', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).send({
             message: "For at like en kommentar skal du være logget ind<br>Ellers du kan oprette en bruger",
@@ -194,7 +197,8 @@ router.post('/api/likes/comments/forum/:id', async (req, res) => {
         }
     }
 });
-router.post('/api/comments/forum', async (req, res) => {
+// /api/comments/forum
+router.post('/api/private/comments/forum', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).send({
             message: "For at kommentere skal du være logget ind<br>Ellers du kan oprette en bruger",
@@ -230,7 +234,8 @@ router.post('/api/comments/forum', async (req, res) => {
         });
     }
 });
-router.delete('/api/comments/forum/:id', async (req, res) => {
+// /api/comments/forum/:id
+router.delete('/api/private/comments/forum/:id', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).send({
             message: "For at slette en kommentar skal du være logget ind<br>Ellers du kan oprette en bruger",
@@ -257,7 +262,8 @@ router.delete('/api/comments/forum/:id', async (req, res) => {
         });
     }
 });
-router.put('/api/comments/forum/:id', async (req, res) => {
+// /api/comments/forum/:id
+router.put('/api/private/comments/forum/:id', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).send({
             message: "For at redigere en kommentar skal du være logget ind<br>Ellers du kan oprette en bruger",
@@ -291,7 +297,8 @@ router.put('/api/comments/forum/:id', async (req, res) => {
         });
     }
 });
-router.post('/api/likes/posts/forum/:id', async (req, res) => {
+// /api/likes/posts/forum/:id
+router.post('/api/private/likes/posts/forum/:id', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).send({
             message: "For at like et opslag skal du være logget ind<br>Ellers du kan oprette en bruger",
@@ -320,7 +327,8 @@ router.post('/api/likes/posts/forum/:id', async (req, res) => {
         });
     }
 });
-router.delete('/api/forum/:id', async (req, res) => {
+// /api/forum/:id
+router.delete('/api/private/forum/posts/:id', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).send({
             message: "For at slette et opslag skal du være logget ind<br>Ellers du kan oprette en bruger",
@@ -342,7 +350,7 @@ router.delete('/api/forum/:id', async (req, res) => {
         status: 200
     });
 });
-router.put('/api/forum/:id', async (req, res) => {
+router.put('/api/private/forum/posts/:id', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).send({
             message: "For at redigere et indlæg skal du være logget ind<br>Ellers du kan oprette en bruger",
@@ -371,7 +379,7 @@ router.put('/api/forum/:id', async (req, res) => {
         status: 200
     });
 });
-router.post('/api/forum', async (req, res) => {
+router.post('/api/private/forum/posts', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).send({
             message: "For at oprette et indlæg skal du være logget ind",
