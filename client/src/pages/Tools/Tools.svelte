@@ -1,28 +1,27 @@
 <script>
     document.title = "UngLøn | Vores tjenester";
-    import { useNavigate, useLocation } from "svelte-navigator";
+    import { useNavigate } from "svelte-navigator";
     import { BASE_URL } from "../../stores/globalsStore.js";
     import { carousel_articles } from "../../stores/sliderStore.js";
     import Articles from "../../components/Articles/Articles.svelte";
     import toastr from "toastr";
 
-
     const navigate = useNavigate();
-    const location = useLocation();
 
     async function checkSession(redirectLocation) {
-        const response = await fetch($BASE_URL + "/api/private/auth/check-session", {
-            method: "GET",
-            credentials: "include",
-        });
+        const response = await fetch(
+            $BASE_URL + "/api/private/auth/check-session",
+            {
+                method: "GET",
+                credentials: "include",
+            }
+        );
         const data = await response.json();
         if (response.status === 200) {
-            const from = ($location.state && $location.state.from) || redirectLocation;
-            navigate(from, { replace: true });
+            navigate(redirectLocation, { replace: true });
         } else {
             toastr.error(data.message);
-            const from = ($location.state && $location.state.from) || "/log-ind";
-            navigate(from, { replace: true });
+            navigate("/log-ind", { replace: true });
         }
     }
 </script>
@@ -45,7 +44,10 @@
 
                 <footer>
                     <p class="properties">Kræver du har en bruger</p>
-                    <a class="card-end" on:click={() => checkSession("/tjenester/beregn-maanedsloen")}
+                    <a
+                        class="card-end"
+                        on:click={() =>
+                            checkSession("/tjenester/beregn-maanedsloen")}
                         ><i class="fa fa-arrow-circle-o-right fa-2x" /></a
                     >
                 </footer>
@@ -60,7 +62,10 @@
                 og indtast det ind i din forskudsopgørelse.
                 <footer>
                     <p class="properties">Kræver du har en bruger</p>
-                    <a class="card-end" on:click={() => checkSession("/tjenester/beregn-koerselsfradrag")}
+                    <a
+                        class="card-end"
+                        on:click={() =>
+                            checkSession("/tjenester/beregn-koerselsfradrag")}
                         ><i class="fa fa-arrow-circle-o-right fa-2x" /></a
                     >
                 </footer>
@@ -78,7 +83,10 @@
                 se hvor meget du kan få udbetalt i feriepenge.
                 <footer>
                     <p class="properties">Kræver du har en bruger</p>
-                    <a class="card-end" on:click={() => checkSession("/tjenester/beregn-feriepenge")}
+                    <a
+                        class="card-end"
+                        on:click={() =>
+                            checkSession("/tjenester/beregn-feriepenge")}
                         ><i class="fa fa-arrow-circle-o-right fa-2x" /></a
                     >
                 </footer>
@@ -93,7 +101,9 @@
                 indlæg, kommentere på andres indlæg og blive klogere på din økonomi.
                 <footer>
                     <p class="properties">Kræver du har en bruger</p>
-                    <a class="card-end" on:click={() => checkSession("/tjenester/forum")}
+                    <a
+                        class="card-end"
+                        on:click={() => checkSession("/tjenester/forum")}
                         ><i class="fa fa-arrow-circle-o-right fa-2x" /></a
                     >
                 </footer>
@@ -101,7 +111,11 @@
         </div>
     </div>
 
-    <Articles amountToShow={2} amountOnScroll={1} articles={$carousel_articles} />
+    <Articles
+        amountToShow={2}
+        amountOnScroll={1}
+        articles={$carousel_articles}
+    />
 </main>
 
 <style>

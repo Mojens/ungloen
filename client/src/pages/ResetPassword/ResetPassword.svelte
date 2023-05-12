@@ -1,14 +1,13 @@
 <script>
     document.title = "UngLøn | Nulstil adgangskode";
     import toastr from "toastr";
-    import { useNavigate, useLocation } from "svelte-navigator";
+    import { useNavigate } from "svelte-navigator";
     import { BASE_URL } from "../../stores/globalsStore.js";
     import { useParams } from "svelte-navigator";
 
     let token = "";
 
     const navigate = useNavigate();
-    const location = useLocation();
 
     const params = useParams();
     token = $params.token;
@@ -38,10 +37,7 @@
                 buttonElement.removeAttribute("aria-busy");
                 buttonElement.removeAttribute("class");
                 toastr.success(data.message);
-                const from =
-                    ($location.state && $location.state.from) ||
-                    "/log-ind";
-                navigate(from, { replace: true });
+                navigate("/log-ind", { replace: true });
             }, 1000);
         } else {
             toastr.error(data.message);

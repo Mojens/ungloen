@@ -6,12 +6,7 @@ import dotenv from 'dotenv/config';
 const router = Router();
 
 router.get('/api/private/googlemaps/autocomplete', async (req, res) => {
-    if (!req.session.user) {
-        return res.status(401).send({
-            message: "Ikke logget ind",
-            status: 401
-        });
-    }
+
     const input = req.query.input;
     const predictions = await autocompletePlaces(input);
     if (predictions !== null) {
@@ -29,12 +24,7 @@ router.get('/api/private/googlemaps/autocomplete', async (req, res) => {
 });
 
 router.post('/api/private/googlemaps/distance', async (req, res) => {
-    if (!req.session.user) {
-        return res.status(401).send({
-            message: "Ikke logget ind",
-            status: 401
-        });
-    }
+ 
     const { origin, destination } = req.body;
     const distance = await calculateDistance(origin, destination);
     if (distance !== null) {

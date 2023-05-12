@@ -6,7 +6,6 @@
     import AuthLinks from "../../components/AuthLinks/AuthLinks.svelte";
 
     const navigate = useNavigate();
-    const location = useLocation();
 
     let email = "";
 
@@ -30,10 +29,7 @@
                 toastr.success(data.message);
                 buttonElement.removeAttribute("aria-busy");
                 buttonElement.removeAttribute("class");
-                const from =
-                    ($location.state && $location.state.from) ||
-                    "/aktiver-bruger";
-                navigate(from, { replace: true });
+                navigate("/aktiver-bruger", { replace: true });
             }, 1500);
         } else {
             toastr.error(data.message);
@@ -72,7 +68,7 @@
             >Send aktiveringskode</button
         >
     </form>
-    <AuthLinks path={$location.pathname} />
+    <AuthLinks path={location.pathname} />
 </main>
 
 <style>

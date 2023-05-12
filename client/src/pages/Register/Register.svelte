@@ -1,7 +1,7 @@
 <script>
     document.title = "UngLøn | Opret dig";
     import toastr from "toastr";
-    import { useNavigate, useLocation } from "svelte-navigator";
+    import { useNavigate } from "svelte-navigator";
     import { BASE_URL } from "../../stores/globalsStore.js";
     import AuthLinks from "../../components/AuthLinks/AuthLinks.svelte";
 
@@ -13,7 +13,6 @@
     let phone = "";
 
     const navigate = useNavigate();
-    const location = useLocation();
 
     async function handleRegister() {
         let buttonElement = document.getElementById("register-btn");
@@ -44,10 +43,7 @@
                 buttonElement.removeAttribute("aria-busy");
                 buttonElement.removeAttribute("class");
                 toastr.success(data.message);
-                const from =
-                    ($location.state && $location.state.from) ||
-                    "/aktiver-bruger";
-                navigate(from, { replace: true });
+                navigate("/aktiver-bruger", { replace: true });
             }, 1500);
         } else {
             toastr.error(data.message);
@@ -134,7 +130,7 @@
         />
         <button type="submit" id="register-btn">Opret</button>
     </form>
-    <AuthLinks path={$location.pathname} />
+    <AuthLinks path={location.pathname} />
 </main>
 
 <style>

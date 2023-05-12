@@ -6,7 +6,6 @@
     import AuthLinks from "../../components/AuthLinks/AuthLinks.svelte";
 
     const navigate = useNavigate();
-    const location = useLocation();
 
     let email = "john_doe@emailprovider.com";
     let password = "";
@@ -34,8 +33,7 @@
                 localStorage.setItem("user", JSON.stringify(data.user));
                 toastr.success(data.message);
                 user.set(data.user);
-                const from = ($location.state && $location.state.from) || "/";
-                navigate(from, { replace: true });
+                navigate("/", { replace: true });
             }, 500);
         } else {
             toastr.error(data.message);
@@ -74,7 +72,7 @@
         />
         <button type="submit" id="login-btn">Log ind</button>
     </form>
-    <AuthLinks path={$location.pathname}/>
+    <AuthLinks path={location.pathname}/>
 </main>
 
 <style>

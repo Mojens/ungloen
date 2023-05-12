@@ -1,4 +1,4 @@
-2.
+2.færdig
 
     Check endpoint URL med SERVER
 
@@ -10,7 +10,7 @@
 
     Check global variables
 
-5.
+5.færdig
 
     Der skal ikke bruges 
         const from =($location.state && $location.state.from) || "/aktiver-bruger";
@@ -42,3 +42,6 @@
 
 12.
     Slet kommentar,  og tjek for session i de individuelle endpoints da der nu er en middleware
+
+13.
+    Check status på fejl behandling i endpoints

@@ -18,18 +18,18 @@ app.use(session({
     saveUninitialized: true,
     cookie: { secure: false }
 }));
-/*
+
 function checkSession(req, res, next) {
     if (!req.session.user) {
-        return res.status(401).send({ 
+        return res.status(401).send({
             message: "Du er ikke logget ind",
             status: 401
-        });             
+        });
     }
     next();
-}          
-app.use('/api/private', checkSession);      
-*/
+}
+app.use('/api/private', checkSession);
+
 
 
 

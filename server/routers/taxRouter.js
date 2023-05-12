@@ -5,12 +5,7 @@ const router = Router();
 
 
 router.get('/api/private/users/tax/data', async (req, res) => {
-    if (!req.session.user) {
-        return res.status(401).send({
-            message: "Ikke logget ind",
-            status: 401
-        });
-    }
+  
     const [taxData] = await db.all('SELECT * FROM users_tax_data WHERE user_id = ?', [req.session.user.id]);
     if (!taxData.tax_rate || !taxData.monthly_deduction || !taxData.zip_code || !taxData.city || !taxData.address) {
         return res.status(404).send({
@@ -26,12 +21,7 @@ router.get('/api/private/users/tax/data', async (req, res) => {
 });
 
 router.post('/api/private/tax/monthly-payout', async (req, res) => {
-    if (!req.session.user) {
-        return res.status(401).send({
-            message: "Ikke logget ind",
-            status: 401
-        });
-    }
+  
     const taxData = req.body;
     if (taxData.incomeType === "Løn" && taxData.payoutTime === "") {
         return res.status(400).send({
@@ -48,12 +38,7 @@ router.post('/api/private/tax/monthly-payout', async (req, res) => {
 });
 
 router.post('/api/private/tax/holiday-payment', async (req, res) => {
-    if (!req.session.user) {
-        return res.status(401).send({
-            message: "Ikke logget ind",
-            status: 401
-        });
-    }
+  
     const { monthlyIncome } = req.body;
     const holidayPaymentData = calculateHolidayPayment(Number(monthlyIncome));
     return res.status(200).send({
@@ -64,12 +49,7 @@ router.post('/api/private/tax/holiday-payment', async (req, res) => {
 });
 
 router.post('/api/private/tax/driving-deduction', async (req, res) => {
-    if (!req.session.user) {
-        return res.status(401).send({
-            message: "Ikke logget ind",
-            status: 401
-        });
-    }
+  
     const { drivingData } = req.body;
     if (drivingData.payForBridge && (!drivingData.isStorebaelt && !drivingData.isOeresund) || drivingData.payForBridge && drivingData.vehicleType === "") {
         return res.status(400).send({

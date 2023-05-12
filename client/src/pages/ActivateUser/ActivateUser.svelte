@@ -6,7 +6,6 @@
     import AuthLinks from "../../components/AuthLinks/AuthLinks.svelte";
 
     const navigate = useNavigate();
-    const location = useLocation();
 
     let verification_code = "";
     let phone = "";
@@ -33,9 +32,7 @@
                 buttonElement.removeAttribute("aria-busy");
                 buttonElement.removeAttribute("class");
                 toastr.success(data.message);
-                const from =
-                    ($location.state && $location.state.from) || "/log-ind";
-                navigate(from, { replace: true });
+                navigate("/log-ind", { replace: true });
             }, 1000);
         } else {
             toastr.error(data.message);
@@ -88,7 +85,7 @@
         </div>
         <button type="submit" id="activate-user-btn">Aktiver</button>
     </form>
-    <AuthLinks path={$location.pathname} />
+    <AuthLinks path={location.pathname} />
 </main>
 
 <style>
