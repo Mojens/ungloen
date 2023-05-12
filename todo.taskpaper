@@ -1,3 +1,4 @@
+@Mojens
 2.færdig
 
     Check endpoint URL med SERVER
@@ -41,7 +42,13 @@
     bcrypt til token ved nulstil adgangskode
 
 12.
-    Slet kommentar,  og tjek for session i de individuelle endpoints da der nu er en middleware
+
+    Slet kommentar rundt i koden
 
 13.
+
     Check status på fejl behandling i endpoints
+
+14.færdig
+
+    tjek for session i de individuelle endpoints da der nu er en middleware
