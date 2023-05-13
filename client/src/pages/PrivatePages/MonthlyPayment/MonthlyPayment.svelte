@@ -185,7 +185,6 @@
                 <div class="grid">
                     <div>
                         <p>
-                            <!-- svelte-ignore a11y-missing-attribute -->
                             Indkomst pr. måned
                             <a
                                 class="tooltip-large"
@@ -242,7 +241,6 @@
                         >
                         af {formatNumber(monthlyPayoutData.monthlyIncome)}
                         kr.
-                        <!-- svelte-ignore a11y-missing-attribute -->
                         <a
                             class="tooltip-large"
                             data-tooltip="
@@ -263,7 +261,6 @@
                     A-skat: <b>{monthlyPayoutData.tax_rate}%</b> af {formatNumber(
                         monthlyPayoutData.AIncome
                     )} kr.
-                    <!-- svelte-ignore a11y-missing-attribute -->
                     <a
                         class="tooltip-large"
                         data-tooltip="

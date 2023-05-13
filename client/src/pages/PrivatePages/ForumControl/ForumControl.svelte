@@ -5,6 +5,7 @@
     import { onMount } from "svelte";
     import { Confirm } from "svelte-confirm";
     import toastr from "toastr";
+    import ReadMore from "../../../components/ReadMore/ReadMore.svelte";
 
     let posts = [];
 
@@ -47,10 +48,13 @@
     }
 
     async function deletePost(postId) {
-        const response = await fetch($BASE_URL + "/api/private/forum/posts/" + postId, {
-            method: "DELETE",
-            credentials: "include",
-        });
+        const response = await fetch(
+            $BASE_URL + "/api/private/forum/posts/" + postId,
+            {
+                method: "DELETE",
+                credentials: "include",
+            }
+        );
         const data = await response.json();
         if (response.status === 200) {
             toastr.success(data.message);
@@ -61,19 +65,22 @@
     }
 
     async function updatePost(postId) {
-        const response = await fetch($BASE_URL + "/api/private/forum/posts/" + postId, {
-            method: "PUT",
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                title: titleToEdit,
-                content: contentToEdit,
-                is_published: is_publishedToEdit,
-                subject: subjectToEdit,
-            }),
-        });
+        const response = await fetch(
+            $BASE_URL + "/api/private/forum/posts/" + postId,
+            {
+                method: "PUT",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    title: titleToEdit,
+                    content: contentToEdit,
+                    is_published: is_publishedToEdit,
+                    subject: subjectToEdit,
+                }),
+            }
+        );
         const data = await response.json();
         if (response.status === 200) {
             toastr.success(data.message);
@@ -213,7 +220,13 @@
                 </summary>
                 <h2 class="center">{post.title}</h2>
                 <p>
-                    {post.content}
+                    <ReadMore
+                        textContent={post.content}
+                        maxChars={175}
+                        readMoreLabel="Læs mere"
+                        readLessLabel="Læs mindre"
+                        maxWords={2000}
+                    />
                 </p>
                 <Confirm
                     confirmTitle="Slet indlæg"
