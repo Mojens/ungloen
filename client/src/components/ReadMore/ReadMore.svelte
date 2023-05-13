@@ -1,66 +1,44 @@
 <script>
-    import { getMaxCharacters, getMaxWords, isFullText } from './utils';
-    export let textContent;
-    export let readMoreLabel = 'Read more';
-    export let readLessLabel = 'Read less';
-    export let maxChars;
-    export let maxWords;
-    export let dotDotDot = '...';
+  export let textContent = "";
+  export let maxChars = 100;
+  export let readMoreLabel = "Læs mere";
+  export let readLessLabel = "Læs mindre";
+  export let maxWords;
 
-    let text
-    let isOpen = false
-    const cleanText= textContent.replace(/\s+/g, ' ').trim();
-    $: finalLabel = isOpen ? readLessLabel : readMoreLabel
-    $: maxCharsText = getMaxCharacters(maxChars, isOpen, cleanText, text)
-    $: finalText = getMaxWords(maxWords, isOpen, maxCharsText, text)
-    $: finalSymbol = isOpen ? '' : dotDotDot
-    $: showButton = (!isOpen && isFullText(finalText, cleanText)) ? false : true
+  let isClosed = true;
 
-    const handleClick = () => {
-        isOpen = !isOpen
-    }  
+  let getClosedText = () => {
+    if (maxWords) {
+      let words = textContent.split(" ");
+      if (words.length > maxWords) {
+        return words.slice(0, maxWords).join(" ") + "...";
+      }
+    }
+    if (textContent.length > maxChars) {
+      return textContent.slice(0, maxChars) + "...";
+    }
+    return textContent;
+  };
+
+  let displayText = getClosedText();
+
+  const toggleText = () => {
+    isClosed = !isClosed;
+    displayText = isClosed ? getClosedText() : textContent;
+  };
 </script>
 
-<div data-testid="wrapper">
-    {finalText}
-    <span
-        data-testid="button-wrapper"
-        data-visible={`${showButton}`}
-        class="button-wrapper"
-    >
-        {!isOpen ? finalSymbol: ''}
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <!-- svelte-ignore a11y-missing-attribute -->
-        <a
-            data-testid="button"
-            on:click={handleClick}
-            class='button'
-        >
-            {finalLabel}
-</a>
-    </span>
-</div>
+<p class="text-content">{displayText}</p>
+<a class="read-more-trigger" on:click|preventDefault={toggleText}
+  >{isClosed ? readMoreLabel : readLessLabel}</a
+>
 
 <style>
-    /* custom styles */
-.button-wrapper {
-    white-space: nowrap;
-    margin-left: -4px;
-}
-span[data-visible='false'] {
-        visibility: hidden;
-}
-.button {
-    border: 0;
-    background-color: transparent;
-    text-decoration: underline;
+  .text-content {
+    display: inline;
+  }
+  .read-more-trigger {
     cursor: pointer;
-
-}
-.button::first-letter {
-	text-transform: uppercase;
-}
-.button:hover {
-	text-decoration: none;
-}
+    display: inline;
+  }
 </style>

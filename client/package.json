@@ -12,7 +12,6 @@
     "@sveltejs/vite-plugin-svelte": "^2.0.3",
     "@types/toastr": "^2.1.40",
     "svelte": "^3.55.1",
-    "svelte-read-more": "^0.2.1",
     "vite": "^4.2.0"
   },
   "dependencies": {
@@ -20,7 +19,6 @@
     "svelte-carousel": "^1.0.25",
     "svelte-confirm": "^0.0.0",
     "svelte-navigator": "^3.2.2",
-    "svelte-quicksearch-bar": "^1.0.5",
     "toastr": "^2.1.4"
   }
 }

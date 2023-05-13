@@ -63,10 +63,13 @@
     }
 
     async function deletePost(postId) {
-        const response = await fetch($BASE_URL + "/api/private/forum/posts/" + postId, {
-            method: "DELETE",
-            credentials: "include",
-        });
+        const response = await fetch(
+            $BASE_URL + "/api/private/forum/posts/" + postId,
+            {
+                method: "DELETE",
+                credentials: "include",
+            }
+        );
         const data = await response.json();
         if (response.status === 200) {
             toastr.success(data.message);
@@ -77,19 +80,22 @@
     }
 
     async function updatePost(postId) {
-        const response = await fetch($BASE_URL + "/api/private/forum/posts/" + postId, {
-            method: "PUT",
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                title: titleToEdit,
-                content: contentToEdit,
-                is_published: is_publishedToEdit,
-                subject: subjectToEdit,
-            }),
-        });
+        const response = await fetch(
+            $BASE_URL + "/api/private/forum/posts/" + postId,
+            {
+                method: "PUT",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    title: titleToEdit,
+                    content: contentToEdit,
+                    is_published: is_publishedToEdit,
+                    subject: subjectToEdit,
+                }),
+            }
+        );
         const data = await response.json();
         if (response.status === 200) {
             toastr.success(data.message);
@@ -104,17 +110,20 @@
         let buttonElement = document.getElementById("add-comment-btn");
         buttonElement.setAttribute("aria-busy", "true");
         buttonElement.setAttribute("class", "secondary");
-        const response = await fetch($BASE_URL + "/api/private/forum/comments", {
-            credentials: "include",
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                comment: comment,
-                post_id: postId,
-            }),
-        });
+        const response = await fetch(
+            $BASE_URL + "/api/private/forum/comments",
+            {
+                credentials: "include",
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    comment: comment,
+                    post_id: postId,
+                }),
+            }
+        );
         const data = await response.json();
         if (response.status === 200) {
             setTimeout(() => {
@@ -164,10 +173,13 @@
         }
     }
     async function getLikedPost() {
-        const response = await fetch($BASE_URL + "/api/private/forum/posts/likes", {
-            method: "GET",
-            credentials: "include",
-        });
+        const response = await fetch(
+            $BASE_URL + "/api/private/forum/posts/likes",
+            {
+                method: "GET",
+                credentials: "include",
+            }
+        );
         const data = await response.json();
         if (response.status === 200) {
             if (data.length === 0) {
@@ -184,9 +196,12 @@
         }
     }
     async function getLikedComments() {
-        const response = await fetch($BASE_URL + "/api/private/forum/comments/likes", {
-            credentials: "include",
-        });
+        const response = await fetch(
+            $BASE_URL + "/api/private/forum/comments/likes",
+            {
+                credentials: "include",
+            }
+        );
         const data = await response.json();
         if (response.status === 200) {
             if (data.length === 0) {
@@ -307,8 +322,6 @@
                                         cancelTitle="Fortryd"
                                         let:confirm={confirmThis}
                                     >
-                                        <!-- svelte-ignore a11y-click-events-have-key-events -->
-                                        <!-- svelte-ignore a11y-missing-attribute -->
                                         <a
                                             class="right-m"
                                             on:click={() =>
@@ -331,8 +344,6 @@
                                         cancelTitle="Fortryd"
                                         let:confirm={confirmThis}
                                     >
-                                        <!-- svelte-ignore a11y-click-events-have-key-events -->
-                                        <!-- svelte-ignore a11y-missing-attribute -->
                                         <a
                                             class="left-m"
                                             on:click={() => {
@@ -453,7 +464,6 @@
                             {/if}
                         {/if}
                         <details class="down-m">
-                            <!-- svelte-ignore a11y-no-redundant-roles -->
                             <summary role="button">Se Kommentar</summary>
                             {#if post.comments}
                                 <h2 class="down-m">Kommentar</h2>
@@ -471,8 +481,6 @@
                                                             cancelTitle="Fortryd"
                                                             let:confirm={confirmThis}
                                                         >
-                                                            <!-- svelte-ignore a11y-click-events-have-key-events -->
-                                                            <!-- svelte-ignore a11y-missing-attribute -->
                                                             <a
                                                                 class="right-m"
                                                                 on:click={() =>
@@ -503,8 +511,6 @@
                                                             cancelTitle="Fortryd"
                                                             let:confirm={confirmThis}
                                                         >
-                                                            <!-- svelte-ignore a11y-click-events-have-key-events -->
-                                                            <!-- svelte-ignore a11y-missing-attribute -->
                                                             <a
                                                                 class="left-m"
                                                                 on:click={() => {
@@ -558,7 +564,7 @@
                                             <p class="content">
                                                 <ReadMore
                                                     textContent={comment.content}
-                                                    maxChars={175}
+                                                    maxChars={50}
                                                     readMoreLabel="Læs mere"
                                                     readLessLabel="Læs mindre"
                                                     maxWords={2000}
