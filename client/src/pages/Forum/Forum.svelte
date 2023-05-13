@@ -311,7 +311,7 @@
             <ul class="post-list">
                 {#each publishedPosts as post}
                     <li class="post-item">
-                        {#if $user !== null}
+                        {#if $user }
                             {#if post.user_id === $user.id}
                                 <div
                                     class="admin-controls card-end"
@@ -430,7 +430,6 @@
                                 maxChars={175}
                                 readMoreLabel="Læs mere"
                                 readLessLabel="Læs mindre"
-                                maxWords={2000}
                             />
                         </p>
                         <p class="author">Oprettet af {post.author}</p>
@@ -564,10 +563,9 @@
                                             <p class="content">
                                                 <ReadMore
                                                     textContent={comment.content}
-                                                    maxChars={50}
+                                                    maxChars={140}
                                                     readMoreLabel="Læs mere"
                                                     readLessLabel="Læs mindre"
-                                                    maxWords={2000}
                                                 />
                                             </p>
                                             <p class="author">

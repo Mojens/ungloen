@@ -3,7 +3,7 @@
   export let maxChars = 100;
   export let readMoreLabel = "Læs mere";
   export let readLessLabel = "Læs mindre";
-  export let maxWords;
+  export let maxWords = null;
 
   let isClosed = true;
 
