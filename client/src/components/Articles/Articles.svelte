@@ -18,15 +18,16 @@
         {#each articles as article}
             <article class="m-left">
                 <header class="center">{article.title}</header>
-                <!-- svelte-ignore a11y-img-redundant-alt -->
                 <img
                     src={article.imgURL}
                     alt="article image"
-                    style="width:412px;height:275px;aspect-ratio:auto 412/275;"
+                    class="article-img"
                 />
                 <footer class="card-footer-article-slider">
                     {article.intro_text}
-                    <a class="card-end" href={article.url}>Læs artikel</a>
+                    <a class="card-end" href={article.url} target="_blank"
+                        >Læs artikel</a
+                    >
                     <span class="author">Skrevet af: {article.author}</span>
                 </footer>
             </article>
@@ -46,5 +47,10 @@
     }
     .m-left {
         margin-left: 10px;
+    }
+    .article-img {
+        width: 412px;
+        height: 275px;
+        aspect-ratio: auto 412/275;
     }
 </style>

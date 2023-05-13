@@ -1,5 +1,5 @@
 <script>
-    import { Link, useNavigate, useLocation } from "svelte-navigator";
+    import { Link } from "svelte-navigator";
     import { BASE_URL, user } from "../../stores/globalsStore.js";
     import toastr from "toastr";
 
@@ -56,8 +56,6 @@
             name: "Personlige indlæg",
         },
     ];
-    const navigate = useNavigate();
-    const location = useLocation();
 
     async function handleLogout() {
         const response = await fetch($BASE_URL + "/api/auth/logout", {
@@ -69,9 +67,6 @@
             toastr.error(data.message);
             localStorage.removeItem("user");
             user.set(null);
-            $user = null;
-            const from = ($location.state && $location.state.from) || "/";
-            navigate(from, { replace: true });
         } else {
             toastr.error(data.message);
         }
@@ -100,7 +95,7 @@
                     </li>
                 {:else}
                     <li>
-                        <Link to={link.path}>{link.name}</Link>
+                        <a href={link.path}>{link.name}</a>
                     </li>
                 {/if}
             {/each}
@@ -113,7 +108,7 @@
                         {#each LoggedNavigationLinksDropDown as link}
                             {#if link}
                                 <li>
-                                    <a href="{link.path}">{link.name}</a>
+                                    <a href={link.path}>{link.name}</a>
                                 </li>
                             {/if}
                         {/each}

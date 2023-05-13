@@ -1,5 +1,7 @@
 <script>
     import { Router, Route } from "svelte-navigator";
+    import { isAuthenticated, BASE_URL, user } from "./stores/globalsStore.js";
+    import { onMount } from "svelte";
     import Home from "./pages/Home/Home.svelte";
     import Navbar from "./components/Navbar/Navbar.svelte";
     import Login from "./pages/Login/Login.svelte";
@@ -20,6 +22,23 @@
     import ForumControl from "./pages/PrivatePages/ForumControl/ForumControl.svelte";
     import ActivateUser from "./pages/ActivateUser/ActivateUser.svelte";
     import SendActivationCode from "./pages/SendActivationCode/SendActivationCode.svelte";
+    import ScrollToTop from "./components/ScrollToTop/ScrollToTop.svelte";
+
+    onMount(async () => {
+        const response = await fetch(
+            $BASE_URL + "/api/private/auth/check-session",
+            {
+                credentials: "include",
+            }
+        );
+        response.status === 200
+            ? isAuthenticated.set(true)
+            : isAuthenticated.set(false);
+        if (!$isAuthenticated) {
+            localStorage.removeItem("user");
+            user.set(null);
+        }
+    });
 </script>
 
 <Router>
@@ -54,4 +73,5 @@
         <ForumControl />
     </PrivateRoute>
 </Router>
+<ScrollToTop />
 <Footer />
