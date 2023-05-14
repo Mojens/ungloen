@@ -67,14 +67,14 @@
     <div class="grid">
         <div class="center">
             <p class="copyright">
-                &copy; 2023 Alle rettigheder forbeholdes af ungløn.dk
+                &copy; 2023 Alle rettigheder forbeholdes af <a href="/" class="bold-a">ungløn.dk</a>
             </p>
         </div>
         <div />
         <div class="center">
-            <a href="/#"><i class="fa fa-facebook" /></a>
-            <a href="/#"><i class="fa fa-instagram" /></a>
-            <a href="/#"><i class="fa fa-twitter" /></a>
+            <a><i class="fa fa-facebook" /></a>
+            <a><i class="fa fa-instagram" /></a>
+            <a><i class="fa fa-twitter" /></a>
             <a href="https://github.com/Mojens/ungloen" target="_blank"
                 ><i class="fa fa-github" /></a
             >
@@ -83,6 +83,11 @@
 </footer>
 
 <style>
+    .bold-a{
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+        font-weight: bold !important;
+    }
     .footer-top-m {
         padding-top: 2rem;
     }

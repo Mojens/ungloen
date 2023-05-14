@@ -96,7 +96,7 @@
             <p>Guldbergsgade 29n</p>
             <p>2200, København N</p>
             <h3>Telefon</h3>
-            <a href="tel:+4546460000"><p>+45 46 46 00 00</p></a>
+            <a href="tel:+4561656854"><p>+45 61 65 68 54</p></a>
             <h3>Email</h3>
             <a href="mailto:moha135h@stud.kea.dk"><p>Moha135h@stud.kea.dk</p></a
             >

@@ -110,6 +110,25 @@
             </article>
         </div>
     </div>
+    <div class="grid">
+        <div>
+            <article>
+                <header class="center">
+                    <h2 class="down-m">Share Dollar</h2>
+                </header>
+                Share Dollar en funktion, som gør det muligt at lave dine egne teams, og dele jeres regninger med hinanden. Så alle betaler deres andel af regningen.
+                <footer>
+                    <p class="properties">Kræver du har en bruger</p>
+                    <a
+                        class="card-end"
+                        on:click={() =>
+                            checkSession("/tjenester/share-dollar")}
+                        ><i class="fa fa-arrow-circle-o-right fa-2x" /></a
+                    >
+                </footer>
+            </article>
+        </div>
+    </div>
 
     <Articles
         amountToShow={2}

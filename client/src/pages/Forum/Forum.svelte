@@ -311,7 +311,7 @@
             <ul class="post-list">
                 {#each publishedPosts as post}
                     <li class="post-item">
-                        {#if $user }
+                        {#if $user}
                             {#if post.user_id === $user.id}
                                 <div
                                     class="admin-controls card-end"
@@ -345,6 +345,7 @@
                                         let:confirm={confirmThis}
                                     >
                                         <a
+                                            href="#"
                                             class="left-m"
                                             on:click={() => {
                                                 titleToEdit = post.title;

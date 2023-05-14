@@ -28,10 +28,16 @@
   };
 </script>
 
-<p class="text-content">{displayText}</p>
-<a class="read-more-trigger" on:click|preventDefault={toggleText}
-  >{isClosed ? readMoreLabel : readLessLabel}</a
->
+{#if textContent.length > maxChars || (maxWords && textContent.split(" ").length > maxWords)}
+  <p class="text-content">{displayText}</p>
+  <a class="read-more-trigger" on:click|preventDefault={toggleText}>
+    {isClosed ? readMoreLabel : readLessLabel}
+  </a>
+{/if}
+
+{#if !(textContent.length > maxChars || (maxWords && textContent.split(" ").length > maxWords))}
+  <p class="text-content">{textContent}</p>
+{/if}
 
 <style>
   .text-content {

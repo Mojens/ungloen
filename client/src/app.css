@@ -98,6 +98,10 @@ h1 {
     margin-left: 1% !important;
 }
 
+.p-down-0 {
+    padding-bottom: 0 !important;
+}
+
 main {
     margin-bottom: 5% !important;
 }
@@ -124,6 +128,10 @@ main {
 
 .w-15 {
     width: 15%;
+}
+
+.p-down {
+    padding-bottom: 5% !important;
 }
 
 .border-raidus {
@@ -154,15 +162,15 @@ main {
 }
 
 .p-36 {
-    font-size: 36px;
+    font-size: 36px !important;
 }
 
 .p-58 {
-    font-size: 58px;
+    font-size: 58px !important;
 }
 
 .p-24 {
-    font-size: 24px;
+    font-size: 24px !important;
 }
 
 .input-disabled {
@@ -194,4 +202,47 @@ hr {
 
 .bold {
     font-weight: bold;
+}
+
+.float-right {
+    float: right;
+}
+
+.icon-in-list {
+    display: inline !important;
+    margin-right: 5px !important;
+    float: right;
+    margin-left: 5px !important;
+    padding: 0;
+}
+
+.h-500 {
+    height: 500px !important;
+}
+
+.scrollable {
+    overflow-y: auto !important;
+}
+
+.bg-primary::placeholder {
+    color: #fff !important;
+}
+
+.bg-primary {
+    background-color: #039BCE;
+    color: #fff !important;
+}
+
+.chat-box {
+    height: 500px;
+    overflow-y: auto;
+}
+
+.chat-message-input {
+    width: 100%;
+    height: 50px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    resize: none;
 }

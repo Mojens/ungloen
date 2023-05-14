@@ -36,6 +36,7 @@ router.get('/api/forum/posts', async (req, res) => {
     }
     return res.status(200).send(posts);
 });
+
 router.get('/api/forum/posts/:id', async (req, res) => {
     const [post] = await db.all('SELECT * FROM forum_posts WHERE id = ?', [Number(req.params.id)]);
     if (!post) {
@@ -73,6 +74,7 @@ router.get('/api/forum/posts/:id', async (req, res) => {
     }
     return res.status(200).send(post);
 });
+
 router.get('/api/forum/posts/subject/:subject', async (req, res) => {
     let posts = await db.all('SELECT * FROM forum_posts WHERE subject = ? AND is_published = true ORDER BY date DESC', [req.params.subject]);
     if (posts.length <= 0) {
@@ -106,6 +108,7 @@ router.get('/api/forum/posts/subject/:subject', async (req, res) => {
         return res.status(200).send(posts);
     }
 });
+
 router.get('/api/private/forum/posts', async (req, res) => {
 
     let posts = await db.all('SELECT * FROM forum_posts WHERE user_id = ?', [req.session.user.id]);
@@ -117,13 +120,14 @@ router.get('/api/private/forum/posts', async (req, res) => {
     return res.status(200).send(posts);
 
 });
-// /api/likes/posts/forum/
+
 router.get('/api/private/forum/posts/likes/', async (req, res) => {
 
     let liked_posts = await db.all('SELECT * FROM posts_likes WHERE user_id = ?', [req.session.user.id]);
     return res.status(200).send(liked_posts);
 
 });
+
 router.get('/api/private/forum/posts/:id', async (req, res) => {
 
     const [post] = await db.all('SELECT * FROM forum_posts WHERE id = ? AND user_id = ?', [Number(req.params.id), req.session.user.id]);
@@ -139,14 +143,14 @@ router.get('/api/private/forum/posts/:id', async (req, res) => {
     return res.status(200).send(post);
 
 });
-// /api/likes/comments/forum/
+
 router.get('/api/private/forum/comments/likes', async (req, res) => {
 
     let liked_comments = await db.all('SELECT * FROM comments_likes WHERE user_id = ?', [req.session.user.id]);
     return res.status(200).send(liked_comments);
 
 });
-// /api/likes/comments/forum/:id
+
 router.post('/api/private/forum/comments/likes/:id', async (req, res) => {
 
     const [comment] = await db.all('SELECT * FROM forum_comments WHERE id = ?', [req.params.id]);
@@ -172,7 +176,7 @@ router.post('/api/private/forum/comments/likes/:id', async (req, res) => {
     }
 
 });
-// /api/comments/forum
+
 router.post('/api/private/forum/comments', async (req, res) => {
 
     const [user] = await db.all('SELECT * FROM users WHERE id = ?', [req.session.user.id]);
@@ -204,7 +208,7 @@ router.post('/api/private/forum/comments', async (req, res) => {
     });
 
 });
-// /api/comments/forum/:id
+
 router.delete('/api/private/forum/comments/:id', async (req, res) => {
 
     const [comment] = await db.all('SELECT * FROM forum_comments WHERE id = ?', [Number(req.params.id)]);
@@ -227,7 +231,7 @@ router.delete('/api/private/forum/comments/:id', async (req, res) => {
     });
 
 });
-// /api/comments/forum/:id
+
 router.put('/api/private/forum/comments/:id', async (req, res) => {
 
     const [comment] = await db.all('SELECT * FROM forum_comments WHERE id = ?', [Number(req.params.id)]);
@@ -257,7 +261,7 @@ router.put('/api/private/forum/comments/:id', async (req, res) => {
     });
 
 });
-// /api/likes/posts/forum/:id
+
 router.post('/api/private/forum/posts/likes/:id', async (req, res) => {
 
     const [post] = await db.all('SELECT * FROM forum_posts WHERE id = ?', [req.params.id]);
@@ -282,7 +286,7 @@ router.post('/api/private/forum/posts/likes/:id', async (req, res) => {
     });
 
 });
-// /api/forum/:id
+
 router.delete('/api/private/forum/posts/:id', async (req, res) => {
   
     const post = await db.get('SELECT * FROM forum_posts WHERE id = ?', [Number(req.params.id)]);
@@ -299,6 +303,7 @@ router.delete('/api/private/forum/posts/:id', async (req, res) => {
         status: 200
     });
 });
+
 router.put('/api/private/forum/posts/:id', async (req, res) => {
 
     const post = await db.get('SELECT * FROM forum_posts WHERE id = ?', [Number(req.params.id)]);
@@ -322,6 +327,7 @@ router.put('/api/private/forum/posts/:id', async (req, res) => {
         status: 200
     });
 });
+
 router.post('/api/private/forum/posts', async (req, res) => {
  
     const { title, content, is_published, subject } = req.body;

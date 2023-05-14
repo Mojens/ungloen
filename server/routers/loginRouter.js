@@ -34,7 +34,7 @@ router.post('/api/auth/login', async (req, res) => {
                     status: 400
                 });
             } else {
-                const { password, verified, verification_code, token, token_expiration, phone, ...userWithoutPassword } = user;
+                const { password, verified, verification_code, token, token_expiration, phone, verification_code_expiration, ...userWithoutPassword } = user;
                 req.session.user = userWithoutPassword;
                 return res.status(200).send({
                     message: 'Du er nu logget ind',

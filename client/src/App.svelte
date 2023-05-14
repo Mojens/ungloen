@@ -23,6 +23,8 @@
     import ActivateUser from "./pages/ActivateUser/ActivateUser.svelte";
     import SendActivationCode from "./pages/SendActivationCode/SendActivationCode.svelte";
     import ScrollToTop from "./components/ScrollToTop/ScrollToTop.svelte";
+    import ShareDollarTeams from "./pages/PrivatePages/ShareDollar/Teams/ShareDollarTeams.svelte";
+    import ShareDollarSpecificTeam from "./pages/PrivatePages/ShareDollar/SpecificTeam/ShareDollarSpecificTeam.svelte";
 
     onMount(async () => {
         const response = await fetch(
@@ -71,6 +73,12 @@
     </PrivateRoute>
     <PrivateRoute path="/tjenester/forum" let:location>
         <ForumControl />
+    </PrivateRoute>
+    <PrivateRoute path="/tjenester/share-dollar" let:location>
+        <ShareDollarTeams />
+    </PrivateRoute>
+    <PrivateRoute path="/tjenester/share-dollar/:teamId" let:location>
+        <ShareDollarSpecificTeam />
     </PrivateRoute>
 </Router>
 <ScrollToTop />

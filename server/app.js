@@ -1,6 +1,6 @@
-import express from 'express';
 import dotenv from 'dotenv/config';
 
+import express from 'express';
 const app = express();
 app.use(express.json());
 
@@ -30,8 +30,24 @@ function checkSession(req, res, next) {
 }
 app.use('/api/private', checkSession);
 
+import http from "http";
+const server = http.createServer(app)
 
+import { Server } from 'socket.io';
+const io = new Server(server, {
+    cors: {
+        origin: "*",
+        methods: ["*"]
+    }
+});
 
+io.on('connection', (socket) => {
+    console.log("A client connected", socket.id);
+    socket.on('disconnect', () => {
+        console.log("A client disconnected", socket.id);
+    }
+    );
+});
 
 import loginRouter from './routers/loginRouter.js';
 app.use(loginRouter);
@@ -45,12 +61,15 @@ app.use(forumRouter);
 import taxRouter from './routers/taxRouter.js';
 app.use(taxRouter);
 
+import shareDollarRouter from './routers/shareDollarRouter.js';
+app.use(shareDollarRouter);
+
 import googleRouter from './routers/googleMapsRouter.js';
 app.use(googleRouter);
 
 
 
-app.listen(process.env.PORT, (err) => {
+server.listen(process.env.PORT, (err) => {
     if (err) {
         console.log(err);
     }

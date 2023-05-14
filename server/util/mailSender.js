@@ -39,7 +39,6 @@ export function sendForgotPasswordMail(res, email, token) {
         }
     });
 }
-
 export function sendFooterContactMail(res, email) {
     const mailData = {
         from: process.env.MAIL_USER,

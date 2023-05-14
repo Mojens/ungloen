@@ -55,6 +55,10 @@
             path: "/tjenester/forum",
             name: "Personlige indlæg",
         },
+        {
+            path: "/tjenester/share-dollar",
+            name: "Share Dollar",
+        }
     ];
 
     async function handleLogout() {
