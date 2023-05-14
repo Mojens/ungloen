@@ -106,7 +106,7 @@
             <li>
                 <details class="navbar-dropdown dropdown-details">
                     <summary aria-haspopup="listbox" class="dropdown-summary"
-                        >Værktøjer</summary
+                        >Tjenester</summary
                     >
                     <ul role="listbox" class="dropdown-ul z-index">
                         {#each LoggedNavigationLinksDropDown as link}
