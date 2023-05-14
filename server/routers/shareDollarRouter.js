@@ -141,12 +141,6 @@ router.post('/sharedollar/teams/invite', async (req, res) => {
     });
 });
 
-router.post('/sharedollar/teams/connect', async (req, res) => {
-    return res.status(200).send({
-        message: "Forbindelse til team oprettet",
-        status: 200
-    });
-});
 //Update team name
 router.patch('/api/private/sharedollar/teams/:id', async (req, res) => {
     const { teamName } = req.body;
@@ -222,9 +216,17 @@ router.get('/sharedollar/teams/:id/messages', async (req, res) => {
     });
 });
 
-router.post('/sharedollar/teams/:id/messages', async (req, res) => {
+router.post('/api/private/sharedollar/teams/:id/messages', async (req, res) => {
+    const { message } = req.body;
+    if (!message) {
+        return res.status(400).send({
+            message: "Besked må ikke være tom",
+            status: 400
+        });
+    }
+    await db.run('INSERT INTO share_dollar_teams_messages (team_id, user_id, content, date) VALUES (?, ?, ?, ?)', Number(req.params.id), req.session.user.id, message, new Date().toISOString().slice(0, 19).replace('T', ' '))
     return res.status(200).send({
-        message: "Besked oprettet",
+        message: "Besked Sendt",
         status: 200
     });
 });

@@ -22,6 +22,10 @@
 
     let inviteEmail = "";
 
+    let messageToSend = "";
+
+    let messages = [];
+
     console.log($whoJoinedChat);
     let socket = io($BASE_URL);
     socket.on("userJoined", (user) => {
@@ -30,7 +34,6 @@
             return whoJoinedChat;
         });
     });
-    let room = {};
 
     async function getTeamData() {
         const response = await fetch(
@@ -46,6 +49,24 @@
             teamName = data.team.teamName;
             isAdmin = data.team.isAdmin;
             document.title = teamName;
+        } else {
+            toastr.error(data.message);
+        }
+    }
+    async function sendMessage() {
+        const response = await fetch($BASE_URL + "/api/private/sharedollar/teams/" + teamId + "/messages",{
+            method: "POST",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                message: messageToSend,
+            }),
+        });
+        const data = await response.json();
+        if (response.status === 200) {
+            
         } else {
             toastr.error(data.message);
         }
@@ -117,8 +138,8 @@
                     <div class="grid">
                         <div>
                             <p class="center">
-                                {user.first_name + " " + user.last_name} joined the
-                                chat
+                                <b>{user.first_name + " " + user.last_name}</b
+                                >&nbsp;er nu med i chatten!
                             </p>
                         </div>
                     </div>
@@ -130,6 +151,7 @@
                         <input
                             class="inline-block bg-primary chat-message-input"
                             type="text"
+                            bind:value={messageToSend}
                             name="message"
                             placeholder="Skriv en besked"
                         />
