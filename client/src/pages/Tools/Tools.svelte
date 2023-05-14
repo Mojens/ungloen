@@ -2,8 +2,6 @@
     document.title = "UngLøn | Vores tjenester";
     import { useNavigate } from "svelte-navigator";
     import { BASE_URL } from "../../stores/globalsStore.js";
-    import { carousel_articles } from "../../stores/sliderStore.js";
-    import Articles from "../../components/Articles/Articles.svelte";
     import toastr from "toastr";
 
     const navigate = useNavigate();
@@ -129,12 +127,6 @@
             </article>
         </div>
     </div>
-
-    <Articles
-        amountToShow={2}
-        amountOnScroll={1}
-        articles={$carousel_articles}
-    />
 </main>
 
 <style>
