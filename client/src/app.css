@@ -246,3 +246,11 @@ hr {
     padding: 10px;
     resize: none;
 }
+
+.p-top-0 {
+    padding-top: 0 !important;
+}
+
+.pointer {
+    cursor: pointer !important;
+}

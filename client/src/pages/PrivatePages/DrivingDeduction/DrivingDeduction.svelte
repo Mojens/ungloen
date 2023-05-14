@@ -76,7 +76,7 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-            setTimeout(() => {
+        
                 buttonElement.removeAttribute("aria-busy");
                 buttonElement.removeAttribute("class");
                 drivingDeductionData = data.drivingDeductionData;
@@ -88,7 +88,7 @@
                             behavior: "smooth",
                         });
                 }, 100);
-            }, 850);
+            
         } else {
             buttonElement.removeAttribute("aria-busy");
             buttonElement.removeAttribute("class");
@@ -133,7 +133,7 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-            setTimeout(() => {
+            
                 distance = Math.floor(data.distance).toString();
                 toastr.success("Afstand fundet");
                 buttonElement.removeAttribute("aria-busy");
@@ -145,7 +145,7 @@
                             behavior: "smooth",
                         });
                 }, 100);
-            }, 1000);
+            
         } else {
             buttonElement.removeAttribute("aria-busy");
             buttonElement.removeAttribute("class");

@@ -126,22 +126,22 @@
         );
         const data = await response.json();
         if (response.status === 200) {
-            setTimeout(() => {
+    
                 toastr.success(data.message);
                 comment = "";
                 getPublishedPosts();
                 buttonElement.removeAttribute("aria-busy");
                 buttonElement.removeAttribute("class");
-            }, 1000);
+            
         } else if (response.status === 401) {
-            setTimeout(() => {
+        
                 toastr.error(data.message);
                 const from =
                     ($location.state && $location.state.from) || "/log-ind";
                 navigate(from, { replace: true });
                 buttonElement.removeAttribute("aria-busy");
                 buttonElement.removeAttribute("class");
-            }, 1000);
+            
         } else {
             toastr.error(data.message);
             buttonElement.removeAttribute("aria-busy");

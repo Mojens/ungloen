@@ -108,13 +108,13 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-            setTimeout(() => {
+            
                 toastr.success(data.message);
                 getAllPosts();
                 toggleForm();
                 buttonElement.removeAttribute("aria-busy");
                 buttonElement.removeAttribute("class");
-            }, 1000);
+        
         } else {
             toastr.error(data.message);
             buttonElement.removeAttribute("aria-busy");

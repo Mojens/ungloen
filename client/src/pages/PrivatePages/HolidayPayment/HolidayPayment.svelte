@@ -28,7 +28,6 @@
         const data = await response.json();
         console.log(data);
         if (response.status === 200) {
-            setTimeout(() => {
                 holidayData = data.holidayPaymentData;
                 buttonElement.removeAttribute("aria-busy");
                 buttonElement.setAttribute("class", "w-25");
@@ -39,7 +38,6 @@
                             behavior: "smooth",
                         });
                 }, 100);
-            }, 1350);
         } else {
             buttonElement.removeAttribute("aria-busy");
             buttonElement.setAttribute("class", "w-25");

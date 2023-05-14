@@ -41,14 +41,14 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-            setTimeout(() => {
+            
                 buttonElement.removeAttribute("aria-busy");
                 buttonElement.removeAttribute("class");
                 toastr.success(data.message);
                 user.set(data.user);
                 localStorage.setItem("user", JSON.stringify(data.user));
                 getUser();
-            }, 1000);
+            
         } else {
             toastr.error(data.message);
             buttonElement.removeAttribute("aria-busy");
@@ -71,11 +71,11 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-            setTimeout(() => {
+            
                 buttonElement.removeAttribute("aria-busy");
                 buttonElement.removeAttribute("class");
                 toastr.success(data.message);
-            }, 1000);
+            
         } else {
             buttonElement.removeAttribute("aria-busy");
             buttonElement.removeAttribute("class");

@@ -28,12 +28,12 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-            setTimeout(() => {
+        
                 buttonElement.removeAttribute("aria-busy");
                 buttonElement.removeAttribute("class");
                 toastr.success(data.message);
                 navigate("/log-ind", { replace: true });
-            }, 1000);
+            
         } else {
             toastr.error(data.message);
         }

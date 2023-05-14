@@ -27,14 +27,14 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-            setTimeout(() => {
+            
                 buttonElement.removeAttribute("aria-busy");
                 buttonElement.removeAttribute("class");
                 localStorage.setItem("user", JSON.stringify(data.user));
                 toastr.success(data.message);
                 user.set(data.user);
                 navigate("/", { replace: true });
-            }, 500);
+            
         } else {
             toastr.error(data.message);
             buttonElement.removeAttribute("aria-busy");

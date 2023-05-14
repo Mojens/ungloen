@@ -27,7 +27,7 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-            setTimeout(() => {
+            
                 toastr.success(data.message);
                 name = "";
                 email = "";
@@ -35,7 +35,7 @@
                 message = "";
                 buttonElement.removeAttribute("aria-busy");
                 buttonElement.removeAttribute("class");
-            }, 500);
+            
         } else {
             toastr.error(data.message);
             buttonElement.removeAttribute("aria-busy");

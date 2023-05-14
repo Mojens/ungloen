@@ -52,6 +52,9 @@
         }
     }
     async function sendMessage() {
+        let buttonElement = document.getElementById("send-message-btn");
+        buttonElement.setAttribute("aria-busy", "true");
+        buttonElement.setAttribute("class", "button w-25 float-right secondary");
         const response = await fetch(
             $BASE_URL +
                 "/api/private/sharedollar/teams/" +
@@ -78,6 +81,9 @@
                 date: new Date().toISOString().slice(0, 19).replace("T", " "),
             });
             messageToSend = "";
+            buttonElement.removeAttribute("aria-busy");
+            buttonElement.setAttribute("class", "button w-25 float-right");
+
         } else {
             toastr.error(data.message);
         }
@@ -192,10 +198,15 @@
     <div>
         <article>
             <em data-tooltip="Alle beskeder vil automatisk slettet efter 30 dage"><i class="fa fa-question-circle"></i></em>
-            <header class="center p-down-0 down-m">
+            <header class="center p-down-0 down-m p-top-0">
                 <h2 class="p-36 down-m">{teamName}</h2>
             </header>
             <div class="chat-box">
+                {#if $chatMessages.length === 0}
+                    <div class="center">
+                        <h5 class="center bold" style="margin-top: 20%;">Der er ingen beskeder endnu</h5>
+                    </div>
+                {/if}
                 {#each $chatMessages as chatMessage}
                     {#if chatMessage.userId === $user.id}
                         <div class="sent">
@@ -224,11 +235,15 @@
                             placeholder="Skriv en besked"
                         />
                         <Confirm>
-                            <a class="icon-button">
-                                <i class="fa fa-money" />
+                            <a class="icon-button pointer"
+                            data-tooltip="Her kan du anmode dine venner om at betale dig tilbage"
+                            data-placement="bottom"
+                            >
+                                <i class="fa fa-money fa-3x" />
                             </a>
                         </Confirm>
                         <button
+                            id="send-message-btn"
                             class="button w-25 float-right"
                             on:click|preventDefault={sendMessage}
                         >
@@ -269,8 +284,5 @@
     .message-metadata-received {
         font-size: 12px;
         color: black;
-    }
-    .get-all-messages {
-        cursor: pointer;
     }
 </style>

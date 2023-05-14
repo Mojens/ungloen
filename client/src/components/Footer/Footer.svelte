@@ -1,7 +1,9 @@
 <script>
     import toastr from "toastr";
     import { BASE_URL } from "../../stores/globalsStore.js";
+    
     let email = "";
+
     async function handleContact() {
         let buttonElement = document.getElementById("footer-contact-btn");
         buttonElement.setAttribute("aria-busy", "true");
@@ -16,12 +18,10 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-            setTimeout(() => {
                 buttonElement.removeAttribute("aria-busy");
                 buttonElement.removeAttribute("class");
                 toastr.success(data.message);
                 email = "";
-            }, 500);
         } else {
             toastr.error(data.message);
             buttonElement.removeAttribute("aria-busy");

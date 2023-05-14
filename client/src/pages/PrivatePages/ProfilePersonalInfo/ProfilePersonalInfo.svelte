@@ -56,12 +56,12 @@
         );
         const data = await response.json();
         if (response.status === 200) {
-            setTimeout(() => {
+            
                 buttonElement.removeAttribute("aria-busy");
                 buttonElement.removeAttribute("class");
                 toastr.success(data.message);
                 getPersonalData();
-            }, 1000);
+            
         } else {
             toastr.error(data.message);
             buttonElement.removeAttribute("aria-busy");

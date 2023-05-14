@@ -62,7 +62,7 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-            setTimeout(() => {
+            
                 monthlyPayoutData = data.monthlyPayoutData;
                 buttonElement.removeAttribute("aria-busy");
                 buttonElement.removeAttribute("class");
@@ -73,7 +73,7 @@
                             behavior: "smooth",
                         });
                 }, 100);
-            }, 850);
+            
         } else {
             buttonElement.removeAttribute("aria-busy");
             buttonElement.removeAttribute("class");
