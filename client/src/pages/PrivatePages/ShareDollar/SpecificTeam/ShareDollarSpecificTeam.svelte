@@ -2,7 +2,11 @@
 <script>
     import { useParams } from "svelte-navigator";
     import { onMount } from "svelte";
-    import { BASE_URL } from "../../../../stores/globalsStore";
+    import {
+        BASE_URL,
+        user,
+        whoJoinedChat,
+    } from "../../../../stores/globalsStore";
     import { Confirm } from "svelte-confirm";
     import io from "socket.io-client";
     import toastr from "toastr";
@@ -18,13 +22,15 @@
 
     let inviteEmail = "";
 
-    let whoJoinedChat = [];
-
+    console.log($whoJoinedChat);
     let socket = io($BASE_URL);
-    socket.on("hasJoined", (data) => {
-        whoJoinedChat.push(data);
-        console.log(whoJoinedChat);
+    socket.on("userJoined", (user) => {
+        whoJoinedChat.update((whoJoinedChat) => {
+            whoJoinedChat.push(user);
+            return whoJoinedChat;
+        });
     });
+    let room = {};
 
     async function getTeamData() {
         const response = await fetch(
@@ -47,7 +53,23 @@
     async function inviteUser() {}
 
     onMount(async () => {
-        getTeamData();
+        await getTeamData();
+        socket = io($BASE_URL);
+        const room = {
+            teamId: teamId,
+            teamName: teamName,
+            user: $user,
+        };
+        socket.on("connect", () => {
+            console.log("Connected to socket.io server");
+            socket.emit("joinRoom", room);
+        });
+        socket.on("userJoined", (user) => {
+            whoJoinedChat.update((whoJoinedChat) => {
+                whoJoinedChat.push(user);
+                return whoJoinedChat;
+            });
+        });
     });
 </script>
 
@@ -90,7 +112,18 @@
             <header class="center p-down-0">
                 <h2 class="p-36 down-m">{teamName}</h2>
             </header>
-            <div class="chat-box" />
+            <div class="chat-box">
+                {#each $whoJoinedChat as user}
+                    <div class="grid">
+                        <div>
+                            <p class="center">
+                                {user.first_name + " " + user.last_name} joined the
+                                chat
+                            </p>
+                        </div>
+                    </div>
+                {/each}
+            </div>
             <footer class="p-down">
                 <div>
                     <form>

@@ -43,10 +43,17 @@ const io = new Server(server, {
 
 io.on('connection', (socket) => {
     console.log("A client connected", socket.id);
+    
+    socket.on("joinRoom", (team) => {
+        console.log("A client joined room", team);
+        socket.join(team.teamId);
+        socket.emit("userJoined", team.user);
+        socket.to(team.teamId).emit("userJoined", team.user);
+    });
+    
     socket.on('disconnect', () => {
         console.log("A client disconnected", socket.id);
-    }
-    );
+    });
 });
 
 import loginRouter from './routers/loginRouter.js';
