@@ -6,7 +6,7 @@
         let buttonElement = document.getElementById("footer-contact-btn");
         buttonElement.setAttribute("aria-busy", "true");
         buttonElement.setAttribute("class", "secondary");
-        const response = await fetch($BASE_URL + "/api/footer/contact", {
+        const response = await fetch($BASE_URL + "/api/contact/footer", {
             credentials: "include",
             method: "POST",
             headers: {
@@ -21,7 +21,7 @@
                 buttonElement.removeAttribute("class");
                 toastr.success(data.message);
                 email = "";
-            }, 1000);
+            }, 500);
         } else {
             toastr.error(data.message);
             buttonElement.removeAttribute("aria-busy");
@@ -53,8 +53,8 @@
             <form on:submit|preventDefault={handleContact}>
                 <input
                     type="email"
-                    id="email"
-                    name="email"
+                    id="footerMail"
+                    name="footerMail"
                     bind:value={email}
                     placeholder="Din email.."
                 />

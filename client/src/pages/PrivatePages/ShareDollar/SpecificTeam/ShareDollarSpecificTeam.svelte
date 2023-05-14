@@ -6,6 +6,7 @@
         BASE_URL,
         user,
         whoJoinedChat,
+        chatMessages,
     } from "../../../../stores/globalsStore";
     import { Confirm } from "svelte-confirm";
     import io from "socket.io-client";
@@ -24,9 +25,6 @@
 
     let messageToSend = "";
 
-    let messages = [];
-
-    console.log($whoJoinedChat);
     let socket = io($BASE_URL);
     socket.on("userJoined", (user) => {
         whoJoinedChat.update((whoJoinedChat) => {
@@ -54,19 +52,52 @@
         }
     }
     async function sendMessage() {
-        const response = await fetch($BASE_URL + "/api/private/sharedollar/teams/" + teamId + "/messages",{
-            method: "POST",
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                message: messageToSend,
-            }),
-        });
+        const response = await fetch(
+            $BASE_URL +
+                "/api/private/sharedollar/teams/" +
+                teamId +
+                "/messages",
+            {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    message: messageToSend,
+                }),
+            }
+        );
         const data = await response.json();
         if (response.status === 200) {
-            
+            socket.emit("chatMessage", {
+                room: teamId,
+                message: messageToSend,
+                userId: $user.id,
+                name: $user.first_name + " " + $user.last_name,
+                date: new Date().toISOString().slice(0, 19).replace("T", " "),
+            });
+            messageToSend = "";
+        } else {
+            toastr.error(data.message);
+        }
+    }
+    async function getAllMessages() {
+        const response = await fetch(
+            $BASE_URL +
+                "/api/private/sharedollar/teams/" +
+                teamId +
+                "/messages",
+            {
+                credentials: "include",
+            }
+        );
+        const data = await response.json();
+        if (response.status === 200) {
+            chatMessages.update((chatMessages) => {
+                chatMessages = data.messages;
+                return chatMessages;
+            });
         } else {
             toastr.error(data.message);
         }
@@ -74,6 +105,7 @@
     async function inviteUser() {}
 
     onMount(async () => {
+        await getAllMessages();
         await getTeamData();
         socket = io($BASE_URL);
         const room = {
@@ -82,13 +114,38 @@
             user: $user,
         };
         socket.on("connect", () => {
-            console.log("Connected to socket.io server");
             socket.emit("joinRoom", room);
         });
+
+        socket.on("disconnect", () => {
+            socket.emit("leaveRoom", room);
+        });
+        socket.on("userLeft", (user) => {
+            console.log(user);
+            toastr.error(
+                    user.first_name +
+                        " " +
+                        user.last_name +
+                        "<br/> Er ikke længere med i chatten!"
+                );
+        });
+
         socket.on("userJoined", (user) => {
             whoJoinedChat.update((whoJoinedChat) => {
                 whoJoinedChat.push(user);
+                toastr.success(
+                    user.first_name +
+                        " " +
+                        user.last_name +
+                        "<br/> Er nu med i chatten!"
+                );
                 return whoJoinedChat;
+            });
+        });
+        socket.on("message", (message) => {
+            chatMessages.update((chatMessages) => {
+                chatMessages.push(message);
+                return chatMessages;
             });
         });
     });
@@ -104,7 +161,10 @@
                     cancelTitle={"Annuller"}
                     let:confirm={confirmThis}
                 >
-                    <button on:click={() => confirmThis(inviteUser)}>
+                    <button
+                        class="button"
+                        on:click={() => confirmThis(inviteUser)}
+                    >
                         Inviter medlemmer
                     </button>
                     <span slot="title">
@@ -118,49 +178,60 @@
                                 bind:value={inviteEmail}
                                 name="inviteEmail"
                                 id="inviteEmail"
+                                class="input"
                             />
                         </form>
                     </span>
                 </Confirm>
             </div>
             <div>
-                <button> Håndter medlemmer </button>
+                <button class="button"> Håndter medlemmer </button>
             </div>
         </div>
     {/if}
     <div>
         <article>
-            <header class="center p-down-0">
+            <em data-tooltip="Alle beskeder vil automatisk slettet efter 30 dage"><i class="fa fa-question-circle"></i></em>
+            <header class="center p-down-0 down-m">
                 <h2 class="p-36 down-m">{teamName}</h2>
             </header>
             <div class="chat-box">
-                {#each $whoJoinedChat as user}
-                    <div class="grid">
-                        <div>
-                            <p class="center">
-                                <b>{user.first_name + " " + user.last_name}</b
-                                >&nbsp;er nu med i chatten!
-                            </p>
+                {#each $chatMessages as chatMessage}
+                    {#if chatMessage.userId === $user.id}
+                        <div class="sent">
+                            <span class="message-metadata-sent"
+                                >{chatMessage.name} | {chatMessage.date}</span
+                            >
+                            <div>{chatMessage.message}</div>
                         </div>
-                    </div>
+                    {:else}
+                        <div class="received">
+                            <span class="message-metadata-received"
+                                >{chatMessage.name} | {chatMessage.date}</span
+                            >
+                            <div>{chatMessage.message}</div>
+                        </div>
+                    {/if}
                 {/each}
             </div>
             <footer class="p-down">
-                <div>
+                <div class="chat-input">
                     <form>
-                        <input
-                            class="inline-block bg-primary chat-message-input"
-                            type="text"
+                        <textarea
+                            class="input chat-message-input"
                             bind:value={messageToSend}
                             name="message"
                             placeholder="Skriv en besked"
                         />
                         <Confirm>
-                            <a class="left-m">
+                            <a class="icon-button">
                                 <i class="fa fa-money" />
                             </a>
                         </Confirm>
-                        <button class="inline-block w-25 float-right">
+                        <button
+                            class="button w-25 float-right"
+                            on:click|preventDefault={sendMessage}
+                        >
                             Send
                         </button>
                     </form>
@@ -169,3 +240,37 @@
         </article>
     </div>
 </main>
+
+<style>
+    .received {
+        background-color: #e2e2e2;
+        color: black;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 15px 15px 15px 0;
+        width: 50%;
+    }
+
+    .sent {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px;
+        margin-bottom: 10px;
+        text-align: right;
+        border-radius: 15px 15px 0 15px;
+        width: 50%;
+        margin-left: auto;
+    }
+
+    .message-metadata-sent {
+        font-size: 12px;
+        color: white;
+    }
+    .message-metadata-received {
+        font-size: 12px;
+        color: black;
+    }
+    .get-all-messages {
+        cursor: pointer;
+    }
+</style>

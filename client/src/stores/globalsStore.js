@@ -9,3 +9,7 @@ export const BASE_URL = readable("http://localhost:8080");
 export const isAuthenticated = writable(false);
 
 export const whoJoinedChat = writable([]);
+
+export const chatMessages = writable([]);
+
+export const newChatMessages = writable([]);

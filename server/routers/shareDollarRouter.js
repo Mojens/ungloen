@@ -208,14 +208,52 @@ router.get('/api/private/sharedollar/teams/:id', async (req, res) => {
         status: 200
     });
 });
-
-router.get('/sharedollar/teams/:id/messages', async (req, res) => {
+// get team messages
+router.get('/api/private/sharedollar/teams/:id/messages', async (req, res) => {
+    const [foundTeam] = await db.all('SELECT * FROM share_dollar_teams WHERE id = ?', Number(req.params.id))
+    if (!foundTeam) {
+        return res.status(404).send({
+            message: "Team ikke fundet",
+            status: 404
+        });
+    }
+    const [isApartOfTeam] = await db.all('SELECT * FROM share_dollar_teams_users WHERE user_id = ? AND team_id = ?', req.session.user.id, Number(req.params.id))
+    if (!isApartOfTeam) {
+        return res.status(400).send({
+            message: "Du er ikke en del af teamet",
+            status: 400
+        });
+    }
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const dbDateFormat = thirtyDaysAgo.toISOString().slice(0, 19).replace('T', ' ')
+    await db.run('DELETE FROM share_dollar_teams_messages WHERE date <= ?', dbDateFormat);
+    const rawMessages = await db.all('SELECT * FROM share_dollar_teams_messages WHERE team_id = ?', Number(req.params.id))
+    if (rawMessages.length === 0) {
+        return res.status(200).send({
+            message: "Ingen beskeder",
+            messages: [],
+            status: 200
+        });
+    }
+    const messages = []
+    for (const rawMessage of rawMessages) {
+        const [user] = await db.all('SELECT * FROM users WHERE id = ?', rawMessage.user_id)
+        messages.push({
+            room: rawMessage.team_id,
+            name: user.first_name + ' ' + user.last_name,
+            userId: user.id,
+            message: rawMessage.content,
+            date: rawMessage.date
+        });
+    }
     return res.status(200).send({
         message: "Beskeder hentet",
+        messages: messages,
         status: 200
     });
 });
-
+// create message
 router.post('/api/private/sharedollar/teams/:id/messages', async (req, res) => {
     const { message } = req.body;
     if (!message) {
@@ -224,9 +262,23 @@ router.post('/api/private/sharedollar/teams/:id/messages', async (req, res) => {
             status: 400
         });
     }
+    const [isApartOfTeam] = await db.all('SELECT * FROM share_dollar_teams_users WHERE user_id = ? AND team_id = ?', req.session.user.id, Number(req.params.id))
+    if (!isApartOfTeam) {
+        return res.status(400).send({
+            message: "Du er ikke en del af teamet",
+            status: 400
+        });
+    }
     await db.run('INSERT INTO share_dollar_teams_messages (team_id, user_id, content, date) VALUES (?, ?, ?, ?)', Number(req.params.id), req.session.user.id, message, new Date().toISOString().slice(0, 19).replace('T', ' '))
+    const sentMessage = {
+        team_id: Number(req.params.id),
+        user_id: req.session.user.id,
+        content: message,
+        date: new Date().toISOString().slice(0, 19).replace('T', ' ')
+    }
     return res.status(200).send({
         message: "Besked Sendt",
+        sentMessage: sentMessage,
         status: 200
     });
 });
