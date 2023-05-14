@@ -2,12 +2,7 @@
 <script>
     import { useParams } from "svelte-navigator";
     import { onMount } from "svelte";
-    import {
-        BASE_URL,
-        user,
-        whoJoinedChat,
-        chatMessages,
-    } from "../../../../stores/globalsStore";
+    import { BASE_URL, user, whoJoinedChat, chatMessages } from "../../../../stores/globalsStore";
     import { Confirm } from "svelte-confirm";
     import io from "socket.io-client";
     import toastr from "toastr";

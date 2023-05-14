@@ -89,4 +89,7 @@
 </main>
 
 <style>
+    p{
+        font-size: small !important;
+    }
 </style>

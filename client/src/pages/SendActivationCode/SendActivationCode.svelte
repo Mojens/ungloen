@@ -47,7 +47,7 @@
     </p>
     <p class="p-end">
         Hvis du fandt din aktiveringskode, behøver du ikke at anmode om en ny
-        hvis det er inden for <b>24 Timer</b>.<br />
+        hvis den er mindre end <b>24 Timer</b> gammel.<br />
         Så kan du nemlig bare klikke på linket
         <a href="/aktiver-bruger">Aktiver bruger</a>.
     </p>
@@ -72,4 +72,7 @@
 </main>
 
 <style>
+    p {
+        font-size: small !important;
+    }
 </style>
