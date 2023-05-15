@@ -42,6 +42,7 @@ const io = new Server(server, {
 });
 
 io.on('connection', (socket) => {
+
     socket.on("joinRoom", (team) => {
         socket.join(team.teamId);
         socket.emit("userJoined", team.user);
@@ -55,6 +56,10 @@ io.on('connection', (socket) => {
     socket.on('chatMessage', (data) => {
         io.to(data.room).emit('message', data);
       });
+      socket.on("invites", (data)=> {
+        io.emit("invitesRecieved", data);
+        
+    });
 });
 
 import loginRouter from './routers/loginRouter.js';

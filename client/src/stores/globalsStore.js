@@ -11,3 +11,5 @@ export const isAuthenticated = writable(false);
 export const whoJoinedChat = writable([]);
 
 export const chatMessages = writable([]);
+
+export const invitations = writable([]);

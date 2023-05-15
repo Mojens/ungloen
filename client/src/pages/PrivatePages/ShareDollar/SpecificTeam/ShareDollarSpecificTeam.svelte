@@ -7,6 +7,7 @@
         user,
         whoJoinedChat,
         chatMessages,
+     
     } from "../../../../stores/globalsStore";
     import { Confirm } from "svelte-confirm";
     import io from "socket.io-client";
@@ -114,7 +115,6 @@
         }
     }
     async function inviteUser() {
-        console.log("inviteEmail", inviteEmail);
         const response = await fetch(
             $BASE_URL + "/api/private/sharedollar/teams/invite",
             {
@@ -131,6 +131,7 @@
         );
         const data = await response.json();
         if (response.status === 200) {
+            socket.emit("invites", data.invitation);
             toastr.success(data.message);
             inviteEmail = "";
         } else {
@@ -155,7 +156,6 @@
             socket.emit("leaveRoom", room);
         });
         socket.on("userLeft", (user) => {
-            console.log(user);
             toastr.error(
                 user.first_name +
                     " " +
@@ -165,17 +165,14 @@
         });
 
         socket.on("userJoined", (user) => {
-            whoJoinedChat.update((whoJoinedChat) => {
-                whoJoinedChat.push(user);
-                toastr.success(
-                    user.first_name +
-                        " " +
-                        user.last_name +
-                        "<br/> Er nu med i chatten!"
-                );
-                return whoJoinedChat;
-            });
+            toastr.success(
+                user.first_name +
+                    " " +
+                    user.last_name +
+                    "<br/> Er nu med i chatten!"
+            );
         });
+
         socket.on("message", (message) => {
             chatMessages.update((chatMessages) => {
                 chatMessages.push(message);

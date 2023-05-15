@@ -96,7 +96,7 @@ export function sendContactMail(res, email, name, message, title) {
         }
     });
 }
-export function sendInvitationForTeam(email, res, token, teamName, userName, teamId){
+export function sendInvitationForTeam(email, res, token, teamName, userName, teamId, obj){
     const mailData = {
         from: process.env.MAIL_USER,
         to: email,
@@ -122,6 +122,7 @@ export function sendInvitationForTeam(email, res, token, teamName, userName, tea
         } else {
             return res.status(200).send({
                 message: 'Invitation sendt',
+                invitation: obj,
                 status: 200
             });
         }

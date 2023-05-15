@@ -4,6 +4,7 @@
     import { BASE_URL, user } from "../../stores/globalsStore.js";
     import toastr from "toastr";
     import AuthLinks from "../../components/AuthLinks/AuthLinks.svelte";
+    import io from "socket.io-client";
 
     const navigate = useNavigate();
 
