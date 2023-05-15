@@ -25,6 +25,7 @@
     import ScrollToTop from "./components/ScrollToTop/ScrollToTop.svelte";
     import ShareDollarTeams from "./pages/PrivatePages/ShareDollar/Teams/ShareDollarTeams.svelte";
     import ShareDollarSpecificTeam from "./pages/PrivatePages/ShareDollar/SpecificTeam/ShareDollarSpecificTeam.svelte";
+    import AcceptInvitation from "./pages/PrivatePages/ShareDollar/AcceptInvitation/AcceptInvitation.svelte";
 
     onMount(async () => {
         const response = await fetch(
@@ -79,6 +80,9 @@
     </PrivateRoute>
     <PrivateRoute path="/tjenester/share-dollar/:teamId" let:location>
         <ShareDollarSpecificTeam />
+    </PrivateRoute>
+    <PrivateRoute path="/accepter-invitation/:token/:teamId" let:location>
+        <AcceptInvitation />
     </PrivateRoute>
 </Router>
 <ScrollToTop />

@@ -1,5 +1,8 @@
 import { Router } from 'express';
+import { sendInvitationForTeam } from '../util/mailSender.js';
 import db from '../database/connection.js';
+import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 
 const router = Router();
 
@@ -63,10 +66,46 @@ router.post('/api/private/sharedollar/teams', async (req, res) => {
         status: 200
     });
 });
-
-router.post('/sharedollar/teams/join', async (req, res) => {
+// Acceptere invitation til et team
+router.post('/api/private/sharedollar/teams/join', async (req, res) => {
+    const { teamId, token, email, userId } = req.body;
+    if (!teamId || !token || !email) {
+        return res.status(400).send({
+            message: "Team id, token eller email mangler",
+            status: 400
+        });
+    };
+    const [team] = await db.all('SELECT * FROM share_dollar_teams WHERE id = ?', Number(teamId))
+    if (!team) {
+        return res.status(404).send({
+            message: "Team ikke fundet",
+            status: 404
+        });
+    }
+    const [isAlreadyInTeam] = await db.all('SELECT * FROM share_dollar_teams_users WHERE team_id = ? AND user_id = ?', Number(teamId), userId)
+    if (isAlreadyInTeam) {
+        return res.status(400).send({
+            message: "Du er allerede en del af dette team",
+            status: 400
+        });
+    }
+    const [invitation] = await db.all('SELECT * FROM share_dollar_teams_invites WHERE team_id = ? AND user_id = ?', Number(teamId), userId)
+    if (!invitation) {
+        return res.status(400).send({
+            message: "Du har ikke modtaget en invitation fra dette team",
+            status: 400
+        });
+    }
+    if (!bcrypt.compare(token, invitation.token)) {
+        return res.status(400).send({
+            message: "Token matcher ikke",
+            status: 400
+        });
+    }
+    await db.run('DELETE FROM share_dollar_teams_invites WHERE team_id = ? AND user_id = ?', Number(teamId), userId)
+    await db.run('INSERT INTO share_dollar_teams_users (team_id, user_id) VALUES (?, ?)', Number(teamId), userId)
     return res.status(200).send({
-        message: "Du er joinet til et team",
+        message: "Du er nu medlem af dette team",
         status: 200
     });
 });
@@ -77,6 +116,20 @@ router.post('/sharedollar/teams/leave', async (req, res) => {
         status: 200
     });
 });
+
+router.delete('/sharedollar/teams/invite', async (req, res) => {
+    return res.status(200).send({
+        message: "Du har afvist en invitation til et team",
+        status: 200
+    });
+})
+router.get('/sharedollar/teams/invite', async (req, res) => {
+    return res.status(200).send({
+        message: "Dette er alle dine invitationer",
+        status: 200
+    });
+});
+
 // delete team
 router.delete('/api/private/sharedollar/teams/delete/:id', async (req, res) => {
     const [team] = await db.all('SELECT * FROM share_dollar_teams WHERE id = ?', Number(req.params.id))
@@ -104,8 +157,8 @@ router.delete('/api/private/sharedollar/teams/delete/:id', async (req, res) => {
         status: 200
     });
 });
-// MANGLER (Inviter medlemmer til team)
-router.post('/sharedollar/teams/invite', async (req, res) => {
+// Inviter medlemmer til team
+router.post('/api/private/sharedollar/teams/invite', async (req, res) => {
     const { email, team_id } = req.body;
     if (!email || !team_id) {
         return res.status(400).send({
@@ -113,7 +166,7 @@ router.post('/sharedollar/teams/invite', async (req, res) => {
             status: 400
         });
     };
-    const [isOwnerOfTeam] = await db.all('SELECT * FROM share_dollar_teams WHERE team_creator_id = ? AND id = ?', req.session.user.id, Number(team_id))
+    const [isOwnerOfTeam] = await db.all('SELECT * FROM share_dollar_teams WHERE team_creator_id = ? AND id = ?', 1, Number(team_id))
     if (!isOwnerOfTeam) {
         return res.status(400).send({
             message: "Du er ikke ejer af teamet",
@@ -134,13 +187,24 @@ router.post('/sharedollar/teams/invite', async (req, res) => {
             status: 400
         });
     }
-    await db.run('INSERT INTO share_dollar_teams_invites (team_id, user_id) VALUES (?, ?)', Number(team_id), userToInvite.id);
-    return res.status(200).send({
-        message: "Invitation sendt",
-        status: 200
-    });
+    const [userAlreadyInvited] = await db.all('SELECT * FROM share_dollar_teams_invites WHERE user_id = ? AND team_id = ?', userToInvite.id, Number(team_id))
+    if (userAlreadyInvited) {
+        if (userAlreadyInvited.token_expiration > Date.now()) {
+            return res.status(400).send({
+                message: "Bruger er allerede inviteret til teamet",
+                status: 400
+            });
+        } else {
+            await db.run('DELETE FROM share_dollar_teams_invites WHERE user_id = ? AND team_id = ?', userToInvite.id, Number(team_id))
+        }
+    }
+    const token = crypto.randomBytes(10).toString('hex');
+    const hashedToken = await bcrypt.hash(token, 12);
+    const tokenExpiration = Date.now() + 7 * (24 * 60 * 60 * 1000);
+    await db.run('INSERT INTO share_dollar_teams_invites (team_id, user_id, token, token_expiration) VALUES (?, ?, ?, ?)', Number(team_id), userToInvite.id, hashedToken, tokenExpiration);
+    const name = req.session.user.first_name + " " + req.session.user.last_name;
+    return sendInvitationForTeam(userToInvite.email, res, token, isOwnerOfTeam.team_name, name, Number(team_id));
 });
-
 //Update team name
 router.patch('/api/private/sharedollar/teams/:id', async (req, res) => {
     const { teamName } = req.body;

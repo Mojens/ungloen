@@ -14,6 +14,7 @@ if (isDeleteMode) {
   db.exec(`DROP TABLE IF EXISTS share_dollar_teams_users;`);
   db.exec(`DROP TABLE IF EXISTS share_dollar_teams_money_requests;`);
   db.exec(`DROP TABLE IF EXISTS share_dollar_teams_messages;`);
+  db.exec(`DROP TABLE IF EXISTS share_dollar_teams_invites;`);
 }
 
 db.exec(`
@@ -99,6 +100,8 @@ db.exec(`
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       team_id INTEGER NOT NULL,
       user_id INTEGER NOT NULL,
+      token TEXT,
+      token_expiration TEXT,
       accepted BOOLEAN NOT NULL DEFAULT 0,
       FOREIGN KEY (team_id) REFERENCES share_dollar_teams(id),
       FOREIGN KEY (user_id) REFERENCES users(id)

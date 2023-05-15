@@ -1,11 +1,18 @@
 <!-- svelte-ignore a11y-missing-attribute -->
 <script>
-    import { useParams } from "svelte-navigator";
+    import { useParams, useNavigate } from "svelte-navigator";
     import { onMount } from "svelte";
-    import { BASE_URL, user, whoJoinedChat, chatMessages } from "../../../../stores/globalsStore";
+    import {
+        BASE_URL,
+        user,
+        whoJoinedChat,
+        chatMessages,
+    } from "../../../../stores/globalsStore";
     import { Confirm } from "svelte-confirm";
     import io from "socket.io-client";
     import toastr from "toastr";
+
+    const navigate = useNavigate();
 
     let teamId = "";
     const params = useParams();
@@ -44,12 +51,16 @@
             document.title = teamName;
         } else {
             toastr.error(data.message);
+            navigate("/tjenester/share-dollar", { replace: true });
         }
     }
     async function sendMessage() {
         let buttonElement = document.getElementById("send-message-btn");
         buttonElement.setAttribute("aria-busy", "true");
-        buttonElement.setAttribute("class", "button w-25 float-right secondary");
+        buttonElement.setAttribute(
+            "class",
+            "button w-25 float-right secondary"
+        );
         const response = await fetch(
             $BASE_URL +
                 "/api/private/sharedollar/teams/" +
@@ -78,7 +89,6 @@
             messageToSend = "";
             buttonElement.removeAttribute("aria-busy");
             buttonElement.setAttribute("class", "button w-25 float-right");
-
         } else {
             toastr.error(data.message);
         }
@@ -103,7 +113,30 @@
             toastr.error(data.message);
         }
     }
-    async function inviteUser() {}
+    async function inviteUser() {
+        console.log("inviteEmail", inviteEmail);
+        const response = await fetch(
+            $BASE_URL + "/api/private/sharedollar/teams/invite",
+            {
+                credentials: "include",
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email: inviteEmail,
+                    team_id: teamId,
+                }),
+            }
+        );
+        const data = await response.json();
+        if (response.status === 200) {
+            toastr.success(data.message);
+            inviteEmail = "";
+        } else {
+            toastr.error(data.message);
+        }
+    }
 
     onMount(async () => {
         await getAllMessages();
@@ -124,11 +157,11 @@
         socket.on("userLeft", (user) => {
             console.log(user);
             toastr.error(
-                    user.first_name +
-                        " " +
-                        user.last_name +
-                        "<br/> Er ikke længere med i chatten!"
-                );
+                user.first_name +
+                    " " +
+                    user.last_name +
+                    "<br/> Er ikke længere med i chatten!"
+            );
         });
 
         socket.on("userJoined", (user) => {
@@ -192,14 +225,19 @@
     {/if}
     <div>
         <article>
-            <em data-tooltip="Alle beskeder vil automatisk slettet efter 30 dage"><i class="fa fa-question-circle"></i></em>
+            <em
+                data-tooltip="Alle beskeder vil automatisk slettet efter 30 dage"
+                ><i class="fa fa-question-circle" /></em
+            >
             <header class="center p-down-0 down-m p-top-0">
                 <h2 class="p-36 down-m">{teamName}</h2>
             </header>
             <div class="chat-box">
                 {#if $chatMessages.length === 0}
                     <div class="center">
-                        <h5 class="center bold" style="margin-top: 20%;">Der er ingen beskeder endnu</h5>
+                        <h5 class="center bold" style="margin-top: 20%;">
+                            Der er ingen beskeder endnu
+                        </h5>
                     </div>
                 {/if}
                 {#each $chatMessages as chatMessage}
@@ -230,9 +268,10 @@
                             placeholder="Skriv en besked"
                         />
                         <Confirm>
-                            <a class="icon-button pointer"
-                            data-tooltip="Her kan du anmode dine venner om at betale dig tilbage"
-                            data-placement="bottom"
+                            <a
+                                class="icon-button pointer"
+                                data-tooltip="Her kan du anmode dine venner om at betale dig tilbage"
+                                data-placement="bottom"
                             >
                                 <i class="fa fa-money fa-3x" />
                             </a>

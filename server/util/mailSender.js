@@ -96,3 +96,34 @@ export function sendContactMail(res, email, name, message, title) {
         }
     });
 }
+export function sendInvitationForTeam(email, res, token, teamName, userName, teamId){
+    const mailData = {
+        from: process.env.MAIL_USER,
+        to: email,
+        subject: `Invitation til ${teamName}`,
+        html: `
+        <p>
+        Hej!, du er blevet inviteret til at deltage i ${teamName} af ${userName}.
+        </p>
+        <p>
+        Klik venligst på følgende link for at acceptere invitationen:
+        </p>
+        <a href="http://localhost:5173/accepter-invitation/${token}/${teamId}">Accepter invitation</a>
+        <p>Dette link udløber om 7 dage</p>
+        `,
+    };
+
+    transporter.sendMail(mailData, (err) => {
+        if (err) {
+            return res.status(400).send({
+                message: 'Noget gik galt, prøv igen senere',
+                status: 400
+            });
+        } else {
+            return res.status(200).send({
+                message: 'Invitation sendt',
+                status: 200
+            });
+        }
+    });
+}
