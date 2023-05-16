@@ -1,4 +1,6 @@
 <!-- svelte-ignore a11y-missing-attribute -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-redundant-roles -->
 <script>
     document.title = "UngLøn | ShareDollar";
     import { BASE_URL, user } from "../../../../stores/globalsStore.js";
@@ -67,7 +69,6 @@
             }
         );
         const data = await response.json();
-        console.log(data);
         if (response.status === 200) {
             teamsApartOf = data.teams;
         }
@@ -104,10 +105,24 @@
         const data = await response.json();
         if (response.status === 200) {
             toastr.success(data.message);
-            ownedTeams = [];
-            teamsApartOf = [];
-            getTeamsApartOf();
-            getOwnedTeams();
+            ownedTeams = ownedTeams.filter((team) => team.id !== teamId);
+            teamsApartOf = teamsApartOf.filter((team) => team.id !== teamId);
+        } else {
+            toastr.error(data.message);
+        }
+    }
+    async function leaveTeam(teamId) {
+        const response = await fetch(
+            $BASE_URL + "/api/private/sharedollar/teams/leave/" + teamId,
+            {
+                method: "DELETE",
+                credentials: "include",
+            }
+        );
+        const data = await response.json();
+        if (response.status === 200) {
+            toastr.success(data.message);
+            teamsApartOf = teamsApartOf.filter((team) => team.id !== teamId);
         } else {
             toastr.error(data.message);
         }
@@ -180,7 +195,6 @@
                                 >
                                     <a
                                         class="icon-in-list"
-                                        href="#"
                                         on:click={() => {
                                             confirmThis(deleteTeam, team.id);
                                         }}><i class="fa fa-trash" /></a
@@ -199,7 +213,6 @@
                                     let:confirm={confirmThis}
                                 >
                                     <a
-                                        href="#"
                                         class="icon-in-list"
                                         on:click={() => {
                                             teamNameToEdit = team.team_name;
@@ -269,68 +282,32 @@
                         <li>
                             <a>
                                 {team.team_name}
-                                <Confirm
-                                    confirmTitle={"Slet Team"}
-                                    cancelTitle={"Fortryd"}
-                                    let:confirm={confirmThis}
-                                >
-                                    <a
-                                        class="icon-in-list"
-                                        href="#"
-                                        on:click={() => {
-                                            confirmThis(deleteTeam, team.id);
-                                        }}><i class="fa fa-trash" /></a
+                                {#if !ownedTeams.some((team) => team.team_creator_id === $user.id)}
+                                    <Confirm
+                                        confirmTitle={"Forlad Team"}
+                                        cancelTitle={"Fortryd"}
+                                        let:confirm={confirmThis}
                                     >
-                                    <span slot="title">
-                                        Er du sikker på, at du vil slette dette
-                                        team?
-                                    </span>
-                                    <span slot="description">
-                                        Du kan ikke fortryde denne handling!
-                                    </span>
-                                </Confirm>
-                                <Confirm
-                                    confirmTitle={"Opdater"}
-                                    cancelTitle={"Fortryd"}
-                                    let:confirm={confirmThis}
-                                >
-                                    <a
-                                        href="#"
-                                        class="icon-in-list"
-                                        on:click={() => {
-                                            teamNameToEdit = team.team_name;
-                                            confirmThis(
-                                                updateTeamName,
-                                                team.id
-                                            );
-                                        }}
-                                    >
-                                        <i class="fa fa-edit" /></a
-                                    >
-                                    <span slot="title">Opdater team navn</span>
-                                    <span slot="description">
-                                        <p>
-                                            Er du sikker på du vil opdatere team
-                                            navnet?
-                                        </p>
-                                        <form style="z-index: 1;">
-                                            <label
-                                                class="w-100 bold"
-                                                for="teamName"
-                                            >
-                                                Team navn
-                                            </label>
-                                            <input
-                                                type="text"
-                                                bind:value={teamNameToEdit}
-                                                placeholder="Team Penge"
-                                                name="teamName"
-                                                id="teamName"
-                                            />
-                                        </form>
-                                    </span>
-                                </Confirm>
-
+                                        <a
+                                            on:click={() => {
+                                                confirmThis(leaveTeam, team.id);
+                                            }}
+                                            class="icon-in-list"
+                                            ><i class="fa fa-user-times" /></a
+                                        >
+                                        <span slot="title">
+                                            Er du sikker på, at du vil forlade
+                                            dette team?
+                                        </span>
+                                        <span slot="description">
+                                            Du kan ikke fortryde denne handling! <br
+                                            />Du vil ikke længere have adgang
+                                            til dette team.
+                                            <br />Du skal kontakte team ejeren
+                                            for at blive tilføjet igen.
+                                        </span>
+                                    </Confirm>
+                                {/if}
                                 <a
                                     class="icon-in-list"
                                     href="/tjenester/share-dollar/{team.id}"

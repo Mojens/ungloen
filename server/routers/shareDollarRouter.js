@@ -25,7 +25,6 @@ router.get('/api/private/sharedollar/teams/', async (req, res) => {
         status: 200
     });
 });
-
 // hente de teams du ejer
 router.get('/api/private/sharedollar/teams/own', async (req, res) => {
     let teams = await db.all('SELECT * FROM share_dollar_teams WHERE team_creator_id = ?', req.session.user.id)
@@ -41,7 +40,6 @@ router.get('/api/private/sharedollar/teams/own', async (req, res) => {
         status: 200
     });
 });
-
 // oprette et team
 router.post('/api/private/sharedollar/teams', async (req, res) => {
     const { teamName } = req.body;
@@ -108,10 +106,25 @@ router.post('/api/private/sharedollar/teams/join', async (req, res) => {
         status: 200
     });
 });
-
-router.post('/sharedollar/teams/leave', async (req, res) => {
+// Leave team
+router.delete('/api/private/sharedollar/teams/leave/:id', async (req, res) => {
+    const [team] = await db.all('SELECT * FROM share_dollar_teams WHERE id = ?', Number(req.params.id))
+    if (!team) {
+        return res.status(404).send({
+            message: "Team ikke fundet",
+            status: 404
+        });
+    }
+    const [isAlreadyInTeam] = await db.all('SELECT * FROM share_dollar_teams_users WHERE team_id = ? AND user_id = ?', Number(req.params.id), req.session.user.id)
+    if (!isAlreadyInTeam) {
+        return res.status(400).send({
+            message: "Du er ikke en del af dette team",
+            status: 400
+        });
+    }
+    await db.run('DELETE FROM share_dollar_teams_users WHERE team_id = ? AND user_id = ?', Number(req.params.id), req.session.user.id)
     return res.status(200).send({
-        message: "Du er forladt et team",
+        message: "Du har forladt " + team.team_name,
         status: 200
     });
 });
