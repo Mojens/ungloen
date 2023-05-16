@@ -1,6 +1,7 @@
 <!-- svelte-ignore a11y-missing-attribute -->
+ <!-- svelte-ignore a11y-click-events-have-key-events -->
 <script>
-    import { Link } from "svelte-navigator";
+    import { Link, navigate } from "svelte-navigator";
     import { BASE_URL, user, invitations } from "../../stores/globalsStore.js";
     import toastr from "toastr";
     import { onMount } from "svelte";
@@ -77,6 +78,11 @@
         } else {
             toastr.error(data.message);
         }
+    }
+
+    async function acceptInvitation(teamId, token, invitationId){
+        $invitations = $invitations.filter((invite) => invite.id !== invitationId);
+        navigate(`/accepter-invitation/${token}/${teamId}`, { replace: true })
     }
 
     async function deleteInvite(id) {
@@ -156,9 +162,10 @@
                                 <li class="down-m">
                                     <div class="icon-container">
                                         <a
-                                            class="icon-in-list"
-                                            href="/accepter-invitation/{invitation.token}/{invitation
-                                                .invitedFrom.id}"
+                                            class="icon-in-list pointer"
+                                            on:click={() =>
+                                                acceptInvitation(invitation
+                                                .invitedFrom.id,invitation.token,invitation.id)}
                                         >
                                             <i class="fa fa-check" />
                                         </a>

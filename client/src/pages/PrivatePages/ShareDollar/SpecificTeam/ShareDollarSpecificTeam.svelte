@@ -1,4 +1,5 @@
 <!-- svelte-ignore a11y-missing-attribute -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <script>
     import { useParams, useNavigate } from "svelte-navigator";
     import { onMount } from "svelte";
@@ -7,7 +8,6 @@
         user,
         whoJoinedChat,
         chatMessages,
-     
     } from "../../../../stores/globalsStore";
     import { Confirm } from "svelte-confirm";
     import io from "socket.io-client";
@@ -44,6 +44,9 @@
             }
         );
         const data = await response.json();
+        console.log(data.team.teamMembers);
+        console.log(data.team.isAdmin);
+        console.log(data.team.teamCreator);
         if (response.status === 200) {
             teamMembers = data.team.teamMembers;
             teamCreator = data.team.teamCreator;
@@ -138,6 +141,26 @@
             toastr.error(data.message);
         }
     }
+    async function removeFromTeam(memberId) {
+        const response = await fetch(
+            $BASE_URL +
+                "/api/private/sharedollar/teams/" +
+                teamId +
+                "/members/" +
+                memberId,
+            {
+                method: "DELETE",
+                credentials: "include",
+            }
+        );
+        const data = await response.json();
+        if (response.status === 200) {
+            toastr.success(data.message);
+            teamMembers = teamMembers.filter((member) => member.id !== memberId);
+        } else {
+            toastr.error(data.message);
+        }
+    }
 
     onMount(async () => {
         await getAllMessages();
@@ -216,7 +239,65 @@
                 </Confirm>
             </div>
             <div>
-                <button class="button"> Håndter medlemmer </button>
+                <Confirm
+                    confirmTitle={"Færdig"}
+                    cancelTitle={"Annuller"}
+                    let:confirm={confirmThis}
+                >
+                    <button class="button" on:click={confirmThis}>
+                        Håndter medlemmer
+                    </button>
+                    <span slot="title">
+                        <h2 class="center">Håndter medlemmer</h2>
+                    </span>
+                    <span slot="description">
+                        <div class="list-container">
+                            <ul class="member-ul">
+                                {#each teamMembers as member}
+                                    <li>
+                                        <a
+                                            >{member.first_name +
+                                                " " +
+                                                member.last_name}</a
+                                        >
+
+                                        {#if member.id !== teamCreator.id}
+                                            <Confirm
+                                                confirmTitle={"Fjern fra gruppe"}
+                                                cancelTitle={"Annuller"}
+                                                let:confirm={confirmThis}
+                                            >
+                                                <i
+                                                    on:click={() =>
+                                                        confirmThis(
+                                                            removeFromTeam,
+                                                            member.id
+                                                        )}
+                                                    class="fa fa-user-times"
+                                                />
+                                                <span slot="title">
+                                                    <h2 class="center">
+                                                        Fjern fra gruppe
+                                                    </h2>
+                                                </span>
+                                                <span slot="description">
+                                                    <p class="center">
+                                                        Er du sikker på du vil
+                                                        fjerne
+                                                        {member.first_name +
+                                                            " " +
+                                                            member.last_name} fra
+                                                        gruppen?
+                                                    </p>
+                                                </span></Confirm
+                                            >
+                                        {/if}
+                                    </li>
+                                {/each}
+                            </ul>
+                        </div>
+                    </span>
+                </Confirm>
             </div>
         </div>
     {/if}
@@ -315,5 +396,39 @@
     .message-metadata-received {
         font-size: 12px;
         color: black;
+    }
+    .list-container {
+        background-color: white;
+        border-left: 3px solid #f0f0f0;
+        padding-left: 10px;
+    }
+
+    .member-ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .member-ul li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: background-color 0.3s ease;
+        cursor: pointer;
+        font-size: 24px;
+        padding: 10px;
+    }
+
+    .member-ul li a {
+        color: black;
+        text-decoration: none;
+    }
+
+    .member-ul li:hover {
+        background-color: #f0f0f0;
+    }
+
+    .member-ul li i {
+        margin-left: 10px;
     }
 </style>

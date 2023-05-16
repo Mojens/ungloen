@@ -170,7 +170,6 @@ router.get('/api/private/sharedollar/teams/invite', async (req, res) => {
         status: 200
     });
 });
-
 // delete team
 router.delete('/api/private/sharedollar/teams/delete/:id', async (req, res) => {
     const [team] = await db.all('SELECT * FROM share_dollar_teams WHERE id = ?', Number(req.params.id))
@@ -273,7 +272,6 @@ router.patch('/api/private/sharedollar/teams/:id', async (req, res) => {
         status: 200
     });
 });
-
 // henter en team
 router.get('/api/private/sharedollar/teams/:id', async (req, res) => {
     const [foundTeam] = await db.all('SELECT * FROM share_dollar_teams WHERE id = ?', Number(req.params.id))
@@ -389,6 +387,46 @@ router.post('/api/private/sharedollar/teams/:id/messages', async (req, res) => {
     return res.status(200).send({
         message: "Besked Sendt",
         sentMessage: sentMessage,
+        status: 200
+    });
+});
+// remove team member
+router.delete('/api/private/sharedollar/teams/:id/members/:memberId', async (req, res) => {
+    const [foundTeam] = await db.all('SELECT * FROM share_dollar_teams WHERE id = ?', Number(req.params.id))
+    if (!foundTeam) {
+        return res.status(404).send({
+            message: "Team ikke fundet",
+            status: 404
+        });
+    }
+    const [isApartOfTeam] = await db.all('SELECT * FROM share_dollar_teams_users WHERE user_id = ? AND team_id = ?', req.session.user.id, Number(req.params.id))
+    if (!isApartOfTeam) {
+        return res.status(400).send({
+            message: "Denne bruger er ikke en del af teamet",
+            status: 400
+        });
+    }
+    let isAdmin = false;
+    if (foundTeam.team_creator_id === req.session.user.id) {
+        isAdmin = true;
+    }
+    if (!isAdmin) {
+        return res.status(400).send({
+            message: "Du er ikke admin af dette team",
+            status: 400
+        });
+    }
+    const [isApartOfTeamMember] = await db.all('SELECT * FROM share_dollar_teams_users WHERE user_id = ? AND team_id = ?', Number(req.params.memberId), Number(req.params.id))
+    if (!isApartOfTeamMember) {
+        return res.status(400).send({
+            message: "Denne bruger er ikke en del af teamet",
+            status: 400
+        });
+    }
+    const [userToRemove] = await db.all('SELECT * FROM users WHERE id = ?', Number(req.params.memberId))
+    await db.run('DELETE FROM share_dollar_teams_users WHERE user_id = ? AND team_id = ?', Number(req.params.memberId), Number(req.params.id))
+    return res.status(200).send({
+        message: `${userToRemove.first_name} ${userToRemove.last_name} er blevet fjernet fra teamet`,
         status: 200
     });
 });
