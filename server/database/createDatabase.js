@@ -117,6 +117,17 @@ db.exec(`
     );
 `);
 db.exec(`
+      CREATE TABLE IF NOT EXISTS share_dollar_teams_messages (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        team_id INTEGER NOT NULL,
+        user_id INTEGER NOT NULL,
+        content TEXT NOT NULL,
+        date TEXT NOT NULL,
+        FOREIGN KEY (team_id) REFERENCES share_dollar_teams(id),
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      );
+`);
+db.exec(`
       CREATE TABLE IF NOT EXISTS share_dollar_teams_money_requests (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         requestor_id INTEGER NOT NULL,
@@ -126,17 +137,6 @@ db.exec(`
         paid BOOLEAN NOT NULL DEFAULT 0,
         FOREIGN KEY (requestor_id) REFERENCES share_dollar_teams_users(id),
         FOREIGN KEY (receiver_id) REFERENCES share_dollar_teams_users(id)
-      );
-`);
-db.exec(`
-      CREATE TABLE IF NOT EXISTS share_dollar_teams_messages (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        team_id INTEGER NOT NULL,
-        user_id INTEGER NOT NULL,
-        content TEXT NOT NULL,
-        date TEXT NOT NULL,
-        FOREIGN KEY (team_id) REFERENCES share_dollar_teams(id),
-        FOREIGN KEY (user_id) REFERENCES users(id)
       );
 `);
 if (isDeleteMode) {

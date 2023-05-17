@@ -257,3 +257,7 @@ hr {
 .m-d-0{
     margin-bottom: 0 !important;
 }
+.confirm-dialog {
+    width: 1000px !important;
+    max-width: 1000px !important;
+}

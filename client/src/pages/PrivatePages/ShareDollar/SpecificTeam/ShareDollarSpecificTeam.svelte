@@ -28,6 +28,45 @@
 
     let messageToSend = "";
 
+    let totalAmount = 0;
+    let requests = [];
+    function formatRequest() {
+        let formattedRequests = [];
+        requests.forEach((request, index) => {
+            formattedRequests.push({
+                memberId: index,
+                amount: request,
+            });
+        });
+        return formattedRequests;
+    }
+
+    async function sendPaymentRequest() {
+        requests = formatRequest();
+        console.log(requests);
+        requests = [];
+    }
+
+    function handleInputChange (memberId, event) {
+    const value = parseInt(event.target.value);
+    
+    if (value < 0 || value > totalAmount) {
+      event.target.value = requests[memberId] || 0;
+    } else {
+      requests[memberId] = value;
+    }
+    
+    let totalRequests = 0;
+    for (let amount of Object.values(requests)) {
+      totalRequests += amount;
+    }
+
+    if (totalRequests > totalAmount) {
+      event.target.value = requests[memberId] - (totalRequests - totalAmount);
+      requests[memberId] = parseInt(event.target.value);
+    }
+  }
+
     let socket = io($BASE_URL);
     socket.on("userJoined", (user) => {
         whoJoinedChat.update((whoJoinedChat) => {
@@ -156,7 +195,9 @@
         const data = await response.json();
         if (response.status === 200) {
             toastr.success(data.message);
-            teamMembers = teamMembers.filter((member) => member.id !== memberId);
+            teamMembers = teamMembers.filter(
+                (member) => member.id !== memberId
+            );
         } else {
             toastr.error(data.message);
         }
@@ -345,15 +386,6 @@
                             name="message"
                             placeholder="Skriv en besked"
                         />
-                        <Confirm>
-                            <a
-                                class="icon-button pointer"
-                                data-tooltip="Her kan du anmode dine venner om at betale dig tilbage"
-                                data-placement="bottom"
-                            >
-                                <i class="fa fa-money fa-3x" />
-                            </a>
-                        </Confirm>
                         <button
                             id="send-message-btn"
                             class="button w-25 float-right"
@@ -362,6 +394,61 @@
                             Send
                         </button>
                     </form>
+                    <Confirm
+                        confirmTitle={"Anmod om betaling"}
+                        cancelTitle={"Annuller"}
+                        let:confirm={confirmThis}
+                    >
+                        <a
+                            class="icon-button pointer"
+                            data-tooltip="Her kan du anmode dine venner om at betale dig tilbage"
+                            data-placement="bottom"
+                            on:click={() => confirmThis(sendPaymentRequest)}
+                        >
+                            <i class="fa fa-money fa-3x" />
+                        </a>
+                        <span slot="title">
+                            <h2 class="center">Anmod om betaling</h2>
+                        </span>
+                        <span slot="description">
+                            <label for="amount" class="p-24">Total Beløb</label>
+                            <input
+                                type="number"
+                                name="amount"
+                                bind:value={totalAmount}
+                                id="amount"
+                                class="input"
+                            />
+                            <div class="list-container">
+                                <ul class="member-ul">
+                                    {#each teamMembers as member}
+                                        <li>
+                                            <a
+                                                >{member.first_name +
+                                                    " " +
+                                                    member.last_name}</a
+                                            >
+                                            <a>
+                                                <label
+                                                    for="amountMember"
+                                                    class="center">Beløb</label
+                                                >
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="amountMember"
+                                                    on:input="{(e) => handleInputChange(member.id, e)}"
+                                                    bind:value={requests[
+                                                        member.id
+                                                    ]}
+                                                />
+                                            </a>
+                                        </li>
+                                    {/each}
+                                </ul>
+                            </div>
+                        </span>
+                    </Confirm>
                 </div>
             </footer>
         </article>
@@ -401,6 +488,8 @@
         background-color: white;
         border-left: 3px solid #f0f0f0;
         padding-left: 10px;
+
+        overflow-y: auto;
     }
 
     .member-ul {
@@ -417,6 +506,10 @@
         cursor: pointer;
         font-size: 24px;
         padding: 10px;
+        width: 100%; /* Set the width to 100% */
+        white-space: nowrap; /* Prevent line breaks */
+        overflow: hidden; /* Hide any overflow */
+        text-overflow: ellipsis; /* Add ellipsis for any overflow */
     }
 
     .member-ul li a {

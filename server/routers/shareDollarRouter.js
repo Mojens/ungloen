@@ -430,5 +430,36 @@ router.delete('/api/private/sharedollar/teams/:id/members/:memberId', async (req
         status: 200
     });
 });
+// create request for money
+router.post('/api/private/sharedollar/teams/:id/requests', async (req, res) => {
+    const { recieverId, amount } = req.body;
+    if (!recieverId || !amount) {
+        return res.status(400).send({
+            message: "Mangler modtager eller beløb",
+            status: 400
+        });
+    }
+    const [foundTeam] = await db.all('SELECT * FROM share_dollar_teams WHERE id = ?', Number(req.params.id))
+    if (!foundTeam) {
+        return res.status(404).send({
+            message: "Team ikke fundet",
+            status: 404
+        });
+    }
+    const [isApartOfTeam] = await db.all('SELECT * FROM share_dollar_teams_users WHERE user_id = ? AND team_id = ?', req.session.user.id, Number(req.params.id))
+    if (!isApartOfTeam) {
+        return res.status(400).send({
+            message: "Du er ikke en del af teamet",
+            status: 400
+        });
+    }
+    const [isApartOfTeamMember] = await db.all('SELECT * FROM share_dollar_teams_users WHERE user_id = ? AND team_id = ?', Number(recieverId), Number(req.params.id))
+    if (!isApartOfTeamMember) {
+        return res.status(400).send({
+            message: "Denne bruger er ikke en del af teamet",
+            status: 400
+        });
+    }
+});
 
 export default router; 
