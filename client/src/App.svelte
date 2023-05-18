@@ -35,7 +35,6 @@
             }
         );
         const data = await response.json();
-        console.log(data);
         if (response.status === 200) {
             isAuthenticated.set(true);
             user.set(data.user);

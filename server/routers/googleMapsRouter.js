@@ -24,7 +24,6 @@ router.get('/api/private/googlemaps/autocomplete', async (req, res) => {
 });
 
 router.post('/api/private/googlemaps/distance', async (req, res) => {
- 
     const { origin, destination } = req.body;
     const distance = await calculateDistance(origin, destination);
     if (distance !== null) {
