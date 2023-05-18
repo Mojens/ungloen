@@ -28,6 +28,9 @@
 
     let messageToSend = "";
 
+    let sentRequests = [];
+    let recievedRequests = [];
+
     let totalAmount = 0;
     let requests = [];
     function formatRequest() {
@@ -40,7 +43,21 @@
         });
         return formattedRequests;
     }
-
+    function formatProgressBar(totalAmount, requests = []) {
+        let amountPaid = 0;
+        if (requests.length > 0) {
+            requests.forEach((request) => {
+                amountPaid += request.amountPaid;
+            });
+        }
+        return [amountPaid, totalAmount];
+    }
+    function formatNumber(number) {
+        const formattedNumber = number.toLocaleString("da-DK", {
+            minimumFractionDigits: 2,
+        });
+        return formattedNumber;
+    }
     async function sendPaymentRequest() {
         const response = await fetch(
             $BASE_URL +
@@ -225,10 +242,60 @@
             toastr.error(data.message);
         }
     }
+    async function getAllSentRequests() {
+        const response = await fetch(
+            `${$BASE_URL}/api/private/sharedollar/requests?team_id=${teamId}`,
+            {
+                credentials: "include",
+            }
+        );
+        const data = await response.json();
+        console.log("Sent: ", data.requests);
+        if (response.status === 200) {
+            sentRequests = data.requests;
+        } else {
+            toastr.error(data.message);
+        }
+    }
+    async function getAllRecievedRequests() {
+        const response = await fetch(
+            `${$BASE_URL}/api/private/sharedollar/requests/recieved?team_id=${teamId}`,
+            {
+                credentials: "include",
+            }
+        );
+        const data = await response.json();
+        console.log("Recieved: ", data.requests);
+        if (response.status === 200) {
+            recievedRequests = data.requests;
+        } else {
+            toastr.error(data.message);
+        }
+    }
+    async function payRequest(requestId) {
+        const response = await fetch(
+            `${$BASE_URL}/api/private/sharedollar/requests/recieved/${requestId}/pay`,
+            {
+                credentials: "include",
+                method: "PATCH",
+            }
+        );
+        const data = await response.json();
+        if (response.status === 200) {
+            toastr.success(data.message);
+            recievedRequests = recievedRequests.filter(
+                (request) => request.id !== requestId
+            );
+        } else {
+            toastr.error(data.message);
+        }
+    }
 
     onMount(async () => {
         await getAllMessages();
         await getTeamData();
+        await getAllSentRequests();
+        await getAllRecievedRequests();
         socket = io($BASE_URL);
         const room = {
             teamId: teamId,
@@ -479,6 +546,428 @@
                 </div>
             </footer>
         </article>
+        <div class="grid">
+            <div>
+                <Confirm
+                    confirmTitle={"Færdig"}
+                    cancelTitle={"Luk"}
+                    let:confirm={confirmThis}
+                >
+                    <button on:click={confirmThis}>Sendte anmodninger</button>
+                    <span slot="title">
+                        <h2 class="center">Sendte anmodninger</h2>
+                    </span>
+                    <span slot="description">
+                        <div class="list-container">
+                            <ul class="request-ul">
+                                <li>
+                                    <details open>
+                                        <summary>Manglende Betaling</summary>
+                                        <li>
+                                            {#each sentRequests as request}
+                                                {#if !request.paid}
+                                                    <li>
+                                                        <details>
+                                                            <summary
+                                                                class="summary-space"
+                                                            >
+                                                                Anmodet beløb: <b
+                                                                    >{formatNumber(
+                                                                        Number(
+                                                                            request.totalAmount
+                                                                        )
+                                                                    )}</b
+                                                                >
+                                                                kr.
+                                                                {#if request.paid}
+                                                                    <p
+                                                                        style="color:green"
+                                                                    >
+                                                                        Hele
+                                                                        beløbet
+                                                                        er
+                                                                        betalt
+                                                                    </p>
+                                                                {:else}
+                                                                    <p
+                                                                        style="color:red"
+                                                                    >
+                                                                        Beløbet
+                                                                        mangler
+                                                                        at blive
+                                                                        betalt
+                                                                        færdig
+                                                                    </p>
+                                                                {/if}
+                                                            </summary>
+                                                            <div>
+                                                                <p
+                                                                    class="center down-m"
+                                                                >
+                                                                    <b
+                                                                        >{formatNumber(
+                                                                            Number(
+                                                                                formatProgressBar(
+                                                                                    request.totalAmount,
+                                                                                    request.usersPaid
+                                                                                )[0]
+                                                                            )
+                                                                        )}</b
+                                                                    >&nbsp;kr.
+                                                                </p>
+                                                                <progress
+                                                                    value={formatProgressBar(
+                                                                        request.totalAmount,
+                                                                        request.usersPaid
+                                                                    )[0]}
+                                                                    max={formatProgressBar(
+                                                                        request.totalAmount,
+                                                                        request.usersPaid
+                                                                    )[1]}
+                                                                />
+                                                                <div
+                                                                    class="progress-labels"
+                                                                >
+                                                                    <p>
+                                                                        <b
+                                                                            >0,00</b
+                                                                        > kr.
+                                                                    </p>
+                                                                    <p>
+                                                                        <b
+                                                                            >{formatNumber(
+                                                                                Number(
+                                                                                    formatProgressBar(
+                                                                                        request.totalAmount,
+                                                                                        request.usersPaid
+                                                                                    )[1]
+                                                                                )
+                                                                            )}</b
+                                                                        > kr.
+                                                                    </p>
+                                                                </div>
+                                                                <hr />
+                                                            </div>
+                                                            {#if request.usersPaid.length > 0}
+                                                                <div
+                                                                    class="paid-users"
+                                                                >
+                                                                    <p>
+                                                                        Personer
+                                                                        der har
+                                                                        betalt:
+                                                                    </p>
+                                                                    <ul
+                                                                        class="paid-users-list"
+                                                                    >
+                                                                        {#each request.usersPaid as user}
+                                                                            <li>
+                                                                                <p
+                                                                                >
+                                                                                    {user.user}
+                                                                                </p>
+                                                                                <p
+                                                                                >
+                                                                                    Betalt:
+                                                                                    <b
+                                                                                        >{formatNumber(
+                                                                                            Number(
+                                                                                                user.amountPaid
+                                                                                            )
+                                                                                        )}</b
+                                                                                    >
+                                                                                    kr.
+                                                                                </p>
+                                                                            </li>
+                                                                        {/each}
+                                                                    </ul>
+                                                                </div>
+                                                            {/if}
+                                                        </details>
+                                                    </li>
+                                                {/if}
+                                            {/each}
+                                        </li>
+                                    </details>
+                                </li>
+                                <li>
+                                    <details>
+                                        <summary>Betalt</summary>
+                                        <l1>
+                                            {#each sentRequests as request}
+                                                {#if request.paid}
+                                                    <li>
+                                                        <details>
+                                                            <summary
+                                                                class="summary-space"
+                                                            >
+                                                                Anmodet beløb: <b
+                                                                    >{formatNumber(
+                                                                        Number(
+                                                                            request.totalAmount
+                                                                        )
+                                                                    )}</b
+                                                                >
+                                                                kr.
+                                                                {#if request.paid}
+                                                                    <p
+                                                                        style="color:green"
+                                                                    >
+                                                                        Hele
+                                                                        beløbet
+                                                                        er
+                                                                        betalt
+                                                                    </p>
+                                                                {:else}
+                                                                    <p
+                                                                        style="color:red"
+                                                                    >
+                                                                        Beløbet
+                                                                        mangler
+                                                                        at blive
+                                                                        betalt
+                                                                        færdig
+                                                                    </p>
+                                                                {/if}
+                                                            </summary>
+                                                            <div>
+                                                                <p
+                                                                    class="center down-m"
+                                                                >
+                                                                    <b
+                                                                        >{formatNumber(
+                                                                            Number(
+                                                                                formatProgressBar(
+                                                                                    request.totalAmount,
+                                                                                    request.usersPaid
+                                                                                )[0]
+                                                                            )
+                                                                        )}</b
+                                                                    >&nbsp;kr.
+                                                                </p>
+                                                                <progress
+                                                                    value={formatProgressBar(
+                                                                        request.totalAmount,
+                                                                        request.usersPaid
+                                                                    )[0]}
+                                                                    max={formatProgressBar(
+                                                                        request.totalAmount,
+                                                                        request.usersPaid
+                                                                    )[1]}
+                                                                />
+                                                                <div
+                                                                    class="progress-labels"
+                                                                >
+                                                                    <p>
+                                                                        <b
+                                                                            >0,00</b
+                                                                        > kr.
+                                                                    </p>
+                                                                    <p>
+                                                                        <b
+                                                                            >{formatNumber(
+                                                                                Number(
+                                                                                    formatProgressBar(
+                                                                                        request.totalAmount,
+                                                                                        request.usersPaid
+                                                                                    )[1]
+                                                                                )
+                                                                            )}</b
+                                                                        > kr.
+                                                                    </p>
+                                                                </div>
+                                                                <hr />
+                                                            </div>
+                                                            {#if request.usersPaid.length > 0}
+                                                                <div
+                                                                    class="paid-users"
+                                                                >
+                                                                    <p>
+                                                                        Personer
+                                                                        der har
+                                                                        betalt:
+                                                                    </p>
+                                                                    <ul
+                                                                        class="paid-users-list"
+                                                                    >
+                                                                        {#each request.usersPaid as user}
+                                                                            <li>
+                                                                                <p
+                                                                                >
+                                                                                    {user.user}
+                                                                                </p>
+                                                                                <p
+                                                                                >
+                                                                                    Betalt:
+                                                                                    <b
+                                                                                        >{formatNumber(
+                                                                                            Number(
+                                                                                                user.amountPaid
+                                                                                            )
+                                                                                        )}</b
+                                                                                    >
+                                                                                    kr.
+                                                                                </p>
+                                                                            </li>
+                                                                        {/each}
+                                                                    </ul>
+                                                                </div>
+                                                            {/if}
+                                                        </details>
+                                                    </li>
+                                                {/if}
+                                            {/each}
+                                        </l1>
+                                    </details>
+                                </li>
+                            </ul>
+                        </div>
+                    </span>
+                </Confirm>
+            </div>
+            <div>
+                <Confirm
+                    confirmTitle={"Færdig"}
+                    cancelTitle={"Luk"}
+                    let:confirm={confirmThis}
+                >
+                    <button on:click={confirmThis}>
+                        Modtagne anmodninger
+                    </button>
+                    <span slot="title">
+                        <h2 class="center">Modtagne anmodninger</h2>
+                    </span>
+                    <span slot="description">
+                        <div class="list-container">
+                            <ul class="request-ul">
+                                <li>
+                                    <details open>
+                                        <summary
+                                            >Manglende Betalte anmodninger</summary
+                                        >
+                                        {#each recievedRequests as request}
+                                            {#if !request.paid}
+                                                <li>
+                                                    <details>
+                                                        <summary
+                                                            class="summary-space"
+                                                        >
+                                                            <span class="down-m"
+                                                                >Anmodet beløb
+                                                                på <b
+                                                                    >{formatNumber(
+                                                                        request.amount
+                                                                    )}
+                                                                    kr.</b
+                                                                ></span
+                                                            ><br />
+                                                            <span class="top-m"
+                                                                >Fra {request.requestor}</span
+                                                            >
+                                                        </summary>
+                                                        <div
+                                                            class="request-container"
+                                                        >
+                                                            {#if request.paid}
+                                                                <p
+                                                                    style="color:green;"
+                                                                >
+                                                                    Du har
+                                                                    betalt denne
+                                                                    regning
+                                                                </p>
+                                                            {:else}
+                                                                <p
+                                                                    style="color:red;"
+                                                                >
+                                                                    Du mangler
+                                                                    at betale
+                                                                    denne
+                                                                    regning
+                                                                </p>
+                                                                <button
+                                                                    on:click={() =>
+                                                                        payRequest(
+                                                                            request.id
+                                                                        )}
+                                                                >
+                                                                    Betal
+                                                                    regning
+                                                                </button>
+                                                            {/if}
+                                                        </div>
+                                                    </details>
+                                                </li>
+                                            {/if}
+                                        {/each}
+                                    </details>
+                                </li>
+                                <li>
+                                    <details>
+                                        <summary>Betalte anmodninger</summary>
+                                        {#each recievedRequests as request}
+                                            {#if request.paid}
+                                                <li>
+                                                    <details>
+                                                        <summary
+                                                            class="summary-space"
+                                                        >
+                                                            <span class="down-m"
+                                                                >Anmodet beløb
+                                                                på <b
+                                                                    >{formatNumber(
+                                                                        request.amount
+                                                                    )}
+                                                                    kr.</b
+                                                                ></span
+                                                            ><br />
+                                                            <span class="top-m"
+                                                                >Fra {request.requestor}</span
+                                                            >
+                                                        </summary>
+                                                        <div
+                                                            class="request-container"
+                                                        >
+                                                            {#if request.paid}
+                                                                <p
+                                                                    style="color:green;"
+                                                                >
+                                                                    Du har
+                                                                    betalt denne
+                                                                    regning
+                                                                </p>
+                                                            {:else}
+                                                                <p
+                                                                    style="color:red;"
+                                                                >
+                                                                    Du mangler
+                                                                    at betale
+                                                                    denne
+                                                                    regning
+                                                                </p>
+                                                                <button
+                                                                    on:click={() =>
+                                                                        payRequest(
+                                                                            request.id
+                                                                        )}
+                                                                >
+                                                                    Betal
+                                                                    regning
+                                                                </button>
+                                                            {/if}
+                                                        </div>
+                                                    </details>
+                                                </li>
+                                            {/if}
+                                        {/each}
+                                    </details>
+                                </li>
+                            </ul>
+                        </div>
+                    </span>
+                </Confirm>
+            </div>
+        </div>
     </div>
 </main>
 
@@ -515,8 +1004,8 @@
         background-color: white;
         border-left: 3px solid #f0f0f0;
         padding-left: 10px;
-
-        overflow-y: auto;
+        max-height: 500px;
+        overflow-y: scroll;
     }
 
     .member-ul {
@@ -550,5 +1039,57 @@
 
     .member-ul li i {
         margin-left: 10px;
+    }
+
+    .request-ul li {
+        transition: background-color 0.3s ease;
+        cursor: pointer;
+        font-size: 24px;
+        padding: 10px;
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .request-ul li {
+        color: black;
+        text-decoration: none;
+    }
+
+    .request-ul li:hover {
+        background-color: #f0f0f0;
+    }
+
+    .request-ul li i {
+        margin-left: 10px;
+    }
+    .summary-space {
+        display: contents;
+    }
+    .progress-labels {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    hr {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+    .paid-users {
+        margin-top: 10px;
+    }
+
+    .paid-users p {
+        margin: 5px 0;
+    }
+
+    .paid-users-list {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+    }
+
+    .paid-users-list li {
+        margin-bottom: 10px;
     }
 </style>

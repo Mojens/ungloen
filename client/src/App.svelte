@@ -34,12 +34,15 @@
                 credentials: "include",
             }
         );
-        response.status === 200
-            ? isAuthenticated.set(true)
-            : isAuthenticated.set(false);
+        const data = await response.json();
+        console.log(data);
+        if (response.status === 200) {
+            isAuthenticated.set(true);
+            user.set(data.user);
+        }
         if (!$isAuthenticated) {
-            localStorage.removeItem("user");
             user.set(null);
+            
         }
     });
 </script>

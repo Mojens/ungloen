@@ -1,12 +1,9 @@
 <script>
     document.title = "UngLøn | Log ind";
-    import { useNavigate, useLocation } from "svelte-navigator";
     import { BASE_URL, user } from "../../stores/globalsStore.js";
     import toastr from "toastr";
     import AuthLinks from "../../components/AuthLinks/AuthLinks.svelte";
-    import io from "socket.io-client";
 
-    const navigate = useNavigate();
 
     let email = "john_doe@emailprovider.com";
     let password = "";
@@ -28,13 +25,12 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-            
                 buttonElement.removeAttribute("aria-busy");
                 buttonElement.removeAttribute("class");
                 localStorage.setItem("user", JSON.stringify(data.user));
                 toastr.success(data.message);
                 user.set(data.user);
-                navigate("/", { replace: true });
+                location.href = "/";
             
         } else {
             toastr.error(data.message);
