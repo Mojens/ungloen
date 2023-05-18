@@ -5,7 +5,7 @@ import crypto from 'crypto';
 
 const router = Router();
 
-// hente de teams du en del af
+
 router.get('/api/private/sharedollar/teams/', async (req, res) => {
     let userTeams = await db.all('SELECT * FROM share_dollar_teams_users WHERE user_id = ?', req.session.user.id)
     if (userTeams.length < 1) {
@@ -25,7 +25,7 @@ router.get('/api/private/sharedollar/teams/', async (req, res) => {
         status: 200
     });
 });
-// hente de teams du ejer
+
 router.get('/api/private/sharedollar/teams/own', async (req, res) => {
     let teams = await db.all('SELECT * FROM share_dollar_teams WHERE team_creator_id = ?', req.session.user.id)
     if (teams.length < 1) {
@@ -40,7 +40,7 @@ router.get('/api/private/sharedollar/teams/own', async (req, res) => {
         status: 200
     });
 });
-// oprette et team
+
 router.post('/api/private/sharedollar/teams', async (req, res) => {
     const { teamName } = req.body;
     if (!teamName) {
@@ -63,7 +63,7 @@ router.post('/api/private/sharedollar/teams', async (req, res) => {
         status: 200
     });
 });
-// Acceptere invitation til et team
+
 router.post('/api/private/sharedollar/teams/join', async (req, res) => {
     const { teamId, token, email, userId } = req.body;
     if (!teamId || !token || !email) {
@@ -106,7 +106,7 @@ router.post('/api/private/sharedollar/teams/join', async (req, res) => {
         status: 200
     });
 });
-// Leave team
+
 router.delete('/api/private/sharedollar/teams/leave/:id', async (req, res) => {
     const [team] = await db.all('SELECT * FROM share_dollar_teams WHERE id = ?', Number(req.params.id))
     if (!team) {
@@ -128,7 +128,7 @@ router.delete('/api/private/sharedollar/teams/leave/:id', async (req, res) => {
         status: 200
     });
 });
-// deny invitation til et team
+
 router.delete('/api/private/sharedollar/teams/invite/:id', async (req, res) => {
     const [invitation] = await db.all('SELECT * FROM share_dollar_teams_invites WHERE id = ?', Number(req.params.id))
     if (!invitation) {
@@ -143,7 +143,7 @@ router.delete('/api/private/sharedollar/teams/invite/:id', async (req, res) => {
         status: 200
     });
 })
-// hente alle invitationer til teams (MANGLER)
+
 router.get('/api/private/sharedollar/teams/invite', async (req, res) => {
     let invitationsFromDb = await db.all('SELECT * FROM share_dollar_teams_invites WHERE user_id = ?', req.session.user.id)
     if (invitationsFromDb.length < 1) {
@@ -170,7 +170,7 @@ router.get('/api/private/sharedollar/teams/invite', async (req, res) => {
         status: 200
     });
 });
-// delete team
+
 router.delete('/api/private/sharedollar/teams/delete/:id', async (req, res) => {
     const [team] = await db.all('SELECT * FROM share_dollar_teams WHERE id = ?', Number(req.params.id))
     if (!team) {
@@ -196,7 +196,7 @@ router.delete('/api/private/sharedollar/teams/delete/:id', async (req, res) => {
         status: 200
     });
 });
-// Inviter medlemmer til team
+
 router.post('/api/private/sharedollar/teams/invite', async (req, res) => {
     const { email, team_id } = req.body;
     if (!email || !team_id) {
@@ -249,7 +249,7 @@ router.post('/api/private/sharedollar/teams/invite', async (req, res) => {
     }
     return sendInvitationForTeam(userToInvite.email, res, token, isOwnerOfTeam.team_name, name, Number(team_id), obj);
 });
-//Update team name
+
 router.patch('/api/private/sharedollar/teams/:id', async (req, res) => {
     const { teamName } = req.body;
     if (!teamName) {
@@ -271,7 +271,7 @@ router.patch('/api/private/sharedollar/teams/:id', async (req, res) => {
         status: 200
     });
 });
-// henter en team
+
 router.get('/api/private/sharedollar/teams/:id', async (req, res) => {
     const [foundTeam] = await db.all('SELECT * FROM share_dollar_teams WHERE id = ?', Number(req.params.id))
     if (!foundTeam) {
@@ -315,7 +315,7 @@ router.get('/api/private/sharedollar/teams/:id', async (req, res) => {
         status: 200
     });
 });
-// get team messages
+
 router.get('/api/private/sharedollar/teams/:id/messages', async (req, res) => {
     const [foundTeam] = await db.all('SELECT * FROM share_dollar_teams WHERE id = ?', Number(req.params.id))
     if (!foundTeam) {
@@ -360,7 +360,7 @@ router.get('/api/private/sharedollar/teams/:id/messages', async (req, res) => {
         status: 200
     });
 });
-// create message
+
 router.post('/api/private/sharedollar/teams/:id/messages', async (req, res) => {
     const { message } = req.body;
     if (!message) {
@@ -389,7 +389,7 @@ router.post('/api/private/sharedollar/teams/:id/messages', async (req, res) => {
         status: 200
     });
 });
-// remove team member
+
 router.delete('/api/private/sharedollar/teams/:id/members/:memberId', async (req, res) => {
     const [foundTeam] = await db.all('SELECT * FROM share_dollar_teams WHERE id = ?', Number(req.params.id))
     if (!foundTeam) {
@@ -430,9 +430,6 @@ router.delete('/api/private/sharedollar/teams/:id/members/:memberId', async (req
     });
 });
 
-// ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-// create request for money
 router.post('/api/private/sharedollar/teams/:id/requests', async (req, res) => {
     const { requests, totalAmount } = req.body;
     if (!requests || !totalAmount) {
@@ -473,7 +470,7 @@ router.post('/api/private/sharedollar/teams/:id/requests', async (req, res) => {
         status: 200
     });
 });
-// get all requests by user id & team id
+
 router.get('/api/private/sharedollar/requests', async (req, res) => {
     let requests = [];
     const teamId = req.query.team_id;
@@ -517,7 +514,7 @@ router.get('/api/private/sharedollar/requests', async (req, res) => {
         status: 200
     });
 });
-// get all recieved requests by user id & team id
+
 router.get('/api/private/sharedollar/requests/recieved', async (req, res) => {
     const teamId = req.query.team_id;
     const requests = await db.all('SELECT * FROM share_dollar_teams_money_requests_users WHERE receiver_id = ?', req.session.user.id);
@@ -555,7 +552,7 @@ router.get('/api/private/sharedollar/requests/recieved', async (req, res) => {
         status: 200
     });
 });
-// pay request recieved
+
 router.patch('/api/private/sharedollar/requests/recieved/:id/pay', async (req, res) => {
     const [request] = await db.all('SELECT * FROM share_dollar_teams_money_requests_users WHERE id = ?', Number(req.params.id))
     if (!request) {
