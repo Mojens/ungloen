@@ -3,12 +3,13 @@
 <script>
     import { useParams, useNavigate } from "svelte-navigator";
     import { onMount } from "svelte";
+    import { BASE_URL, user } from "../../../../stores/globalsStore.js";
     import {
-        BASE_URL,
-        user,
         whoJoinedChat,
         chatMessages,
-    } from "../../../../stores/globalsStore";
+        sentRequests,
+        recievedRequests,
+    } from "../../../../stores/shareDollarStore.js";
     import { Confirm } from "svelte-confirm";
     import io from "socket.io-client";
     import toastr from "toastr";
@@ -28,11 +29,9 @@
 
     let messageToSend = "";
 
-    let sentRequests = [];
-    let recievedRequests = [];
-
     let totalAmount = 0;
     let requests = [];
+    
     function formatRequest() {
         let formattedRequests = [];
         requests.forEach((request, index) => {
@@ -81,6 +80,8 @@
             toastr.success(data.message);
             totalAmount = 0;
             requests = [];
+            await getAllSentRequests();
+            await getAllRecievedRequests();
         } else {
             toastr.error(data.message);
         }
@@ -252,7 +253,7 @@
         const data = await response.json();
         console.log("Sent: ", data.requests);
         if (response.status === 200) {
-            sentRequests = data.requests;
+            $sentRequests = data.requests;
         } else {
             toastr.error(data.message);
         }
@@ -267,7 +268,7 @@
         const data = await response.json();
         console.log("Recieved: ", data.requests);
         if (response.status === 200) {
-            recievedRequests = data.requests;
+            $recievedRequests = data.requests;
         } else {
             toastr.error(data.message);
         }
@@ -283,9 +284,10 @@
         const data = await response.json();
         if (response.status === 200) {
             toastr.success(data.message);
-            recievedRequests = recievedRequests.filter(
+            $recievedRequests = $recievedRequests.filter(
                 (request) => request.id !== requestId
             );
+            await getAllSentRequests();
         } else {
             toastr.error(data.message);
         }
@@ -564,7 +566,7 @@
                                     <details open>
                                         <summary>Manglende Betaling</summary>
                                         <li>
-                                            {#each sentRequests as request}
+                                            {#each $sentRequests as request}
                                                 {#if !request.paid}
                                                     <li>
                                                         <details>
@@ -694,7 +696,7 @@
                                     <details>
                                         <summary>Betalt</summary>
                                         <l1>
-                                            {#each sentRequests as request}
+                                            {#each $sentRequests as request}
                                                 {#if request.paid}
                                                     <li>
                                                         <details>
@@ -845,7 +847,7 @@
                                         <summary
                                             >Manglende Betalte anmodninger</summary
                                         >
-                                        {#each recievedRequests as request}
+                                        {#each $recievedRequests as request}
                                             {#if !request.paid}
                                                 <li>
                                                     <details>
@@ -905,7 +907,7 @@
                                 <li>
                                     <details>
                                         <summary>Betalte anmodninger</summary>
-                                        {#each recievedRequests as request}
+                                        {#each $recievedRequests as request}
                                             {#if request.paid}
                                                 <li>
                                                     <details>

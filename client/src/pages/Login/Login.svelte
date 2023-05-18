@@ -31,7 +31,6 @@
                 toastr.success(data.message);
                 user.set(data.user);
                 location.href = "/";
-            
         } else {
             toastr.error(data.message);
             buttonElement.removeAttribute("aria-busy");
