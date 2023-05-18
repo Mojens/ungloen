@@ -188,7 +188,6 @@ router.delete('/api/private/sharedollar/teams/delete/:id', async (req, res) => {
     }
     await db.run('DELETE FROM share_dollar_teams WHERE id = ?', Number(req.params.id))
     const teamUsers = await db.all('SELECT * FROM share_dollar_teams_users WHERE team_id = ?', Number(req.params.id))
-    console.log(teamUsers)
     for (const teamUser of teamUsers) {
         await db.run('DELETE FROM share_dollar_teams_users WHERE id = ?', teamUser.id)
     }
@@ -436,7 +435,6 @@ router.delete('/api/private/sharedollar/teams/:id/members/:memberId', async (req
 // create request for money
 router.post('/api/private/sharedollar/teams/:id/requests', async (req, res) => {
     const { requests, totalAmount } = req.body;
-    console.log(requests, totalAmount)
     if (!requests || !totalAmount) {
         return res.status(400).send({
             message: "Udfyld venligst alle felter",
@@ -512,7 +510,6 @@ router.get('/api/private/sharedollar/requests', async (req, res) => {
             });
         }
     }
-    console.log(allRequests)
 
     return res.status(200).send({
         message: "Anmodninger hentet",
@@ -538,10 +535,7 @@ router.get('/api/private/sharedollar/requests/recieved', async (req, res) => {
                     date: requestInfo.date
                 });
             } else {
-                console.log(teamId)
-                console.log(request.request_id)
                 const [requestInfo] = await db.all('SELECT * FROM share_dollar_teams_money_requests WHERE id = ? AND team_id = ?', request.request_id, Number(teamId));
-                console.log(requestInfo)
                 const [requestor] = await db.all('SELECT * FROM users WHERE id = ?', requestInfo.requestor_id);
                 allRequests.push({
                     id: request.id,
@@ -588,7 +582,6 @@ router.patch('/api/private/sharedollar/requests/recieved/:id/pay', async (req, r
     let isAllPaid = true;
     const requestUsers = await db.all('SELECT * FROM share_dollar_teams_money_requests_users WHERE request_id = ?', request.request_id)
     for (const requestUser of requestUsers) {
-        console.log("PAID: ", requestUser.paid)
         if (!requestUser.paid) {
             isAllPaid = false;
             break;

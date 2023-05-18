@@ -230,7 +230,6 @@
             }
         );
         const data = await response.json();
-        console.log(data);
         if (response.status === 200 || response.status === 201) {
             getLikedPost();
             getPublishedPosts();
@@ -252,7 +251,6 @@
             }
         );
         const data = await response.json();
-        console.log(data);
         if (response.status === 200 || response.status === 201) {
             getLikedComments();
             getPublishedPosts();

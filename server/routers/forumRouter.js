@@ -193,7 +193,6 @@ router.post('/api/private/forum/comments', async (req, res) => {
             status: 400
         });
     };
-    console.log(comment, post_id);
     const [post] = await db.all('SELECT * FROM forum_posts WHERE id = ?', [Number(post_id)]);
     if (!post) {
         return res.status(404).send({

@@ -124,9 +124,6 @@
             }
         );
         const data = await response.json();
-        console.log(data.team.teamMembers);
-        console.log(data.team.isAdmin);
-        console.log(data.team.teamCreator);
         if (response.status === 200) {
             teamMembers = data.team.teamMembers;
             teamCreator = data.team.teamCreator;
@@ -251,7 +248,6 @@
             }
         );
         const data = await response.json();
-        console.log("Sent: ", data.requests);
         if (response.status === 200) {
             $sentRequests = data.requests;
         } else {
@@ -266,7 +262,6 @@
             }
         );
         const data = await response.json();
-        console.log("Recieved: ", data.requests);
         if (response.status === 200) {
             $recievedRequests = data.requests;
         } else {

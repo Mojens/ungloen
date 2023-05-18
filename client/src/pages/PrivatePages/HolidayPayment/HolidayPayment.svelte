@@ -26,7 +26,6 @@
             }),
         });
         const data = await response.json();
-        console.log(data);
         if (response.status === 200) {
                 holidayData = data.holidayPaymentData;
                 buttonElement.removeAttribute("aria-busy");
