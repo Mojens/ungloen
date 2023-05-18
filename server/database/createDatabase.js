@@ -15,7 +15,7 @@ if (isDeleteMode) {
   db.exec(`DROP TABLE IF EXISTS share_dollar_teams_money_requests;`);
   db.exec(`DROP TABLE IF EXISTS share_dollar_teams_messages;`);
   db.exec(`DROP TABLE IF EXISTS share_dollar_teams_invites;`);
-  db.exec(`DROP TABLE IF EXISTS share_dollar_teams_money_requests_progress;`);
+  db.exec(`DROP TABLE IF EXISTS share_dollar_teams_money_requests_users;`);
 }
 
 db.exec(`

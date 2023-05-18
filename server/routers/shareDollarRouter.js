@@ -477,7 +477,7 @@ router.post('/api/private/sharedollar/teams/:id/requests', async (req, res) => {
 });
 // get all requests by user id & team id
 router.get('/api/private/sharedollar/requests', async (req, res) => {
-    const requests = [];
+    let requests = [];
     const teamId = req.query.team_id;
     if (!teamId) {
         requests = await db.all('SELECT * FROM share_dollar_teams_money_requests WHERE requestor_id = ?', req.session.user.id);
@@ -507,10 +507,12 @@ router.get('/api/private/sharedollar/requests', async (req, res) => {
                 id: request.id,
                 totalAmount: request.total_amount,
                 date: request.date,
+                paid: request.paid,
                 usersPaid: usersPaid
             });
         }
     }
+    console.log(allRequests)
 
     return res.status(200).send({
         message: "Anmodninger hentet",
@@ -525,20 +527,31 @@ router.get('/api/private/sharedollar/requests/recieved', async (req, res) => {
     const allRequests = [];
     if (requests.length > 0) {
         for (const request of requests) {
-            const requestInfo = {};
             if (!teamId) {
-                [requestInfo] = await db.all('SELECT * FROM share_dollar_teams_money_requests WHERE id = ?', request.request_id);
+                const [requestInfo] = await db.all('SELECT * FROM share_dollar_teams_money_requests WHERE id = ?', request.request_id);
+                const [requestor] = await db.all('SELECT * FROM users WHERE id = ?', requestInfo.requestor_id);
+                allRequests.push({
+                    id: request.id,
+                    requestor: `${requestor.first_name} ${requestor.last_name}`,
+                    amount: request.amount,
+                    paid: request.paid,
+                    date: requestInfo.date
+                });
             } else {
-                [requestInfo] = await db.all('SELECT * FROM share_dollar_teams_money_requests WHERE id = ? AND team_id = ?', request.request_id, Number(teamId));
+                console.log(teamId)
+                console.log(request.request_id)
+                const [requestInfo] = await db.all('SELECT * FROM share_dollar_teams_money_requests WHERE id = ? AND team_id = ?', request.request_id, Number(teamId));
+                console.log(requestInfo)
+                const [requestor] = await db.all('SELECT * FROM users WHERE id = ?', requestInfo.requestor_id);
+                allRequests.push({
+                    id: request.id,
+                    requestor: `${requestor.first_name} ${requestor.last_name}`,
+                    amount: request.amount,
+                    paid: request.paid,
+                    date: requestInfo.date
+                });
             }
-            const [requestor] = await db.all('SELECT * FROM users WHERE id = ?', requestInfo.requestor_id);
-            allRequests.push({
-                id: request.id,
-                requestor: `${requestor.first_name} ${requestor.last_name}`,
-                amount: request.amount,
-                paid: request.paid,
-                date: requestInfo.date
-            });
+
         }
     }
 
@@ -549,7 +562,7 @@ router.get('/api/private/sharedollar/requests/recieved', async (req, res) => {
     });
 });
 // pay request recieved
-router.post('/api/private/sharedollar/requests/recieved/:id/pay', async (req, res) => {
+router.patch('/api/private/sharedollar/requests/recieved/:id/pay', async (req, res) => {
     const [request] = await db.all('SELECT * FROM share_dollar_teams_money_requests_users WHERE id = ?', Number(req.params.id))
     if (!request) {
         return res.status(404).send({
@@ -572,20 +585,23 @@ router.post('/api/private/sharedollar/requests/recieved/:id/pay', async (req, re
         });
     }
     await db.run('UPDATE share_dollar_teams_money_requests_users SET paid = ? WHERE id = ?', true, Number(req.params.id))
-    const isAllPaid = true;
+    let isAllPaid = true;
     const requestUsers = await db.all('SELECT * FROM share_dollar_teams_money_requests_users WHERE request_id = ?', request.request_id)
     for (const requestUser of requestUsers) {
+        console.log("PAID: ", requestUser.paid)
         if (!requestUser.paid) {
             isAllPaid = false;
             break;
         }
+    }
+    if (isAllPaid) {
+        await db.run('UPDATE share_dollar_teams_money_requests SET paid = ? WHERE id = ?', true, request.request_id)
     }
     return res.status(200).send({
         message: `Du har betalt ${request.amount} kr. til ${requestor.first_name} ${requestor.last_name}`,
         status: 200
     });
 });
-
 
 
 

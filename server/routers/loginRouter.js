@@ -281,6 +281,7 @@ router.post('/api/auth/check-token', async (req, res) => {
 router.get('/api/private/auth/check-session', async (req, res) => {
     return res.status(200).send({
         message: 'Session fundet',
+        user: req.session.user,
         status: 200
     })
 });
