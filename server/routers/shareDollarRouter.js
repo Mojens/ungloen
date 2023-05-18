@@ -430,12 +430,16 @@ router.delete('/api/private/sharedollar/teams/:id/members/:memberId', async (req
         status: 200
     });
 });
+
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 // create request for money
 router.post('/api/private/sharedollar/teams/:id/requests', async (req, res) => {
-    const { recieverId, amount } = req.body;
-    if (!recieverId || !amount) {
+    const { requests, totalAmount } = req.body;
+    console.log(requests, totalAmount)
+    if (!requests || !totalAmount) {
         return res.status(400).send({
-            message: "Mangler modtager eller beløb",
+            message: "Udfyld venligst alle felter",
             status: 400
         });
     }
@@ -453,13 +457,136 @@ router.post('/api/private/sharedollar/teams/:id/requests', async (req, res) => {
             status: 400
         });
     }
-    const [isApartOfTeamMember] = await db.all('SELECT * FROM share_dollar_teams_users WHERE user_id = ? AND team_id = ?', Number(recieverId), Number(req.params.id))
-    if (!isApartOfTeamMember) {
+    for (const request of requests) {
+        const [isReceiverApartOfTeam] = await db.all('SELECT * FROM share_dollar_teams_users WHERE user_id = ? AND team_id = ?', Number(request.memberId), Number(req.params.id))
+        if (!isReceiverApartOfTeam) {
+            return res.status(400).send({
+                message: "En eller flere af modtagerne er ikke en del af teamet",
+                status: 400
+            });
+        }
+    }
+    const dbRequest = await db.run('INSERT INTO share_dollar_teams_money_requests (requestor_id, team_id, total_amount, paid, date) VALUES (?, ?, ?, ?, ?)', req.session.user.id, Number(req.params.id), totalAmount, false, new Date().toISOString().slice(0, 19).replace('T', ' '))
+    for (const request of requests) {
+        await db.run('INSERT INTO share_dollar_teams_money_requests_users (receiver_id, amount, paid, request_id) VALUES (?, ?, ?, ?)', request.memberId, request.amount, false, dbRequest.lastID)
+    }
+    return res.status(200).send({
+        message: "Anmodning sendt",
+        status: 200
+    });
+});
+// get all requests by user id & team id
+router.get('/api/private/sharedollar/requests', async (req, res) => {
+    const requests = [];
+    const teamId = req.query.team_id;
+    if (!teamId) {
+        requests = await db.all('SELECT * FROM share_dollar_teams_money_requests WHERE requestor_id = ?', req.session.user.id);
+    } else {
+        requests = await db.all('SELECT * FROM share_dollar_teams_money_requests WHERE requestor_id = ? AND team_id = ?', req.session.user.id, Number(teamId));
+    }
+
+    const allRequests = [];
+
+    if (requests.length > 0) {
+        for (const request of requests) {
+            const requestUsers = await db.all('SELECT * FROM share_dollar_teams_money_requests_users WHERE request_id = ?', request.id);
+            const usersPaid = [];
+
+            for (const requestUser of requestUsers) {
+                const [user] = await db.all('SELECT * FROM users WHERE id = ?', requestUser.receiver_id);
+
+                if (requestUser.paid) {
+                    usersPaid.push({
+                        user: `${user.first_name} ${user.last_name}`,
+                        amountPaid: requestUser.amount
+                    });
+                }
+            }
+
+            allRequests.push({
+                id: request.id,
+                totalAmount: request.total_amount,
+                date: request.date,
+                usersPaid: usersPaid
+            });
+        }
+    }
+
+    return res.status(200).send({
+        message: "Anmodninger hentet",
+        requests: allRequests,
+        status: 200
+    });
+});
+// get all recieved requests by user id & team id
+router.get('/api/private/sharedollar/requests/recieved', async (req, res) => {
+    const teamId = req.query.team_id;
+    const requests = await db.all('SELECT * FROM share_dollar_teams_money_requests_users WHERE receiver_id = ?', req.session.user.id);
+    const allRequests = [];
+    if (requests.length > 0) {
+        for (const request of requests) {
+            const requestInfo = {};
+            if (!teamId) {
+                [requestInfo] = await db.all('SELECT * FROM share_dollar_teams_money_requests WHERE id = ?', request.request_id);
+            } else {
+                [requestInfo] = await db.all('SELECT * FROM share_dollar_teams_money_requests WHERE id = ? AND team_id = ?', request.request_id, Number(teamId));
+            }
+            const [requestor] = await db.all('SELECT * FROM users WHERE id = ?', requestInfo.requestor_id);
+            allRequests.push({
+                id: request.id,
+                requestor: `${requestor.first_name} ${requestor.last_name}`,
+                amount: request.amount,
+                paid: request.paid,
+                date: requestInfo.date
+            });
+        }
+    }
+
+    return res.status(200).send({
+        message: "Anmodninger hentet",
+        requests: allRequests,
+        status: 200
+    });
+});
+// pay request recieved
+router.post('/api/private/sharedollar/requests/recieved/:id/pay', async (req, res) => {
+    const [request] = await db.all('SELECT * FROM share_dollar_teams_money_requests_users WHERE id = ?', Number(req.params.id))
+    if (!request) {
+        return res.status(404).send({
+            message: "Anmodning ikke fundet",
+            status: 404
+        });
+    }
+    const [requestInfo] = await db.all('SELECT * FROM share_dollar_teams_money_requests WHERE id = ?', request.request_id)
+    const [requestor] = await db.all('SELECT * FROM users WHERE id = ?', requestInfo.requestor_id)
+    if (request.paid) {
         return res.status(400).send({
-            message: "Denne bruger er ikke en del af teamet",
+            message: "Denne anmodning er allerede betalt",
             status: 400
         });
     }
+    if (request.receiver_id !== req.session.user.id) {
+        return res.status(400).send({
+            message: "Du er ikke modtager af denne anmodning",
+            status: 400
+        });
+    }
+    await db.run('UPDATE share_dollar_teams_money_requests_users SET paid = ? WHERE id = ?', true, Number(req.params.id))
+    const isAllPaid = true;
+    const requestUsers = await db.all('SELECT * FROM share_dollar_teams_money_requests_users WHERE request_id = ?', request.request_id)
+    for (const requestUser of requestUsers) {
+        if (!requestUser.paid) {
+            isAllPaid = false;
+            break;
+        }
+    }
+    return res.status(200).send({
+        message: `Du har betalt ${request.amount} kr. til ${requestor.first_name} ${requestor.last_name}`,
+        status: 200
+    });
 });
+
+
+
 
 export default router; 

@@ -42,30 +42,53 @@
     }
 
     async function sendPaymentRequest() {
-        requests = formatRequest();
-        console.log(requests);
-        requests = [];
+        const response = await fetch(
+            $BASE_URL +
+                "/api/private/sharedollar/teams/" +
+                teamId +
+                "/requests",
+            {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    requests: formatRequest(),
+                    totalAmount: totalAmount,
+                }),
+            }
+        );
+        const data = await response.json();
+        if (response.status === 200) {
+            toastr.success(data.message);
+            totalAmount = 0;
+            requests = [];
+        } else {
+            toastr.error(data.message);
+        }
     }
 
-    function handleInputChange (memberId, event) {
-    const value = parseInt(event.target.value);
-    
-    if (value < 0 || value > totalAmount) {
-      event.target.value = requests[memberId] || 0;
-    } else {
-      requests[memberId] = value;
-    }
-    
-    let totalRequests = 0;
-    for (let amount of Object.values(requests)) {
-      totalRequests += amount;
-    }
+    function handleInputChange(memberId, event) {
+        const value = parseInt(event.target.value);
 
-    if (totalRequests > totalAmount) {
-      event.target.value = requests[memberId] - (totalRequests - totalAmount);
-      requests[memberId] = parseInt(event.target.value);
+        if (value < 0 || value > totalAmount) {
+            event.target.value = requests[memberId] || 0;
+        } else {
+            requests[memberId] = value;
+        }
+
+        let totalRequests = 0;
+        for (let amount of Object.values(requests)) {
+            totalRequests += amount;
+        }
+
+        if (totalRequests > totalAmount) {
+            event.target.value =
+                requests[memberId] - (totalRequests - totalAmount);
+            requests[memberId] = parseInt(event.target.value);
+        }
     }
-  }
 
     let socket = io($BASE_URL);
     socket.on("userJoined", (user) => {
@@ -437,7 +460,11 @@
                                                     type="number"
                                                     min="0"
                                                     id="amountMember"
-                                                    on:input="{(e) => handleInputChange(member.id, e)}"
+                                                    on:input={(e) =>
+                                                        handleInputChange(
+                                                            member.id,
+                                                            e
+                                                        )}
                                                     bind:value={requests[
                                                         member.id
                                                     ]}
@@ -506,10 +533,10 @@
         cursor: pointer;
         font-size: 24px;
         padding: 10px;
-        width: 100%; /* Set the width to 100% */
-        white-space: nowrap; /* Prevent line breaks */
-        overflow: hidden; /* Hide any overflow */
-        text-overflow: ellipsis; /* Add ellipsis for any overflow */
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .member-ul li a {
