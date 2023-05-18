@@ -197,7 +197,7 @@
                                         class="icon-in-list"
                                         on:click={() => {
                                             confirmThis(deleteTeam, team.id);
-                                        }}><i class="fa fa-trash" /></a
+                                        }}><i class="fa fa-trash pointer" /></a
                                     >
                                     <span slot="title">
                                         Er du sikker på, at du vil slette dette
@@ -222,7 +222,7 @@
                                             );
                                         }}
                                     >
-                                        <i class="fa fa-edit" /></a
+                                        <i class="fa fa-edit pointer" /></a
                                     >
                                     <span slot="title">Opdater team navn</span>
                                     <span slot="description">
