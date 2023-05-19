@@ -2,15 +2,39 @@
     export let pageTitle;
     document.title = pageTitle;
 
-    import { BASE_URL, user } from "../../stores/globalsStore.js";
+    import { BASE_URL, user, invitations } from "../../stores/globalsStore.js";
     import { useNavigate } from "svelte-navigator";
     import toastr from "toastr";
     import AuthLinks from "../../components/AuthLinks/AuthLinks.svelte";
+    import io from "socket.io-client";
 
     const navigate = useNavigate();
 
     let email = "john_doe@emailprovider.com";
     let password = "";
+
+    async function listenForInvitations(){
+        const response = await fetch(
+                `${$BASE_URL}/api/private/sharedollar/teams/invite`,
+                {
+                    credentials: "include",
+                }
+            );
+            const data = await response.json();
+            if (response.status === 200) {
+                $invitations = data.invitations;
+            }
+
+            let socket = io($BASE_URL);
+            socket.on("invitesRecieved", (data) => {
+                if ($user.id === data.inviteTo.id) {
+                    invitations.update((invitations) => {
+                        invitations.push(data);
+                        return invitations;
+                    });
+                }
+            });
+    }
 
     async function handleLogin() {
         let buttonElement = document.getElementById("login-btn");
@@ -31,7 +55,7 @@
         if (response.status === 200) {
             buttonElement.removeAttribute("aria-busy");
             buttonElement.removeAttribute("class");
-            localStorage.setItem("user", JSON.stringify(data.user));
+            await listenForInvitations();
             toastr.success(data.message);
             user.set(data.user);
             navigate("/", { replace: true });

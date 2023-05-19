@@ -1,11 +1,12 @@
 <!-- svelte-ignore a11y-missing-attribute -->
- <!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <script>
-    import { Link, navigate } from "svelte-navigator";
+    import { Link, useNavigate, useLocation } from "svelte-navigator";
     import { BASE_URL, user, invitations } from "../../stores/globalsStore.js";
     import toastr from "toastr";
-    import { onMount } from "svelte";
-    import io from "socket.io-client";
+
+    const navigate = useNavigate();
+    const location = useLocation();
 
     $: notLoggedNavigationLinks = [
         {
@@ -66,28 +67,33 @@
     ];
 
     async function handleLogout() {
-        const response = await fetch($BASE_URL + "/api/auth/logout", {
+        const response = await fetch(`${$BASE_URL}/api/auth/logout`, {
             credentials: "include",
             method: "POST",
         });
         const data = await response.json();
         if (response.status === 200) {
             toastr.error(data.message);
-            localStorage.removeItem("user");
+            navigate("/log-ind", {
+                state: { from: $location.pathname },
+                replace: true,
+            });
             user.set(null);
         } else {
             toastr.error(data.message);
         }
     }
 
-    async function acceptInvitation(teamId, token, invitationId){
-        $invitations = $invitations.filter((invite) => invite.id !== invitationId);
-        navigate(`/accepter-invitation/${token}/${teamId}`, { replace: true })
+    async function acceptInvitation(teamId, token, invitationId) {
+        $invitations = $invitations.filter(
+            (invite) => invite.id !== invitationId
+        );
+        navigate(`/accepter-invitation/${token}/${teamId}`, { replace: true });
     }
 
     async function deleteInvite(id) {
         const response = await fetch(
-            $BASE_URL + "/api/private/sharedollar/teams/invite/" + id,
+            `${$BASE_URL}/api/private/sharedollar/teams/invite/${id}`,
             {
                 credentials: "include",
                 method: "DELETE",
@@ -101,30 +107,6 @@
             toastr.error(data.message);
         }
     }
-
-    onMount(async () => {
-        const response = await fetch(
-            $BASE_URL + "/api/private/sharedollar/teams/invite",
-            {
-                credentials: "include",
-            }
-        );
-        const data = await response.json();
-        if (response.status === 200) {
-            $invitations = data.invitations;
-        }
-        if ($user) {
-            let socket = io($BASE_URL);
-            socket.on("invitesRecieved", (data) => {
-                if ($user.id === data.inviteTo.id) {
-                    invitations.update((invitations) => {
-                        invitations.push(data);
-                        return invitations;
-                    });
-                }
-            });
-        }
-    });
 </script>
 
 <nav>
@@ -164,8 +146,11 @@
                                         <a
                                             class="icon-in-list pointer"
                                             on:click={() =>
-                                                acceptInvitation(invitation
-                                                .invitedFrom.id,invitation.token,invitation.id)}
+                                                acceptInvitation(
+                                                    invitation.invitedFrom.id,
+                                                    invitation.token,
+                                                    invitation.id
+                                                )}
                                         >
                                             <i class="fa fa-check" />
                                         </a>
@@ -210,9 +195,13 @@
                     <ul role="listbox">
                         {#each LoggedNavigationLinksDropDown as link}
                             {#if link}
-                                <li on:click={()=>{
-                                    document.getElementById("dropdown-nav").open = false;
-                                }}>
+                                <li
+                                    on:click={() => {
+                                        document.getElementById(
+                                            "dropdown-nav"
+                                        ).open = false;
+                                    }}
+                                >
                                     <Link to={link.path}>{link.name}</Link>
                                 </li>
                             {/if}
@@ -301,13 +290,13 @@
         flex: auto;
     }
     .notification-bubble {
-    background-color: red;
-    color: white;
-    border-radius: 50%;
-    padding: 5px 10px;
-    font-size: 12px;
-    position: absolute;
-    top: -20px;
-    right: -15px;
-}
+        background-color: red;
+        color: white;
+        border-radius: 50%;
+        padding: 5px 10px;
+        font-size: 12px;
+        position: absolute;
+        top: -20px;
+        right: -15px;
+    }
 </style>
