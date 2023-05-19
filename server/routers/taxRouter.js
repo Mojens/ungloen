@@ -6,7 +6,7 @@ const router = Router();
 
 router.get('/api/private/users/tax/data', async (req, res) => {
   
-    const [taxData] = await db.all('SELECT * FROM users_tax_data WHERE user_id = ?', [req.session.user.id]);
+    const taxData = await db.get('SELECT * FROM users_tax_data WHERE user_id = ?', [req.session.user.id]);
     if (!taxData.tax_rate || !taxData.monthly_deduction || !taxData.zip_code || !taxData.city || !taxData.address) {
         return res.status(404).send({
             message: 'Ingen personlige oplysninger fundet',

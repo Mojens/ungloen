@@ -15,7 +15,7 @@ router.post('/api/auth/login', async (req, res) => {
             status: 400
         });
     } else {
-        const [user] = await db.all('SELECT * FROM users WHERE LOWER(email) = ?', [email.toLowerCase()]);
+        const user = await db.get('SELECT * FROM users WHERE LOWER(email) = ?', [email.toLowerCase()]);
         if (!user) {
             return res.status(400).send({
                 message: 'Kunne ikke finde bruger',
@@ -54,7 +54,7 @@ router.post('/api/auth/verify', async (req, res) => {
             status: 400
         });
     } else {
-        const [user] = await db.all('SELECT * FROM users WHERE phone = ? AND verified = 0', [phone]);
+        const user = await db.get('SELECT * FROM users WHERE phone = ? AND verified = 0', [phone]);
         if (!user) {
             return res.status(400).send({
                 message: 'Kunne ikke finde din bruger. <br>Prøv at oprette en ny bruger eller <br> anmod om en ny aktiveringskode',
@@ -92,7 +92,7 @@ router.post('/api/auth/resend-verification', async (req, res) => {
             status: 400
         });
     } else {
-        const [user] = await db.all('SELECT * FROM users WHERE LOWER(email) = ?', [email.toLowerCase()]);
+        const user = await db.get('SELECT * FROM users WHERE LOWER(email) = ?', [email.toLowerCase()]);
         if (!user) {
             return res.status(400).send({
                 message: 'Kunne ikke finde bruger',
@@ -126,8 +126,8 @@ router.post('/api/auth/register', async (req, res) => {
             status: 400
         });
     } else {
-        const [userMail] = await db.all('SELECT * FROM users WHERE email = ?', [email]);
-        const [userPhone] = await db.all('SELECT * FROM users WHERE phone = ?', [phone]);
+        const userMail = await db.get('SELECT * FROM users WHERE email = ?', [email]);
+        const userPhone = await db.get('SELECT * FROM users WHERE phone = ?', [phone]);
         if (userMail || userPhone) {
             return res.status(400).send({
                 message: 'Bruger med denne email eller telefonnummer eksisterer allerede',
@@ -173,7 +173,7 @@ router.post('/api/auth/forgot-password', async (req, res) => {
             status: 400
         });
     } else {
-        const [user] = await db.all('SELECT * FROM users WHERE LOWER(email) = ?', [email.toLowerCase()]);
+        const user = await db.get('SELECT * FROM users WHERE LOWER(email) = ?', [email.toLowerCase()]);
         if (!user) {
             return res.status(400).send({
                 message: 'Kunne ikke finde bruger',
@@ -210,7 +210,7 @@ router.post('/api/auth/reset-password', async (req, res) => {
                 status: 400
             });
         } else {
-            const [user] = await db.all('SELECT * FROM users WHERE token = ?', [token]);
+            const user = await db.get('SELECT * FROM users WHERE token = ?', [token]);
             if (!user) {
                 return res.status(400).send({
                     message: 'Noget gik galt',
@@ -220,14 +220,14 @@ router.post('/api/auth/reset-password', async (req, res) => {
             } else {
                 if (token !== user.token) {
                     return res.status(400).send({
-                        message: 'Noget gik galt',
+                        message: 'Dit link virker ikke, anmod om en ny',
                         error: 'Din token virker ikke, anmod om en ny',
                         status: 400
                     });
                 } else {
                     if (Date.now() > Number(user.token_expiration)) {
                         return res.status(400).send({
-                            message: 'Noget gik galt',
+                            message: 'Dit link er udløbet, venligst anmod om en ny',
                             error: 'Token Udløbet',
                             status: 400
                         });
@@ -255,7 +255,7 @@ router.post('/api/auth/check-token', async (req, res) => {
             status: 400
         });
     };
-    const [user] = await db.all('SELECT * FROM users WHERE token = ?', [token]);
+    const user = await db.get('SELECT * FROM users WHERE token = ?', [token]);
     if (!user) {
         return res.status(400).send({
             message: 'Link virker ikke',

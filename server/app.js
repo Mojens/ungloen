@@ -43,6 +43,8 @@ const io = new Server(server, {
 
 io.on('connection', (socket) => {
 
+    console.log("A user connected")
+
     socket.on("joinRoom", (team) => {
         socket.join(team.teamId);
         socket.emit("userJoined", team.user);

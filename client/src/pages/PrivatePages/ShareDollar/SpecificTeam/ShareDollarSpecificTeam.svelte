@@ -108,13 +108,7 @@
         }
     }
 
-    let socket = io($BASE_URL);
-    socket.on("userJoined", (user) => {
-        whoJoinedChat.update((whoJoinedChat) => {
-            whoJoinedChat.push(user);
-            return whoJoinedChat;
-        });
-    });
+    let socket;
 
     async function getTeamData() {
         const response = await fetch(

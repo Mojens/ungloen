@@ -13,7 +13,7 @@ router.get('/api/private/users/:id', async (req, res) => {
             status: 401
         });
     }
-    const [user] = await db.all('SELECT * FROM users WHERE id = ?', [Number(req.params.id)]);
+    const user = await db.get('SELECT * FROM users WHERE id = ?', [Number(req.params.id)]);
     if (!user) {
         return res.status(404).send({
             message: 'Kunne ikke hente bruger informationer',
@@ -43,7 +43,7 @@ router.put('/api/private/users/:id', async (req, res) => {
         });
     }
     await db.run('UPDATE users SET first_name = ?, last_name = ?, email = ? WHERE id = ?', [first_name, last_name, email, Number(req.params.id)]);
-    const [user] = await db.all('SELECT * FROM users WHERE id = ?', [Number(req.params.id)]);
+    const user = await db.get('SELECT * FROM users WHERE id = ?', [Number(req.params.id)]);
     const { password, token, token_expiration, ...userWithoutPassword } = user;
     req.session.user = userWithoutPassword;
     return res.status(200).send({

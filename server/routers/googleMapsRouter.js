@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { calculateDistance, autocompletePlaces } from '../util/googleMaps.js';
-import db from '../database/connection.js';
 import dotenv from 'dotenv/config';
 
 const router = Router();
