@@ -35,8 +35,7 @@
     }
 
     async function getAllPosts() {
-        const response = await fetch($BASE_URL + "/api/private/forum/posts", {
-            method: "GET",
+        const response = await fetch(`${$BASE_URL}/api/private/forum/posts`, {
             credentials: "include",
         });
         const data = await response.json();
@@ -49,7 +48,7 @@
 
     async function deletePost(postId) {
         const response = await fetch(
-            $BASE_URL + "/api/private/forum/posts/" + postId,
+            `${$BASE_URL}/api/private/forum/posts/${postId}`,
             {
                 method: "DELETE",
                 credentials: "include",
@@ -58,7 +57,7 @@
         const data = await response.json();
         if (response.status === 200) {
             toastr.success(data.message);
-            getAllPosts();
+            await getAllPosts();
         } else {
             toastr.error(data.message);
         }
@@ -66,7 +65,7 @@
 
     async function updatePost(postId) {
         const response = await fetch(
-            $BASE_URL + "/api/private/forum/posts/" + postId,
+            `${$BASE_URL}/api/private/forum/posts/${postId}`,
             {
                 method: "PUT",
                 credentials: "include",
@@ -84,16 +83,17 @@
         const data = await response.json();
         if (response.status === 200) {
             toastr.success(data.message);
-            getAllPosts();
+            await getAllPosts();
         } else {
             toastr.error(data.message);
         }
     }
-    async function handleSubmitPost() {
+
+    async function createPost() {
         let buttonElement = document.getElementById("submit-btn");
         buttonElement.setAttribute("aria-busy", "true");
         buttonElement.setAttribute("class", "secondary");
-        const response = await fetch($BASE_URL + "/api/private/forum/posts/", {
+        const response = await fetch(`${$BASE_URL}/api/private/forum/posts/`, {
             method: "POST",
             credentials: "include",
             headers: {
@@ -108,13 +108,11 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-            
-                toastr.success(data.message);
-                getAllPosts();
-                toggleForm();
-                buttonElement.removeAttribute("aria-busy");
-                buttonElement.removeAttribute("class");
-        
+            toastr.success(data.message);
+            await getAllPosts();
+            toggleForm();
+            buttonElement.removeAttribute("aria-busy");
+            buttonElement.removeAttribute("class");
         } else {
             toastr.error(data.message);
             buttonElement.removeAttribute("aria-busy");
@@ -122,8 +120,8 @@
         }
     }
 
-    onMount(() => {
-        getAllPosts();
+    onMount(async () => {
+        await getAllPosts();
     });
 </script>
 
@@ -147,10 +145,7 @@
             </button>
         </div>
         {#if showForm}
-            <form
-                class="new-post-form"
-                on:submit|preventDefault={handleSubmitPost}
-            >
+            <form class="new-post-form" on:submit|preventDefault={createPost}>
                 <label for="title">Titel</label>
                 <input
                     type="text"

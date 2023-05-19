@@ -27,7 +27,7 @@ router.post('/api/private/googlemaps/distance', async (req, res) => {
     const distance = await calculateDistance(origin, destination);
     if (distance !== null) {
         return res.status(200).send({
-            message: 'Afstanden fundet',
+            message: 'Afstanden udregnet',
             distance: distance,
             status: 200
         })

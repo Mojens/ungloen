@@ -3,6 +3,7 @@
     import { BASE_URL } from "../../../stores/globalsStore.js";
     import { incomeTypes } from "../../../stores/taxStore.js";
     import { onMount } from "svelte";
+    import { Link } from "svelte-navigator";
     import toastr from "toastr";
 
     let showForm = false;
@@ -13,7 +14,7 @@
     let headOrBiCard = "";
     let monthlyPayoutData = {};
 
-    function toogleForm() {
+    function toggleForm() {
         monthlyPayoutData = {};
         if (incomeType !== "") {
             showForm = true;
@@ -30,9 +31,12 @@
     }
 
     async function getTaxData() {
-        const response = await fetch($BASE_URL + "/api/private/users/tax/data", {
-            credentials: "include",
-        });
+        const response = await fetch(
+            `${$BASE_URL}/api/private/users/tax/data`,
+            {
+                credentials: "include",
+            }
+        );
         const data = await response.json();
         if (response.status === 200) {
             userPersonalData = data.taxData;
@@ -45,35 +49,34 @@
         let buttonElement = document.getElementById("calculate-payout");
         buttonElement.setAttribute("aria-busy", "true");
         buttonElement.setAttribute("class", "secondary");
-        const response = await fetch($BASE_URL + "/api/private/tax/monthly-payout", {
-            method: "POST",
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                tax_rate: userPersonalData.tax_rate,
-                monthly_deduction: userPersonalData.monthly_deduction,
-                incomeType: incomeType,
-                payoutTime: payoutTime,
-                monthlyIncome: monthlyIncome,
-                headOrBiCard: headOrBiCard,
-            }),
-        });
+        const response = await fetch(
+            `${$BASE_URL}/api/private/tax/monthly-payout`,
+            {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    tax_rate: userPersonalData.tax_rate,
+                    monthly_deduction: userPersonalData.monthly_deduction,
+                    incomeType: incomeType,
+                    payoutTime: payoutTime,
+                    monthlyIncome: monthlyIncome,
+                    headOrBiCard: headOrBiCard,
+                }),
+            }
+        );
         const data = await response.json();
         if (response.status === 200) {
-            
-                monthlyPayoutData = data.monthlyPayoutData;
-                buttonElement.removeAttribute("aria-busy");
-                buttonElement.removeAttribute("class");
-                setTimeout(() => {
-                    document
-                        .getElementById("udbetaling-output")
-                        .scrollIntoView({
-                            behavior: "smooth",
-                        });
-                }, 100);
-            
+            monthlyPayoutData = data.monthlyPayoutData;
+            buttonElement.removeAttribute("aria-busy");
+            buttonElement.removeAttribute("class");
+            setTimeout(() => {
+                document.getElementById("udbetaling-output").scrollIntoView({
+                    behavior: "smooth",
+                });
+            }, 100);
         } else {
             buttonElement.removeAttribute("aria-busy");
             buttonElement.removeAttribute("class");
@@ -100,7 +103,7 @@
             <select
                 id="select-incometype"
                 bind:value={incomeType}
-                on:change={toogleForm}
+                on:change={toggleForm}
                 required
             >
                 <option value="" disabled selected>Vælg en Indkomsttype</option>
@@ -216,8 +219,8 @@
                 Kune ikke indlæse dine personoplysninger.
             </h1>
             <h3>
-                Husk at indtaste alle felter under <a href="/profil/personlig"
-                    >Dine personlige oplysninger</a
+                Husk at indtaste alle felter under <Link to="/profil/personlig"
+                    >Dine personlige oplysninger</Link
                 >
             </h3>
         </hgroup>

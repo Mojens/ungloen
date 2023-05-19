@@ -11,7 +11,9 @@
     let monthly_deduction = "";
 
     async function getPersonalData() {
-        const response = await fetch($BASE_URL + "/api/private/users/tax/data",{
+        const response = await fetch(
+            `${$BASE_URL}/api/private/users/tax/data`,
+            {
                 credentials: "include",
             }
         );
@@ -33,12 +35,13 @@
         }
     }
 
-    async function handleUpdatePersonalData() {
+    async function updatePersonalData() {
         let buttonElement = document.getElementById("update-personal-data-btn");
         buttonElement.setAttribute("aria-busy", "true");
         buttonElement.setAttribute("class", "secondary");
+
         const response = await fetch(
-            $BASE_URL + "/api/private/tax/data/users/" + $user.id,
+            `${$BASE_URL}/api/private/tax/data/users/${$user.id}`,
             {
                 method: "PUT",
                 credentials: "include",
@@ -56,20 +59,19 @@
         );
         const data = await response.json();
         if (response.status === 200) {
-            
-                buttonElement.removeAttribute("aria-busy");
-                buttonElement.removeAttribute("class");
-                toastr.success(data.message);
-                getPersonalData();
-            
+            buttonElement.removeAttribute("aria-busy");
+            buttonElement.removeAttribute("class");
+            toastr.success(data.message);
+            await getPersonalData();
         } else {
             toastr.error(data.message);
             buttonElement.removeAttribute("aria-busy");
             buttonElement.removeAttribute("class");
         }
     }
-    onMount(() => {
-        getPersonalData();
+
+    onMount(async () => {
+        await getPersonalData();
     });
 </script>
 
@@ -84,7 +86,7 @@
             <li>Person oplysninger</li>
         </ul>
     </nav>
-    <form on:submit|preventDefault={handleUpdatePersonalData}>
+    <form on:submit|preventDefault={updatePersonalData}>
         <div class="grid">
             <label for="zip_code">
                 Postnummer

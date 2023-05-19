@@ -15,7 +15,7 @@
         let buttonElement = document.getElementById("calculate-holiday");
         buttonElement.setAttribute("aria-busy", "true");
         buttonElement.setAttribute("class", "secondary w-25");
-        const response = await fetch($BASE_URL + "/api/private/tax/holiday-payment", {
+        const response = await fetch(`${$BASE_URL}/api/private/tax/holiday-payment`, {
             method: "POST",
             credentials: "include",
             headers: {

@@ -35,7 +35,7 @@
                 payBothWays = false;
 
                 drivingDeductionData = {};
-            }, 700);
+            }, 600);
         }, 100);
     }
 
@@ -45,6 +45,7 @@
         });
         return formattedNumber;
     }
+
     function formatDate(date) {
         let dateSplit = date.split("-");
         return dateSplit[2] + "/" + dateSplit[1] + "/" + dateSplit[0];
@@ -56,39 +57,39 @@
         );
         buttonElement.setAttribute("aria-busy", "true");
         buttonElement.setAttribute("class", "secondary");
-        const response = await fetch($BASE_URL + "/api/private/tax/driving-deduction", {
-            method: "POST",
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                drivingData: {
-                    distance,
-                    workDaysInTransport,
-                    payForBridge,
-                    isStorebaelt,
-                    isOeresund,
-                    vehicleType,
-                    payBothWays,
+        const response = await fetch(
+            `${$BASE_URL}/api/private/tax/driving-deduction`,
+            {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
                 },
-            }),
-        });
+                body: JSON.stringify({
+                    drivingData: {
+                        distance,
+                        workDaysInTransport,
+                        payForBridge,
+                        isStorebaelt,
+                        isOeresund,
+                        vehicleType,
+                        payBothWays,
+                    },
+                }),
+            }
+        );
         const data = await response.json();
         if (response.status === 200) {
-        
-                buttonElement.removeAttribute("aria-busy");
-                buttonElement.removeAttribute("class");
-                drivingDeductionData = data.drivingDeductionData;
-                toastr.success(data.message);
-                setTimeout(() => {
-                    document
-                        .getElementById("driving-deduction-result")
-                        .scrollIntoView({
-                            behavior: "smooth",
-                        });
-                }, 100);
-            
+            buttonElement.removeAttribute("aria-busy");
+            buttonElement.removeAttribute("class");
+            drivingDeductionData = data.drivingDeductionData;
+            setTimeout(() => {
+                document
+                    .getElementById("driving-deduction-result")
+                    .scrollIntoView({
+                        behavior: "smooth",
+                    });
+            }, 100);
         } else {
             buttonElement.removeAttribute("aria-busy");
             buttonElement.removeAttribute("class");
@@ -120,32 +121,33 @@
         let buttonElement = document.getElementById("address-distance-btn");
         buttonElement.setAttribute("aria-busy", "true");
         buttonElement.setAttribute("class", "secondary");
-        const response = await fetch($BASE_URL + "/api/private/googlemaps/distance", {
-            method: "POST",
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                origin,
-                destination,
-            }),
-        });
+        const response = await fetch(
+            `${$BASE_URL}/api/private/googlemaps/distance`,
+            {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    origin,
+                    destination,
+                }),
+            }
+        );
         const data = await response.json();
         if (response.status === 200) {
-            
-                distance = Math.floor(data.distance).toString();
-                toastr.success("Afstand fundet");
-                buttonElement.removeAttribute("aria-busy");
-                buttonElement.removeAttribute("class");
-                setTimeout(() => {
-                    document
-                        .getElementById("driving-deduction-form")
-                        .scrollIntoView({
-                            behavior: "smooth",
-                        });
-                }, 100);
-            
+            distance = Math.floor(data.distance).toString();
+            toastr.success(data.message);
+            buttonElement.removeAttribute("aria-busy");
+            buttonElement.removeAttribute("class");
+            setTimeout(() => {
+                document
+                    .getElementById("driving-deduction-form")
+                    .scrollIntoView({
+                        behavior: "smooth",
+                    });
+            }, 100);
         } else {
             buttonElement.removeAttribute("aria-busy");
             buttonElement.removeAttribute("class");
@@ -154,9 +156,12 @@
     }
 
     async function getPersonalData() {
-        const response = await fetch($BASE_URL + "/api/private/users/tax/data", {
-            credentials: "include",
-        });
+        const response = await fetch(
+            `${$BASE_URL}/api/private/users/tax/data`,
+            {
+                credentials: "include",
+            }
+        );
         const data = await response.json();
         if (response.status === 200) {
             origin = `${data.taxData.address}, ${data.taxData.zip_code} ${data.taxData.city}`;
@@ -171,7 +176,7 @@
             return;
         }
         const response = await fetch(
-            $BASE_URL + "/api/private/googlemaps/autocomplete?input=" + destination,
+            `${$BASE_URL}/api/private/googlemaps/autocomplete?input=${destination}`,
             {
                 credentials: "include",
             }
@@ -184,8 +189,9 @@
             toastr.error(data.message);
         }
     }
-    onMount(() => {
-        getPersonalData();
+
+    onMount(async () => {
+        await getPersonalData();
         getWorkDays();
     });
 </script>

@@ -3,16 +3,19 @@
     import { onMount } from "svelte";
     import toastr from "toastr";
     import { BASE_URL, user } from "../../../stores/globalsStore.js";
+
     let first_name = "";
     let last_name = "";
     let email = "";
     let phone = "";
 
     async function getUser() {
-        const response = await fetch($BASE_URL + "/api/private/users/" + $user.id, {
-            method: "GET",
-            credentials: "include",
-        });
+        const response = await fetch(
+            `${$BASE_URL}/api/private/users/${$user.id}`,
+            {
+                credentials: "include",
+            }
+        );
         const data = await response.json();
         if (response.status === 200) {
             first_name = data.user.first_name;
@@ -23,44 +26,47 @@
             toastr.error(data.message);
         }
     }
-    async function handleUpdateProfile() {
+
+    async function updateUser() {
         const buttonElement = document.getElementById("update-profile-btn");
         buttonElement.setAttribute("aria-busy", "true");
         buttonElement.setAttribute("class", "secondary");
-        const response = await fetch($BASE_URL + "/api/private/users/" + $user.id, {
-            method: "PUT",
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                first_name,
-                last_name,
-                email,
-            }),
-        });
+        const response = await fetch(
+            `${$BASE_URL}/api/private/users/${$user.id}`,
+            {
+                method: "PUT",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    first_name,
+                    last_name,
+                    email,
+                }),
+            }
+        );
         const data = await response.json();
         if (response.status === 200) {
-            
-                buttonElement.removeAttribute("aria-busy");
-                buttonElement.removeAttribute("class");
-                toastr.success(data.message);
-                user.set(data.user);
-                localStorage.setItem("user", JSON.stringify(data.user));
-                getUser();
-            
+            buttonElement.removeAttribute("aria-busy");
+            buttonElement.removeAttribute("class");
+            toastr.success(data.message);
+            user.set(data.user);
+            localStorage.setItem("user", JSON.stringify(data.user));
+            await getUser();
         } else {
             toastr.error(data.message);
             buttonElement.removeAttribute("aria-busy");
             buttonElement.removeAttribute("class");
         }
     }
+
     async function handleResetPassword() {
         let buttonElement = document.getElementById("reset-password-btn");
         buttonElement.setAttribute("aria-busy", "true");
         buttonElement.setAttribute("class", "secondary");
-        const response = await fetch($BASE_URL + "/api/auth/forgot-password", {
-            credentials: "include",
+
+        const response = await fetch(`${$BASE_URL}/api/auth/forgot-password`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -71,20 +77,20 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-            
-                buttonElement.removeAttribute("aria-busy");
-                buttonElement.removeAttribute("class");
-                toastr.success(data.message);
-            
+            buttonElement.removeAttribute("aria-busy");
+            buttonElement.removeAttribute("class");
+            toastr.success(data.message);
         } else {
             buttonElement.removeAttribute("aria-busy");
             buttonElement.removeAttribute("class");
             toastr.error(data.message);
         }
     }
+
     onMount(async () => {
         await getUser();
     });
+    
 </script>
 
 <main class="container">
@@ -135,10 +141,8 @@
             bind:value={phone}
             required
         />
-        <button
-            type="button"
-            id="update-profile-btn"
-            on:click={handleUpdateProfile}>Opdater profil</button
+        <button type="button" id="update-profile-btn" on:click={updateUser}
+            >Opdater profil</button
         >
     </form>
     <button type="button" id="reset-password-btn" on:click={handleResetPassword}
