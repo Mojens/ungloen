@@ -5,6 +5,7 @@
     import { onMount } from "svelte";
     import { BASE_URL, user } from "../../../stores/globalsStore.js";
     import toastr from "toastr";
+    import { Link } from "svelte-navigator";
 
     let zip_code = "";
     let city = "";
@@ -84,7 +85,7 @@
     </hgroup>
     <nav aria-label="breadcrumb">
         <ul>
-            <li><a href="/profil">Profil</a></li>
+            <li><Link to="/profil">Profil</Link></li>
             <li>Person oplysninger</li>
         </ul>
     </nav>

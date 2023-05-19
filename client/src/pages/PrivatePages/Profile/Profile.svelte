@@ -5,6 +5,7 @@
     import { onMount } from "svelte";
     import toastr from "toastr";
     import { BASE_URL, user } from "../../../stores/globalsStore.js";
+    import { Link } from "svelte-navigator";
 
     let first_name = "";
     let last_name = "";
@@ -101,8 +102,10 @@
     </hgroup>
     <nav aria-label="breadcrumb">
         <ul>
-            <li><a href="/profil/personlig">Person oplysninger</a></li>
-            <li>Profil</li>
+            <li><a>Profil</a></li>
+            <li>
+                <Link to="/profil/personlig">Person oplysninger</Link>
+            </li>
         </ul>
     </nav>
     <form>
@@ -147,6 +150,12 @@
         >
     </form>
     <button type="button" id="reset-password-btn" on:click={handleResetPassword}
-        >Nulstil adgangskode</button
+        ><i class="fa fa-lock right-m" />Nulstil adgangskode</button
     >
 </main>
+<style>
+    li a {
+        text-decoration: none;
+        color: black;
+    }
+</style>

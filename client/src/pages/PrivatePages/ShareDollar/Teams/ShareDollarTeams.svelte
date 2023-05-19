@@ -8,9 +8,7 @@
     import { BASE_URL, user } from "../../../../stores/globalsStore.js";
     import { onMount } from "svelte";
     import toastr from "toastr";
-    import io from "socket.io-client";
     import { Confirm } from "svelte-confirm";
-    import { Link } from "svelte-navigator";
 
     let ownedTeams = [];
     let teamsApartOf = [];
@@ -251,10 +249,10 @@
                                     </span>
                                 </Confirm>
 
-                                <Link
+                                <a
                                     class="icon-in-list"
-                                    to="/tjenester/share-dollar/{team.id}"
-                                    ><i class="fa fa-arrow-circle-o-right" /></Link
+                                    href="/tjenester/share-dollar/{team.id}"
+                                    ><i class="fa fa-arrow-circle-o-right" /></a
                                 >
                             </a>
                         </li>
@@ -311,10 +309,10 @@
                                         </span>
                                     </Confirm>
                                 {/if}
-                                <Link
+                                <a
                                     class="icon-in-list"
-                                    to="/tjenester/share-dollar/{team.id}"
-                                    ><i class="fa fa-arrow-circle-o-right" /></Link
+                                    href="/tjenester/share-dollar/{team.id}"
+                                    ><i class="fa fa-arrow-circle-o-right" /></a
                                 >
                             </a>
                         </li>
