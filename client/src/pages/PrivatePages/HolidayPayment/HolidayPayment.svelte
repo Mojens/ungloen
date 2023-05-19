@@ -1,5 +1,7 @@
 <script>
-    document.title = "UngLøn | Feriepenge";
+    export let pageTitle;
+    document.title = pageTitle;
+
     import { BASE_URL } from "../../../stores/globalsStore.js";
     import toastr from "toastr";
 
@@ -15,28 +17,29 @@
         let buttonElement = document.getElementById("calculate-holiday");
         buttonElement.setAttribute("aria-busy", "true");
         buttonElement.setAttribute("class", "secondary w-25");
-        const response = await fetch(`${$BASE_URL}/api/private/tax/holiday-payment`, {
-            method: "POST",
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                monthlyIncome,
-            }),
-        });
+        const response = await fetch(
+            `${$BASE_URL}/api/private/tax/holiday-payment`,
+            {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    monthlyIncome,
+                }),
+            }
+        );
         const data = await response.json();
         if (response.status === 200) {
-                holidayData = data.holidayPaymentData;
-                buttonElement.removeAttribute("aria-busy");
-                buttonElement.setAttribute("class", "w-25");
-                setTimeout(() => {
-                    document
-                        .getElementById("vacation-output")
-                        .scrollIntoView({
-                            behavior: "smooth",
-                        });
-                }, 100);
+            holidayData = data.holidayPaymentData;
+            buttonElement.removeAttribute("aria-busy");
+            buttonElement.setAttribute("class", "w-25");
+            setTimeout(() => {
+                document.getElementById("vacation-output").scrollIntoView({
+                    behavior: "smooth",
+                });
+            }, 100);
         } else {
             buttonElement.removeAttribute("aria-busy");
             buttonElement.setAttribute("class", "w-25");

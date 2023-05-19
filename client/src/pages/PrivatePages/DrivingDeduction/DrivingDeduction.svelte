@@ -1,5 +1,7 @@
 <script>
-    document.title = "UngLøn | Kørselsfradrag";
+    export let pageTitle;
+    document.title = pageTitle;
+
     import { BASE_URL, user } from "../../../stores/globalsStore.js";
     import { onMount } from "svelte";
     import toastr from "toastr";

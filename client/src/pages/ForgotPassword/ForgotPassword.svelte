@@ -1,5 +1,7 @@
 <script>
-    document.title = "UngLøn | Glemt adgangskode";
+    export let pageTitle;
+    document.title = pageTitle;
+
     import toastr from "toastr";
     import { BASE_URL } from "../../stores/globalsStore.js";
     import AuthLinks from "../../components/AuthLinks/AuthLinks.svelte";
@@ -49,7 +51,7 @@
         />
         <button type="submit" id="forgot-password-btn">Send link</button>
     </form>
-    <AuthLinks path={location.pathname}/>
+    <AuthLinks path={location.pathname} />
 </main>
 
 <style>

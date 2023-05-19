@@ -1,5 +1,7 @@
 <script>
-    document.title = "UngLøn | Vores tjenester";
+    export let pageTitle;
+    document.title = pageTitle;
+
     import { Link } from "svelte-navigator";
 </script>
 

@@ -1,5 +1,7 @@
 <script>
-    document.title = "UngLøn | Nulstil adgangskode";
+    export let pageTitle;
+    document.title = pageTitle;
+
     import toastr from "toastr";
     import { useNavigate, useParams } from "svelte-navigator";
     import { BASE_URL } from "../../stores/globalsStore.js";
@@ -43,27 +45,24 @@
     }
 
     async function checkToken() {
-        const response = await fetch(
-            `${$BASE_URL}/api/auth/check-token`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    token,
-                }),
-            }
-        );
+        const response = await fetch(`${$BASE_URL}/api/auth/check-token`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                token,
+            }),
+        });
         const data = await response.json();
         if (response.status > 200) {
             toastr.error(data.message);
         }
     }
-    
-    onMount(async ()=>{
+
+    onMount(async () => {
         await checkToken();
-    })
+    });
 </script>
 
 <main class="container">

@@ -1,5 +1,7 @@
 <script>
-    document.title = "UngLøn | Kontakt os";
+    export let pageTitle;
+    document.title = pageTitle;
+    
     import { BASE_URL } from "../../stores/globalsStore.js";
     import toastr from "toastr";
 

@@ -1,5 +1,7 @@
 <script>
-    document.title = "UngLøn | Profil";
+    export let pageTitle;
+    document.title = pageTitle;
+
     import { onMount } from "svelte";
     import toastr from "toastr";
     import { BASE_URL, user } from "../../../stores/globalsStore.js";
@@ -90,7 +92,6 @@
     onMount(async () => {
         await getUser();
     });
-    
 </script>
 
 <main class="container">

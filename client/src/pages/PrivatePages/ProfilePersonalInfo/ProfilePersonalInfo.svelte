@@ -1,5 +1,7 @@
 <script>
-    document.title = "UngLøn | Personlige oplysninger";
+    export let pageTitle;
+    document.title = pageTitle;
+
     import { onMount } from "svelte";
     import { BASE_URL, user } from "../../../stores/globalsStore.js";
     import toastr from "toastr";

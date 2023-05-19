@@ -38,8 +38,7 @@
         if (response.status === 200) {
             isAuthenticated.set(true);
             user.set(data.user);
-        }
-        if (!$isAuthenticated) {
+        } else {
             user.set(null);
         }
     });
@@ -47,44 +46,90 @@
 
 <Router>
     <Navbar />
-    <Route path="/" component={Home} />
-    <Route path="/log-ind" component={Login} />
-    <Route path="/opret-bruger" component={Register} />
-    <Route path="/glemt-adgangskode" component={ForgotPassword} />
-    <Route path="/nulstil-adgangskode/:token" component={ResetPassword} />
-    <Route path="/aktiver-bruger" component={ActivateUser} />
-    <Route path="/send-aktiveringskode" component={SendActivationCode} />
-    <Route path="/om-os" component={About} />
-    <Route path="/kontakt" component={Contact} />
-    <Route path="/forum" component={Forum} />
-    <Route path="/tjenester" component={Tools} />
+
+    <Route path="/">
+        <Home pageTitle="UngLøn | Forside" />
+    </Route>
+
+    <Route path="/log-ind">
+        <Login pageTitle="UngLøn | Log ind" />
+    </Route>
+
+    <Route path="/opret-bruger">
+        <Register pageTitle="UngLøn | Opret bruger!" />
+    </Route>
+
+    <Route path="/glemt-adgangskode">
+        <ForgotPassword pageTitle="UngLøn | Glemt adgangskode" />
+    </Route>
+
+    <Route path="/nulstil-adgangskode/:token">
+        <ResetPassword pageTitle="UngLøn | Nulstil adgangskode" />
+    </Route>
+
+    <Route path="/aktiver-bruger">
+        <ActivateUser pageTitle="UngLøn | Aktiver din bruger" />
+    </Route>
+
+    <Route path="/send-aktiveringskode">
+        <SendActivationCode pageTitle="UngLøn | Send aktiveringskode" />
+    </Route>
+
+    <Route path="/om-os">
+        <About pageTitle="UngLøn | Om os" />
+    </Route>
+
+    <Route path="/kontakt">
+        <Contact pageTitle="UngLøn | Kontakt os" />
+    </Route>
+
+    <Route path="/forum">
+        <Forum pageTitle="UngLøn | Forum" />
+    </Route>
+
+    <Route path="/tjenester">
+        <Tools pageTitle="UngLøn | Tjenester" />
+    </Route>
+
     <PrivateRoute path="/profil" let:location>
-        <Profile />
+        <Profile
+            pageTitle="Profil | {$user.first_name + ' ' + $user.last_name}"
+        />
     </PrivateRoute>
+
     <PrivateRoute path="/profil/personlig" let:location>
-        <ProfilePersonalInfo />
+        <ProfilePersonalInfo pageTitle="UngLøn | Personlige Oplysninger" />
     </PrivateRoute>
+
     <PrivateRoute path="/tjenester/beregn-maanedsloen" let:location>
-        <MonthlyPayment />
+        <MonthlyPayment pageTitle="UngLøn | Beregn Månedsløn" />
     </PrivateRoute>
+
     <PrivateRoute path="/tjenester/beregn-koerselsfradrag" let:location>
-        <DrivingDeduction />
+        <DrivingDeduction pageTitle="UngLøn | Beregn Kørselsfradrag" />
     </PrivateRoute>
+
     <PrivateRoute path="/tjenester/beregn-feriepenge" let:location>
-        <HolidayPayment />
+        <HolidayPayment pageTitle="UngLøn | Beregn Feriepenge" />
     </PrivateRoute>
+
     <PrivateRoute path="/tjenester/forum" let:location>
-        <ForumControl />
+        <ForumControl pageTitle="UngLøn | Dine Indlæg" />
     </PrivateRoute>
+
     <PrivateRoute path="/tjenester/share-dollar" let:location>
-        <ShareDollarTeams />
+        <ShareDollarTeams pageTitle="Ungløn | ShareDollar" />
     </PrivateRoute>
+
     <PrivateRoute path="/tjenester/share-dollar/:teamId" let:location>
         <ShareDollarSpecificTeam />
     </PrivateRoute>
+
     <PrivateRoute path="/accepter-invitation/:token/:teamId" let:location>
         <AcceptInvitation />
     </PrivateRoute>
+
     <ScrollToTop />
+
     <Footer />
 </Router>

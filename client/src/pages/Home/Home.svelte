@@ -1,5 +1,7 @@
 <script>
-  document.title = "UngLøn | Forside";
+  export let pageTitle;
+  document.title = pageTitle;
+
   import Slider from "../../components/Slider/Slider.svelte";
   import Articles from "../../components/Articles/Articles.svelte";
   import {

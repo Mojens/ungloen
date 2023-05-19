@@ -1,5 +1,7 @@
 <script>
-    document.title = "UngLøn | Send aktiveringskode";
+    export let pageTitle;
+    document.title = pageTitle;
+
     import { BASE_URL } from "../../stores/globalsStore.js";
     import toastr from "toastr";
     import { useNavigate } from "svelte-navigator";
@@ -38,7 +40,6 @@
             buttonElement.removeAttribute("class");
         }
     }
-
 </script>
 
 <main class="container">

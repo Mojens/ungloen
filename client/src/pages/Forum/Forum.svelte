@@ -1,5 +1,7 @@
 <script>
-    document.title = "UngLøn | Forum";
+    export let pageTitle;
+    document.title = pageTitle;
+
     import { useNavigate } from "svelte-navigator";
     import { onMount } from "svelte";
     import { BASE_URL, user } from "../../stores/globalsStore.js";
@@ -550,7 +552,9 @@
                                                 {/if}
                                             {/if}
                                             <p class="date">
-                                                Kommenterede: <b>{comment.date}</b>
+                                                Kommenterede: <b
+                                                    >{comment.date}</b
+                                                >
                                             </p>
                                             <p class="content">
                                                 <ReadMore

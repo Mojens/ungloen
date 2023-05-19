@@ -1,5 +1,6 @@
 <script>
-    document.title = "UngLøn | Om os";
+    export let pageTitle;
+    document.title = pageTitle;
 </script>
 
 <main class="container">

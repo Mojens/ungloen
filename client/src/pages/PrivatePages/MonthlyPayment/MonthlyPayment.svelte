@@ -1,5 +1,7 @@
 <script>
-    document.title = "UngLøn | Månedsløn";
+    export let pageTitle;
+    document.title = pageTitle;
+
     import { BASE_URL } from "../../../stores/globalsStore.js";
     import { incomeTypes } from "../../../stores/taxStore.js";
     import { onMount } from "svelte";

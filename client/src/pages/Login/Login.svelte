@@ -1,5 +1,7 @@
 <script>
-    document.title = "UngLøn | Log ind";
+    export let pageTitle;
+    document.title = pageTitle;
+
     import { BASE_URL, user } from "../../stores/globalsStore.js";
     import { useNavigate } from "svelte-navigator";
     import toastr from "toastr";
@@ -27,12 +29,12 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-                buttonElement.removeAttribute("aria-busy");
-                buttonElement.removeAttribute("class");
-                localStorage.setItem("user", JSON.stringify(data.user));
-                toastr.success(data.message);
-                user.set(data.user);
-                navigate("/", { replace: true })
+            buttonElement.removeAttribute("aria-busy");
+            buttonElement.removeAttribute("class");
+            localStorage.setItem("user", JSON.stringify(data.user));
+            toastr.success(data.message);
+            user.set(data.user);
+            navigate("/", { replace: true });
         } else {
             toastr.error(data.message);
             buttonElement.removeAttribute("aria-busy");
@@ -70,7 +72,7 @@
         />
         <button type="submit" id="login-btn">Log ind</button>
     </form>
-    <AuthLinks path={location.pathname}/>
+    <AuthLinks path={location.pathname} />
 </main>
 
 <style>

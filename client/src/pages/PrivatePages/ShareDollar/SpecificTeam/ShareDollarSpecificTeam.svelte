@@ -1,11 +1,13 @@
 <!-- svelte-ignore a11y-missing-attribute -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <script>
+    export let pageTitle = "";
+    document.title = pageTitle;
+
     import { useParams, useNavigate } from "svelte-navigator";
     import { onMount } from "svelte";
     import { BASE_URL, user } from "../../../../stores/globalsStore.js";
     import {
-        whoJoinedChat,
         chatMessages,
         sentRequests,
         recievedRequests,
@@ -31,7 +33,7 @@
 
     let totalAmount = 0;
     let requests = [];
-    
+
     function formatRequest() {
         let formattedRequests = [];
         requests.forEach((request, index) => {

@@ -2,7 +2,9 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-redundant-roles -->
 <script>
-    document.title = "UngLøn | ShareDollar";
+    export let pageTitle;
+    document.title = pageTitle;
+
     import { BASE_URL, user } from "../../../../stores/globalsStore.js";
     import { onMount } from "svelte";
     import toastr from "toastr";

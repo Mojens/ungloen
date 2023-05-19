@@ -1,5 +1,7 @@
 <script>
-    document.title = "UngLøn | Opret dig";
+    export let pageTitle;
+    document.title = pageTitle;
+
     import toastr from "toastr";
     import { useNavigate } from "svelte-navigator";
     import { BASE_URL } from "../../stores/globalsStore.js";

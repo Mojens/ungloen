@@ -1,5 +1,7 @@
 <script>
-    document.title = "UngLøn | Dine Indlæg";
+    export let pageTitle;
+    document.title = pageTitle;
+
     import { BASE_URL } from "../../../stores/globalsStore.js";
     import { forum_subjects } from "../../../stores/taxStore.js";
     import { onMount } from "svelte";
