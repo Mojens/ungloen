@@ -3,10 +3,7 @@
 </script>
 
 <main class="container">
-    <hgroup>
         <h1 class="title-contact">Om os</h1>
-        <h3>Lavet af Mohammad</h3>
-      </hgroup>
     <p>
         Jeg har udviklet dette program som en del af min eksamen i Fullstack med
         Node.js. Ideen bag programmet opstod fra min arbejdstid i Netto, hvor
@@ -23,10 +20,17 @@
         økonomi og opnå større finansiel frihed.
     </p>
     <p>
+        <b>UngLøn</b> har også et program der hedder "ShareDollar", som giver brugerne
+        mulighed for at dele deres udgifter med andre brugere. Dette program er
+        designet til at hjælpe unge mennesker, der bor sammen med andre, med at
+        holde styr på deres fælles udgifter. Dette program er også designet til
+        at hjælpe venner og bekendte til at holde styr på deres fælles udgifter.
+    </p>
+    <p>
         Jeg har arbejdet hårdt på at udvikle et brugervenligt og pålideligt
-        program, der er baseret på de nyeste teknologier og bedste praksisser.
+        program-
         Jeg håber, at dette program vil være nyttigt for unge mennesker, der
-        ønsker at tage kontrol over deres økonomi og opnå større økonomisk
+        ønsker at tage kontrol over deres økonomi og opnå en større økonomisk
         frihed.
     </p>
     <p>

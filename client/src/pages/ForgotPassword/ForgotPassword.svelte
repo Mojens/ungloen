@@ -10,7 +10,7 @@
         let buttonElement = document.getElementById("forgot-password-btn");
         buttonElement.setAttribute("aria-busy", "true");
         buttonElement.setAttribute("class", "secondary");
-        const response = await fetch($BASE_URL + "/api/auth/forgot-password", {
+        const response = await fetch(`${$BASE_URL}/api/auth/forgot-password`, {
             credentials: "include",
             method: "POST",
             headers: {

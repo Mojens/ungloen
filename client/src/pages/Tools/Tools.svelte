@@ -1,27 +1,6 @@
 <script>
     document.title = "UngLøn | Vores tjenester";
-    import { useNavigate } from "svelte-navigator";
-    import { BASE_URL } from "../../stores/globalsStore.js";
-    import toastr from "toastr";
-
-    const navigate = useNavigate();
-
-    async function checkSession(redirectLocation) {
-        const response = await fetch(
-            $BASE_URL + "/api/private/auth/check-session",
-            {
-                method: "GET",
-                credentials: "include",
-            }
-        );
-        const data = await response.json();
-        if (response.status === 200) {
-            navigate(redirectLocation, { replace: true });
-        } else {
-            toastr.error(data.message);
-            navigate("/log-ind", { replace: true });
-        }
-    }
+    import { Link } from "svelte-navigator";
 </script>
 
 <main class="container">
@@ -42,11 +21,12 @@
 
                 <footer>
                     <p class="properties">Kræver du har en bruger</p>
-                    <a
-                        class="card-end"
-                        on:click={() =>
-                            checkSession("/tjenester/beregn-maanedsloen")}
-                        ><i class="fa fa-arrow-circle-o-right fa-2x" /></a
+                    <a class="card-end"
+                        ><Link to="/tjenester/beregn-maanedsloen"
+                            ><i
+                                class="fa fa-arrow-circle-o-right fa-2x"
+                            /></Link
+                        ></a
                     >
                 </footer>
             </article>
@@ -60,11 +40,12 @@
                 og indtast det ind i din forskudsopgørelse.
                 <footer>
                     <p class="properties">Kræver du har en bruger</p>
-                    <a
-                        class="card-end"
-                        on:click={() =>
-                            checkSession("/tjenester/beregn-koerselsfradrag")}
-                        ><i class="fa fa-arrow-circle-o-right fa-2x" /></a
+                    <a class="card-end"
+                        ><Link to="/tjenester/beregn-koerselsfradrag"
+                            ><i
+                                class="fa fa-arrow-circle-o-right fa-2x"
+                            /></Link
+                        ></a
                     >
                 </footer>
             </article>
@@ -81,11 +62,12 @@
                 se hvor meget du kan få udbetalt i feriepenge.
                 <footer>
                     <p class="properties">Kræver du har en bruger</p>
-                    <a
-                        class="card-end"
-                        on:click={() =>
-                            checkSession("/tjenester/beregn-feriepenge")}
-                        ><i class="fa fa-arrow-circle-o-right fa-2x" /></a
+                    <a class="card-end"
+                        ><Link to="/tjenester/beregn-feriepenge"
+                            ><i
+                                class="fa fa-arrow-circle-o-right fa-2x"
+                            /></Link
+                        ></a
                     >
                 </footer>
             </article>
@@ -99,10 +81,12 @@
                 indlæg, kommentere på andres indlæg og blive klogere på din økonomi.
                 <footer>
                     <p class="properties">Kræver du har en bruger</p>
-                    <a
-                        class="card-end"
-                        on:click={() => checkSession("/tjenester/forum")}
-                        ><i class="fa fa-arrow-circle-o-right fa-2x" /></a
+                    <a class="card-end"
+                        ><Link to="/tjenester/forum"
+                            ><i
+                                class="fa fa-arrow-circle-o-right fa-2x"
+                            /></Link
+                        ></a
                     >
                 </footer>
             </article>
@@ -114,14 +98,17 @@
                 <header class="center">
                     <h2 class="down-m">Share Dollar</h2>
                 </header>
-                Share Dollar en funktion, som gør det muligt at lave dine egne teams, og dele jeres regninger med hinanden. Så alle betaler deres andel af regningen.
+                Share Dollar en funktion, som gør det muligt at lave dine egne teams,
+                og dele jeres regninger med hinanden. Så alle betaler deres andel
+                af regningen.
                 <footer>
                     <p class="properties">Kræver du har en bruger</p>
-                    <a
-                        class="card-end"
-                        on:click={() =>
-                            checkSession("/tjenester/share-dollar")}
-                        ><i class="fa fa-arrow-circle-o-right fa-2x" /></a
+                    <a class="card-end"
+                        ><Link to="/tjenester/share-dollar"
+                            ><i
+                                class="fa fa-arrow-circle-o-right fa-2x"
+                            /></Link
+                        ></a
                     >
                 </footer>
             </article>

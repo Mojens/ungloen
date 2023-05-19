@@ -22,7 +22,7 @@
         if (phone.includes("+45")) {
             phone = phone.replace("+45", "");
         }
-        const response = await fetch($BASE_URL + "/api/auth/register", {
+        const response = await fetch(`${$BASE_URL}/api/auth/register`, {
             credentials: "include",
             method: "POST",
             headers: {
@@ -39,12 +39,10 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-            
-                buttonElement.removeAttribute("aria-busy");
-                buttonElement.removeAttribute("class");
-                toastr.success(data.message);
-                navigate("/aktiver-bruger", { replace: true });
-            
+            buttonElement.removeAttribute("aria-busy");
+            buttonElement.removeAttribute("class");
+            toastr.success(data.message);
+            navigate("/aktiver-bruger", { replace: true });
         } else {
             toastr.error(data.message);
             buttonElement.removeAttribute("aria-busy");

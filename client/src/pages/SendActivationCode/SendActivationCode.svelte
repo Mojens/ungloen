@@ -2,7 +2,7 @@
     document.title = "UngLøn | Send aktiveringskode";
     import { BASE_URL } from "../../stores/globalsStore.js";
     import toastr from "toastr";
-    import { useNavigate, useLocation } from "svelte-navigator";
+    import { useNavigate } from "svelte-navigator";
     import AuthLinks from "../../components/AuthLinks/AuthLinks.svelte";
 
     const navigate = useNavigate();
@@ -13,30 +13,32 @@
         let buttonElement = document.getElementById("send-activation-code-btn");
         buttonElement.setAttribute("aria-busy", "true");
         buttonElement.setAttribute("class", "secondary");
-        const response = await fetch($BASE_URL + "/api/auth/resend-verification", {
-            credentials: "include",
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                email,
-            }),
-        });
+        const response = await fetch(
+            `${$BASE_URL}/api/auth/resend-verification`,
+            {
+                credentials: "include",
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email,
+                }),
+            }
+        );
         const data = await response.json();
         if (response.status === 200) {
-            
-                toastr.success(data.message);
-                buttonElement.removeAttribute("aria-busy");
-                buttonElement.removeAttribute("class");
-                navigate("/aktiver-bruger", { replace: true });
-            
+            toastr.success(data.message);
+            buttonElement.removeAttribute("aria-busy");
+            buttonElement.removeAttribute("class");
+            navigate("/aktiver-bruger", { replace: true });
         } else {
             toastr.error(data.message);
             buttonElement.removeAttribute("aria-busy");
             buttonElement.removeAttribute("class");
         }
     }
+
 </script>
 
 <main class="container">

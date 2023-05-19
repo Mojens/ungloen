@@ -1,16 +1,14 @@
 <script>
     document.title = "UngLøn | Nulstil adgangskode";
     import toastr from "toastr";
-    import { useNavigate } from "svelte-navigator";
+    import { useNavigate, useParams } from "svelte-navigator";
     import { BASE_URL } from "../../stores/globalsStore.js";
-    import { useParams } from "svelte-navigator";
-
-    let token = "";
+    import { onMount } from "svelte";
 
     const navigate = useNavigate();
 
     const params = useParams();
-    token = $params.token;
+    let token = $params.token;
 
     let password = "";
     let confirm_password = "";
@@ -19,7 +17,7 @@
         let buttonElement = document.getElementById("reset-password-btn");
         buttonElement.setAttribute("aria-busy", "true");
         buttonElement.setAttribute("class", "secondary");
-        const response = await fetch($BASE_URL + "/api/auth/reset-password", {
+        const response = await fetch(`${$BASE_URL}/api/auth/reset-password`, {
             credentials: "include",
             method: "POST",
             headers: {
@@ -33,12 +31,10 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-            
-                buttonElement.removeAttribute("aria-busy");
-                buttonElement.removeAttribute("class");
-                toastr.success(data.message);
-                navigate("/log-ind", { replace: true });
-            
+            buttonElement.removeAttribute("aria-busy");
+            buttonElement.removeAttribute("class");
+            toastr.success(data.message);
+            navigate("/log-ind", { replace: true });
         } else {
             toastr.error(data.message);
             buttonElement.removeAttribute("aria-busy");
@@ -47,24 +43,27 @@
     }
 
     async function checkToken() {
-        const response = await fetch($BASE_URL + "/api/private/auth/check-session", {
-            credentials: "include",
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                token,
-            }),
-        });
+        const response = await fetch(
+            `${$BASE_URL}/api/auth/check-token`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    token,
+                }),
+            }
+        );
         const data = await response.json();
-        if (response.status === 200) {
-            toastr.success(data.message);
-        } else {
+        if (response.status > 200) {
             toastr.error(data.message);
         }
     }
-    checkToken();
+    
+    onMount(async ()=>{
+        await checkToken();
+    })
 </script>
 
 <main class="container">

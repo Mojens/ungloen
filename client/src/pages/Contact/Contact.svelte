@@ -12,7 +12,7 @@
         let buttonElement = document.getElementById("contact-btn");
         buttonElement.setAttribute("aria-busy", "true");
         buttonElement.setAttribute("class", "secondary");
-        const response = await fetch($BASE_URL + "/api/contact", {
+        const response = await fetch(`${$BASE_URL}/api/contact}`, {
             credentials: "include",
             method: "POST",
             headers: {
@@ -27,15 +27,13 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-            
-                toastr.success(data.message);
-                name = "";
-                email = "";
-                title = "";
-                message = "";
-                buttonElement.removeAttribute("aria-busy");
-                buttonElement.removeAttribute("class");
-            
+            toastr.success(data.message);
+            name = "";
+            email = "";
+            title = "";
+            message = "";
+            buttonElement.removeAttribute("aria-busy");
+            buttonElement.removeAttribute("class");
         } else {
             toastr.error(data.message);
             buttonElement.removeAttribute("aria-busy");

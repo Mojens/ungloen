@@ -1,9 +1,11 @@
 <script>
     document.title = "UngLøn | Log ind";
     import { BASE_URL, user } from "../../stores/globalsStore.js";
+    import { useNavigate } from "svelte-navigator";
     import toastr from "toastr";
     import AuthLinks from "../../components/AuthLinks/AuthLinks.svelte";
 
+    const navigate = useNavigate();
 
     let email = "john_doe@emailprovider.com";
     let password = "";
@@ -12,7 +14,7 @@
         let buttonElement = document.getElementById("login-btn");
         buttonElement.setAttribute("aria-busy", "true");
         buttonElement.setAttribute("class", "secondary");
-        const response = await fetch($BASE_URL + "/api/auth/login", {
+        const response = await fetch(`${$BASE_URL}/api/auth/login`, {
             credentials: "include",
             method: "POST",
             headers: {
@@ -30,7 +32,7 @@
                 localStorage.setItem("user", JSON.stringify(data.user));
                 toastr.success(data.message);
                 user.set(data.user);
-                location.href = "/";
+                navigate("/", { replace: true })
         } else {
             toastr.error(data.message);
             buttonElement.removeAttribute("aria-busy");

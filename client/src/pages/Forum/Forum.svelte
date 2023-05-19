@@ -1,6 +1,6 @@
 <script>
     document.title = "UngLøn | Forum";
-    import { useNavigate, useLocation } from "svelte-navigator";
+    import { useNavigate } from "svelte-navigator";
     import { onMount } from "svelte";
     import { BASE_URL, user } from "../../stores/globalsStore.js";
     import { forum_subjects } from "../../stores/taxStore.js";
@@ -21,9 +21,11 @@
 
     let commentToEdit = "";
 
+    const navigate = useNavigate();
+
     async function deleteComment(commentId) {
         const response = await fetch(
-            $BASE_URL + "/api/private/forum/comments/" + commentId,
+            `${$BASE_URL}/api/private/forum/comments/${commentId}`,
             {
                 method: "DELETE",
                 credentials: "include",
@@ -33,14 +35,15 @@
         if (response.status === 200) {
             toastr.success(data.message);
             publishedPosts = [];
-            getPublishedPosts();
+            await getPublishedPosts();
         } else {
             toastr.error(data.message);
         }
     }
+
     async function updateComment(commentId) {
         const response = await fetch(
-            $BASE_URL + "/api/private/forum/comments/" + commentId,
+            `${$BASE_URL}/api/private/forum/comments/${commentId}`,
             {
                 method: "PUT",
                 credentials: "include",
@@ -56,7 +59,7 @@
         if (response.status === 200) {
             toastr.success(data.message);
             publishedPosts = [];
-            getPublishedPosts();
+            await getPublishedPosts();
         } else {
             toastr.error(data.message);
         }
@@ -64,7 +67,7 @@
 
     async function deletePost(postId) {
         const response = await fetch(
-            $BASE_URL + "/api/private/forum/posts/" + postId,
+            `${$BASE_URL}/api/private/forum/posts/${postId}`,
             {
                 method: "DELETE",
                 credentials: "include",
@@ -73,7 +76,7 @@
         const data = await response.json();
         if (response.status === 200) {
             toastr.success(data.message);
-            getPublishedPosts();
+            await getPublishedPosts();
         } else {
             toastr.error(data.message);
         }
@@ -81,7 +84,7 @@
 
     async function updatePost(postId) {
         const response = await fetch(
-            $BASE_URL + "/api/private/forum/posts/" + postId,
+            `$BASE_URL}/api/private/forum/posts/${postId}`,
             {
                 method: "PUT",
                 credentials: "include",
@@ -100,7 +103,7 @@
         if (response.status === 200) {
             toastr.success(data.message);
             publishedPosts = [];
-            getPublishedPosts();
+            await getPublishedPosts();
         } else {
             toastr.error(data.message);
         }
@@ -111,7 +114,7 @@
         buttonElement.setAttribute("aria-busy", "true");
         buttonElement.setAttribute("class", "secondary");
         const response = await fetch(
-            $BASE_URL + "/api/private/forum/comments",
+            `${$BASE_URL}/api/private/forum/comments`,
             {
                 credentials: "include",
                 method: "POST",
@@ -126,22 +129,16 @@
         );
         const data = await response.json();
         if (response.status === 200) {
-    
-                toastr.success(data.message);
-                comment = "";
-                getPublishedPosts();
-                buttonElement.removeAttribute("aria-busy");
-                buttonElement.removeAttribute("class");
-            
+            toastr.success(data.message);
+            comment = "";
+            await getPublishedPosts();
+            buttonElement.removeAttribute("aria-busy");
+            buttonElement.removeAttribute("class");
         } else if (response.status === 401) {
-        
-                toastr.error(data.message);
-                const from =
-                    ($location.state && $location.state.from) || "/log-ind";
-                navigate(from, { replace: true });
-                buttonElement.removeAttribute("aria-busy");
-                buttonElement.removeAttribute("class");
-            
+            toastr.error(data.message);
+            navigate("/log-ind", { replace: true });
+            buttonElement.removeAttribute("aria-busy");
+            buttonElement.removeAttribute("class");
         } else {
             toastr.error(data.message);
             buttonElement.removeAttribute("aria-busy");
@@ -149,8 +146,9 @@
             comment = "";
         }
     }
+
     async function getPublishedPosts() {
-        const response = await fetch($BASE_URL + "/api/forum/posts");
+        const response = await fetch(`${$BASE_URL}/api/forum/posts`);
         const data = await response.json();
         if (response.status === 200) {
             publishedPosts = data;
@@ -158,12 +156,13 @@
             toastr.error(data.message);
         }
     }
-    async function orderPostBySubject() {
+
+    async function sortPostBySubject() {
         if (subject === "") {
             return getPublishedPosts();
         }
         const response = await fetch(
-            $BASE_URL + "/api/forum/posts/subject/" + subject
+            `${$BASE_URL}/api/forum/posts/subject/${subject}`
         );
         const data = await response.json();
         if (response.status === 200) {
@@ -172,9 +171,10 @@
             publishedPosts = [];
         }
     }
-    async function getLikedPost() {
+
+    async function getLikedPosts() {
         const response = await fetch(
-            $BASE_URL + "/api/private/forum/posts/likes",
+            `${$BASE_URL}/api/private/forum/posts/likes`,
             {
                 method: "GET",
                 credentials: "include",
@@ -195,9 +195,10 @@
             userPostLikes = [];
         }
     }
+
     async function getLikedComments() {
         const response = await fetch(
-            $BASE_URL + "/api/private/forum/comments/likes",
+            `${$BASE_URL}/api/private/forum/comments/likes`,
             {
                 credentials: "include",
             }
@@ -217,13 +218,10 @@
             userCommentLikes = [];
         }
     }
-    getLikedComments();
-    getLikedPost();
-    const navigate = useNavigate();
-    const location = useLocation();
+
     async function likePost(post_id) {
         const response = await fetch(
-            $BASE_URL + "/api/private/forum/posts/likes/" + post_id,
+            `${$BASE_URL}/api/private/forum/posts/likes/${post_id}`,
             {
                 credentials: "include",
                 method: "POST",
@@ -231,41 +229,40 @@
         );
         const data = await response.json();
         if (response.status === 200 || response.status === 201) {
-            getLikedPost();
-            getPublishedPosts();
+            await getLikedPosts();
+            await getPublishedPosts();
         } else if (response.status === 401) {
             toastr.error(data.message);
-            const from =
-                ($location.state && $location.state.from) || "/log-ind";
-            navigate(from, { replace: true });
-        } else {
-            toastr.error(data.message);
-        }
-    }
-    async function likeComment(post_id) {
-        const response = await fetch(
-            $BASE_URL + "/api/private/forum/comments/likes/" + post_id,
-            {
-                credentials: "include",
-                method: "POST",
-            }
-        );
-        const data = await response.json();
-        if (response.status === 200 || response.status === 201) {
-            getLikedComments();
-            getPublishedPosts();
-        } else if (response.status === 401) {
-            toastr.error(data.message);
-            const from =
-                ($location.state && $location.state.from) || "/log-ind";
-            navigate(from, { replace: true });
+            navigate("/log-ind", { replace: true });
         } else {
             toastr.error(data.message);
         }
     }
 
-    onMount(() => {
-        getPublishedPosts();
+    async function likeComment(post_id) {
+        const response = await fetch(
+            `${$BASE_URL}/api/private/forum/comments/likes/${post_id}`,
+            {
+                credentials: "include",
+                method: "POST",
+            }
+        );
+        const data = await response.json();
+        if (response.status === 200 || response.status === 201) {
+            await getLikedComments();
+            await getPublishedPosts();
+        } else if (response.status === 401) {
+            toastr.error(data.message);
+            navigate("/log-ind", { replace: true });
+        } else {
+            toastr.error(data.message);
+        }
+    }
+
+    onMount(async () => {
+        await getPublishedPosts();
+        await getLikedComments();
+        await getLikedPosts();
     });
 </script>
 
@@ -277,11 +274,7 @@
     <div id="filter">
         <h2 class="down-m">Find det emne du ønsker</h2>
         <label for="subject">Emne</label>
-        <select
-            bind:value={subject}
-            on:change={orderPostBySubject}
-            id="subject"
-        >
+        <select bind:value={subject} on:change={sortPostBySubject} id="subject">
             <option value="">Alle</option>
             {#each $forum_subjects as subject}
                 <option value={subject}>{subject}</option>
@@ -557,7 +550,7 @@
                                                 {/if}
                                             {/if}
                                             <p class="date">
-                                                Skrevet: <b>{comment.date}</b>
+                                                Kommenterede: <b>{comment.date}</b>
                                             </p>
                                             <p class="content">
                                                 <ReadMore
@@ -568,7 +561,7 @@
                                                 />
                                             </p>
                                             <p class="author">
-                                                Kommentaret af: {comment.author}
+                                                Kommenteret af: {comment.author}
                                             </p>
                                             {#if userCommentLikes.length <= 0}
                                                 <button
