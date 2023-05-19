@@ -20,7 +20,7 @@
                 <header class="center">{article.title}</header>
                 <img
                     src={article.imgURL}
-                    alt="article image"
+                    alt={article.title}
                     class="article-img"
                 />
                 <footer class="card-footer-article-slider">

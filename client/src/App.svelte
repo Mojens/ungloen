@@ -41,7 +41,6 @@
         }
         if (!$isAuthenticated) {
             user.set(null);
-            
         }
     });
 </script>
@@ -86,6 +85,6 @@
     <PrivateRoute path="/accepter-invitation/:token/:teamId" let:location>
         <AcceptInvitation />
     </PrivateRoute>
+    <ScrollToTop />
+    <Footer />
 </Router>
-<ScrollToTop />
-<Footer />

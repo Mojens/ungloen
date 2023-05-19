@@ -1,7 +1,8 @@
 <script>
     import toastr from "toastr";
+    import { Link } from "svelte-navigator";
     import { BASE_URL } from "../../stores/globalsStore.js";
-    
+
     let email = "";
 
     async function handleContact() {
@@ -18,10 +19,10 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-                buttonElement.removeAttribute("aria-busy");
-                buttonElement.removeAttribute("class");
-                toastr.success(data.message);
-                email = "";
+            buttonElement.removeAttribute("aria-busy");
+            buttonElement.removeAttribute("class");
+            toastr.success(data.message);
+            email = "";
         } else {
             toastr.error(data.message);
             buttonElement.removeAttribute("aria-busy");
@@ -34,19 +35,21 @@
     <hr />
     <div class="grid">
         <div class="center">
-            <a href="/">
-                <h2>
-                    <span>💰</span>
-                    <span>ungløn.dk</span>
-                </h2>
+            <a>
+                <Link to="/">
+                    <h2>
+                        <span>💰</span>
+                        <span>ungløn.dk</span>
+                    </h2>
+                </Link>
             </a>
         </div>
         <div class="center">
             <ul class="footer-links">
-                <li><a href="/tjenester">Tjenester</a></li>
-                <li><a href="/om-os">Om os</a></li>
-                <li><a href="/kontakt">Kontakt</a></li>
-                <li><a href="/log-ind">Log ind</a></li>
+                <li><a><Link to="/tjenester">Tjenester</Link></a></li>
+                <li><a><Link to="/om-os">Om os</Link></a></li>
+                <li><a><Link to="/kontakt">Kontakt</Link></a></li>
+                <li><a><Link to="/log-ind">Log ind</Link></a></li>
             </ul>
         </div>
         <div class="center">
@@ -67,7 +70,9 @@
     <div class="grid">
         <div class="center">
             <p class="copyright">
-                &copy; 2023 Alle rettigheder forbeholdes af <a href="/" class="bold-a">ungløn.dk</a>
+                &copy; 2023 Alle rettigheder forbeholdes af <a
+                    class="bold-a"><Link to="/">ungløn.dk</Link></a
+                >
             </p>
         </div>
         <div />
@@ -83,7 +88,7 @@
 </footer>
 
 <style>
-    .bold-a{
+    .bold-a {
         margin-left: 0 !important;
         padding-left: 0 !important;
         font-weight: bold !important;

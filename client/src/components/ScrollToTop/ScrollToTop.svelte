@@ -42,23 +42,11 @@
         opacity: 0.8;
         font-size: 24px;
     }
+
     @media (prefers-color-scheme: dark) {
         .scroll-to-top {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
             background-color: #fff;
             color: #333;
-            border: none;
-            cursor: pointer;
-            opacity: 0.8;
-            font-size: 24px;
         }
     }
 

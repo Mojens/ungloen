@@ -198,20 +198,22 @@
                     </li>
                 {:else}
                     <li>
-                        <a href={link.path}>{link.name}</a>
+                        <Link to={link.path}>{link.name}</Link>
                     </li>
                 {/if}
             {/each}
             <li>
-                <details role="list" dir="rtl">
+                <details role="list" dir="rtl" id="dropdown-nav">
                     <summary aria-haspopup="listbox" role="link"
                         >Tjenester</summary
                     >
                     <ul role="listbox">
                         {#each LoggedNavigationLinksDropDown as link}
                             {#if link}
-                                <li>
-                                    <a href={link.path}>{link.name}</a>
+                                <li on:click={()=>{
+                                    document.getElementById("dropdown-nav").open = false;
+                                }}>
+                                    <Link to={link.path}>{link.name}</Link>
                                 </li>
                             {/if}
                         {/each}

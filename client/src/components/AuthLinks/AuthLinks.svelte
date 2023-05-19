@@ -1,55 +1,56 @@
 <script>
+    import { Link } from "svelte-navigator";
     export let path = "";
 </script>
 
 {#if path === "/send-aktiveringskode"}
     <div class="form-links">
-        <a href="/log-ind">Er du allerede aktiveret?</a>
+        <Link to="/log-ind">Er du allerede aktiveret?</Link>
         <span id="form-link-divider">|</span>
-        <a href="/opret-bruger">Opret en bruger</a>
+        <Link to="/opret-bruger">Opret en bruger</Link>
         <span id="form-link-divider">|</span>
-        <a href="/glemt-adgangskode">Glemt adgangskode?</a>
+        <Link to="/glemt-adgangskode">Glemt adgangskode?</Link>
         <span id="form-link-divider">|</span>
-        <a href="/aktiver-bruger">Har du allerede en aktiveringskode?</a>
+        <Link to="/aktiver-bruger">Har du allerede en aktiveringskode?</Link>
     </div>
 {:else if path === "/opret-bruger"}
     <div class="form-links">
-        <a href="/log-ind">Allerede oprettet?</a>
+        <Link to="/log-ind">Allerede oprettet?</Link>
         <span id="form-link-divider">|</span>
-        <a href="/glemt-adgangskode">Glemt adgangskode?</a>
+        <Link to="/glemt-adgangskode">Glemt adgangskode?</Link>
         <span id="form-link-divider">|</span>
-        <a href="/aktiver-bruger">Aktiver din bruger</a>
+        <Link to="/aktiver-bruger">Aktiver din bruger</Link>
         <span id="form-link-divider">|</span>
-        <a href="/send-aktiveringskode">Send aktiveringskode</a>
+        <Link to="/send-aktiveringskode">Send aktiveringskode</Link>
     </div>
 {:else if path === "/log-ind"}
     <div class="form-links">
-        <a href="/glemt-adgangskode">Glemt adgangskode?</a>
+        <Link to="/glemt-adgangskode">Glemt adgangskode?</Link>
         <span id="form-link-divider">|</span>
-        <a href="/opret-bruger">Opret en bruger</a>
+        <Link to="/opret-bruger">Opret en bruger</Link>
         <span id="form-link-divider">|</span>
-        <a href="/aktiver-bruger">Aktiver din bruger</a>
+        <Link to="/aktiver-bruger">Aktiver din bruger</Link>
         <span id="form-link-divider">|</span>
-        <a href="/send-aktiveringskode">Send aktiveringskode</a>
+        <Link to="/send-aktiveringskode">Send aktiveringskode</Link>
     </div>
 {:else if path === "/glemt-adgangskode"}
     <div class="form-links">
-        <a href="/log-ind">Allerede oprettet?</a>
+        <Link to="/log-ind">Allerede oprettet?</Link>
         <span id="form-link-divider">|</span>
-        <a href="/opret-bruger">Opret en bruger</a>
+        <Link to="/opret-bruger">Opret en bruger</Link>
         <span id="form-link-divider">|</span>
-        <a href="/aktiver-bruger">Aktiver din bruger</a>
+        <Link to="/aktiver-bruger">Aktiver din bruger</Link>
         <span id="form-link-divider">|</span>
-        <a href="/send-aktiveringskode">Send aktiveringskode</a>
+        <Link to="/send-aktiveringskode">Send aktiveringskode</Link>
     </div>
 {:else if path === "/aktiver-bruger"}
     <div class="form-links">
-        <a href="/log-ind">Er du allerede aktiveret?</a>
+        <Link to="/log-ind">Er du allerede aktiveret?</Link>
         <span id="form-link-divider">|</span>
-        <a href="/opret-bruger">Opret en bruger</a>
+        <Link to="/opret-bruger">Opret en bruger</Link>
         <span id="form-link-divider">|</span>
-        <a href="/glemt-adgangskode">Glemt adgangskode?</a>
+        <Link to="/glemt-adgangskode">Glemt adgangskode?</Link>
         <span id="form-link-divider">|</span>
-        <a href="/send-aktiveringskode">Send aktiveringskode</a>
+        <Link to="/send-aktiveringskode">Send aktiveringskode</Link>
     </div>
 {/if}
