@@ -3,6 +3,7 @@
     document.title = pageTitle;
     
     import { BASE_URL } from "../../stores/globalsStore.js";
+    import { startLoading, stopLoading } from "../../util/loadingButton.js";
     import toastr from "toastr";
 
     let name = "";
@@ -10,10 +11,11 @@
     let title = "";
     let message = "";
 
+    let contactButtonElement;
+
     async function handleContact() {
-        let buttonElement = document.getElementById("contact-btn");
-        buttonElement.setAttribute("aria-busy", "true");
-        buttonElement.setAttribute("class", "secondary");
+        startLoading(contactButtonElement);
+
         const response = await fetch(`${$BASE_URL}/api/contact}`, {
             credentials: "include",
             method: "POST",
@@ -34,12 +36,10 @@
             email = "";
             title = "";
             message = "";
-            buttonElement.removeAttribute("aria-busy");
-            buttonElement.removeAttribute("class");
+            stopLoading(contactButtonElement);
         } else {
             toastr.error(data.message);
-            buttonElement.removeAttribute("aria-busy");
-            buttonElement.removeAttribute("class");
+            stopLoading(contactButtonElement);
         }
     }
 </script>
@@ -88,7 +88,7 @@
                     required
                 />
 
-                <button type="submit" id="contact-btn">Kontakt</button>
+                <button type="submit" bind:this={contactButtonElement}>Kontakt</button>
             </form>
         </div>
         <div class="col-62 left-m">

@@ -2,10 +2,11 @@
     export let pageTitle;
     document.title = pageTitle;
 
-    import toastr from "toastr";
     import { useNavigate, useParams } from "svelte-navigator";
     import { BASE_URL } from "../../stores/globalsStore.js";
     import { onMount } from "svelte";
+    import { startLoading, stopLoading } from "../../util/loadingButton.js";
+    import toastr from "toastr";
 
     const navigate = useNavigate();
 
@@ -15,10 +16,11 @@
     let password = "";
     let confirm_password = "";
 
+    let resetPasswordButtonElement;
+
     async function handleResetPassword() {
-        let buttonElement = document.getElementById("reset-password-btn");
-        buttonElement.setAttribute("aria-busy", "true");
-        buttonElement.setAttribute("class", "secondary");
+        startLoading(resetPasswordButtonElement);
+
         const response = await fetch(`${$BASE_URL}/api/auth/reset-password`, {
             credentials: "include",
             method: "POST",
@@ -33,14 +35,12 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-            buttonElement.removeAttribute("aria-busy");
-            buttonElement.removeAttribute("class");
             toastr.success(data.message);
+            stopLoading(resetPasswordButtonElement);
             navigate("/log-ind", { replace: true });
         } else {
             toastr.error(data.message);
-            buttonElement.removeAttribute("aria-busy");
-            buttonElement.removeAttribute("class");
+            stopLoading(resetPasswordButtonElement);
         }
     }
 
@@ -87,7 +87,7 @@
             placeholder="********"
             required
         />
-        <button type="submit" id="reset-password-btn"
+        <button type="submit" bind:this={resetPasswordButtonElement}
             >Nulstil adgangskode</button
         >
     </form>

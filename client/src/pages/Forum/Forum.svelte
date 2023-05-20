@@ -7,6 +7,7 @@
     import { BASE_URL, user } from "../../stores/globalsStore.js";
     import { forum_subjects } from "../../stores/taxStore.js";
     import { Confirm } from "svelte-confirm";
+    import { startLoading, stopLoading } from "../../util/loadingButton.js";
     import ReadMore from "../../components/ReadMore/ReadMore.svelte";
     import toastr from "toastr";
 
@@ -22,6 +23,8 @@
     let subjectToEdit = "";
 
     let commentToEdit = "";
+
+    let addCommentButtonElement;
 
     const navigate = useNavigate();
 
@@ -112,9 +115,8 @@
     }
 
     async function addComment(postId) {
-        let buttonElement = document.getElementById("add-comment-btn");
-        buttonElement.setAttribute("aria-busy", "true");
-        buttonElement.setAttribute("class", "secondary");
+        startLoading(addCommentButtonElement);
+
         const response = await fetch(
             `${$BASE_URL}/api/private/forum/comments`,
             {
@@ -134,17 +136,14 @@
             toastr.success(data.message);
             comment = "";
             await getPublishedPosts();
-            buttonElement.removeAttribute("aria-busy");
-            buttonElement.removeAttribute("class");
+            stopLoading(addCommentButtonElement);
         } else if (response.status === 401) {
             toastr.error(data.message);
             navigate("/log-ind", { replace: true });
-            buttonElement.removeAttribute("aria-busy");
-            buttonElement.removeAttribute("class");
+            stopLoading(addCommentButtonElement);
         } else {
             toastr.error(data.message);
-            buttonElement.removeAttribute("aria-busy");
-            buttonElement.removeAttribute("class");
+            stopLoading(addCommentButtonElement);
             comment = "";
         }
     }
@@ -628,7 +627,7 @@
                                     id="comment"
                                     placeholder="Skriv en kommentar"
                                 />
-                                <button id="add-comment-btn" type="submit">
+                                <button bind:this={addCommentButtonElement} type="submit">
                                     Tilføj kommentar
                                 </button>
                             </form>

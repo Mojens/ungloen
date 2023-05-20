@@ -4,6 +4,7 @@
 
 	import { BASE_URL } from "../../stores/globalsStore.js";
 	import { useNavigate } from "svelte-navigator";
+	import { startLoading, stopLoading } from "../../util/loadingButton.js";
 	import toastr from "toastr";
 	import AuthLinks from "../../components/AuthLinks/AuthLinks.svelte";
 
@@ -12,11 +13,11 @@
 	let verification_code = "";
 	let phone = "";
 
-	async function verifyUser() {
-		let buttonElement = document.getElementById("activate-user-btn");
-		buttonElement.setAttribute("aria-busy", "true");
-		buttonElement.setAttribute("class", "secondary");
+	let verifyUserButtonElement;
 
+	async function verifyUser() {
+		startLoading(verifyUserButtonElement);
+		
 		const response = await fetch(`${$BASE_URL}/api/auth/verify}`, {
 			credentials: "include",
 			method: "POST",
@@ -30,12 +31,12 @@
 		});
 		const data = await response.json();
 		if (response.status === 200) {
-			buttonElement.removeAttribute("aria-busy");
-			buttonElement.removeAttribute("class");
 			toastr.success(data.message);
+			stopLoading(verifyUserButtonElement);
 			navigate("/log-ind", { replace: true });
 		} else {
 			toastr.error(data.message);
+			stopLoading(verifyUserButtonElement);
 		}
 	}
 </script>
@@ -83,8 +84,8 @@
 			</label>
 		</div>
 		<button
-			type="submit"
-			id="activate-user-btn">Aktiver</button
+			bind:this={verifyUserButtonElement}
+			type="submit">Aktiver</button
 		>
 	</form>
 	<AuthLinks path={location.pathname} />

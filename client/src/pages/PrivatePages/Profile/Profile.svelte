@@ -3,14 +3,18 @@
     document.title = pageTitle;
 
     import { onMount } from "svelte";
-    import toastr from "toastr";
+    import { startLoading, stopLoading } from "../../../util/loadingButton.js";
     import { BASE_URL, user } from "../../../stores/globalsStore.js";
     import { Link } from "svelte-navigator";
+    import toastr from "toastr";
 
     let first_name = "";
     let last_name = "";
     let email = "";
     let phone = "";
+
+    let resetPasswordButtonElement;
+    let updateProfileButtonElement;
 
     async function getUser() {
         const response = await fetch(
@@ -31,9 +35,8 @@
     }
 
     async function updateUser() {
-        const buttonElement = document.getElementById("update-profile-btn");
-        buttonElement.setAttribute("aria-busy", "true");
-        buttonElement.setAttribute("class", "secondary");
+        startLoading(updateProfileButtonElement);
+        
         const response = await fetch(
             `${$BASE_URL}/api/private/users/${$user.id}`,
             {
@@ -51,23 +54,18 @@
         );
         const data = await response.json();
         if (response.status === 200) {
-            buttonElement.removeAttribute("aria-busy");
-            buttonElement.removeAttribute("class");
             toastr.success(data.message);
             user.set(data.user);
-            localStorage.setItem("user", JSON.stringify(data.user));
             await getUser();
+            stopLoading(updateProfileButtonElement);
         } else {
             toastr.error(data.message);
-            buttonElement.removeAttribute("aria-busy");
-            buttonElement.removeAttribute("class");
+            stopLoading(updateProfileButtonElement);
         }
     }
 
     async function handleResetPassword() {
-        let buttonElement = document.getElementById("reset-password-btn");
-        buttonElement.setAttribute("aria-busy", "true");
-        buttonElement.setAttribute("class", "secondary");
+        startLoading(resetPasswordButtonElement);
 
         const response = await fetch(`${$BASE_URL}/api/auth/forgot-password`, {
             method: "POST",
@@ -80,13 +78,11 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-            buttonElement.removeAttribute("aria-busy");
-            buttonElement.removeAttribute("class");
             toastr.success(data.message);
+            stopLoading(resetPasswordButtonElement);
         } else {
-            buttonElement.removeAttribute("aria-busy");
-            buttonElement.removeAttribute("class");
             toastr.error(data.message);
+            stopLoading(resetPasswordButtonElement);
         }
     }
 
@@ -108,7 +104,7 @@
             </li>
         </ul>
     </nav>
-    <form>
+    <form on:submit|preventDefault={updateUser}>
         <label for="first_name">Fornavn</label>
         <input
             type="text"
@@ -145,11 +141,11 @@
             bind:value={phone}
             required
         />
-        <button type="button" id="update-profile-btn" on:click={updateUser}
+        <button type="submit" bind:this={updateProfileButtonElement}
             >Opdater profil</button
         >
     </form>
-    <button type="button" id="reset-password-btn" on:click={handleResetPassword}
+    <button type="button" bind:this={resetPasswordButtonElement} on:click={handleResetPassword}
         ><i class="fa fa-lock right-m" />Nulstil adgangskode</button
     >
 </main>

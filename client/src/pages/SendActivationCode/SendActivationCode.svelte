@@ -3,18 +3,20 @@
     document.title = pageTitle;
 
     import { BASE_URL } from "../../stores/globalsStore.js";
-    import toastr from "toastr";
+    import { startLoading, stopLoading } from "../../util/loadingButton.js";
     import { useNavigate } from "svelte-navigator";
+    import toastr from "toastr";
     import AuthLinks from "../../components/AuthLinks/AuthLinks.svelte";
 
     const navigate = useNavigate();
 
     let email = "";
 
+    let resetPasswordButtonElement;
+
     async function resendActivationCode() {
-        let buttonElement = document.getElementById("send-activation-code-btn");
-        buttonElement.setAttribute("aria-busy", "true");
-        buttonElement.setAttribute("class", "secondary");
+        startLoading(resetPasswordButtonElement);
+        
         const response = await fetch(
             `${$BASE_URL}/api/auth/resend-verification`,
             {
@@ -31,13 +33,11 @@
         const data = await response.json();
         if (response.status === 200) {
             toastr.success(data.message);
-            buttonElement.removeAttribute("aria-busy");
-            buttonElement.removeAttribute("class");
+            stopLoading(resetPasswordButtonElement);
             navigate("/aktiver-bruger", { replace: true });
         } else {
             toastr.error(data.message);
-            buttonElement.removeAttribute("aria-busy");
-            buttonElement.removeAttribute("class");
+            stopLoading(resetPasswordButtonElement);
         }
     }
 </script>
@@ -67,7 +67,7 @@
         <small
             >Din aktiveringskode er gyldig i 24 timer efter du har modtaget den.</small
         >
-        <button type="submit" id="send-activation-code-btn"
+        <button type="submit" bind:this={resetPasswordButtonElement}
             >Send aktiveringskode</button
         >
     </form>

@@ -4,14 +4,16 @@
 
     import toastr from "toastr";
     import { BASE_URL } from "../../stores/globalsStore.js";
+    import { startLoading, stopLoading } from "../../util/loadingButton.js";
     import AuthLinks from "../../components/AuthLinks/AuthLinks.svelte";
 
     let email = "";
 
+    let forgotPasswordButtonElement;
+
     async function handleResetPassword() {
-        let buttonElement = document.getElementById("forgot-password-btn");
-        buttonElement.setAttribute("aria-busy", "true");
-        buttonElement.setAttribute("class", "secondary");
+        startLoading(forgotPasswordButtonElement);
+
         const response = await fetch(`${$BASE_URL}/api/auth/forgot-password`, {
             credentials: "include",
             method: "POST",
@@ -25,10 +27,10 @@
         const data = await response.json();
         if (response.status === 200) {
             toastr.success(data.message);
-            buttonElement.removeAttribute("aria-busy");
-            buttonElement.removeAttribute("class");
+            stopLoading(forgotPasswordButtonElement);
         } else {
             toastr.error(data.message);
+            stopLoading(forgotPasswordButtonElement);
         }
     }
 </script>
@@ -49,7 +51,7 @@
             placeholder="john_doe@emailprovider.dk"
             required
         />
-        <button type="submit" id="forgot-password-btn">Send link</button>
+        <button type="submit" bind:this={forgotPasswordButtonElement}>Send link</button>
     </form>
     <AuthLinks path={location.pathname} />
 </main>

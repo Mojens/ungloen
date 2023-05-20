@@ -2,9 +2,10 @@
     export let pageTitle;
     document.title = pageTitle;
 
-    import toastr from "toastr";
     import { useNavigate } from "svelte-navigator";
     import { BASE_URL } from "../../stores/globalsStore.js";
+    import { startLoading, stopLoading } from "../../util/loadingButton.js";
+    import toastr from "toastr";
     import AuthLinks from "../../components/AuthLinks/AuthLinks.svelte";
 
     let email = "";
@@ -14,12 +15,13 @@
     let last_name = "";
     let phone = "";
 
+    let registerButtonElement;
+
     const navigate = useNavigate();
 
     async function handleRegister() {
-        let buttonElement = document.getElementById("register-btn");
-        buttonElement.setAttribute("aria-busy", "true");
-        buttonElement.setAttribute("class", "secondary");
+        startLoading(registerButtonElement);
+
         phone.replace(" ", "");
         if (phone.includes("+45")) {
             phone = phone.replace("+45", "");
@@ -41,14 +43,12 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-            buttonElement.removeAttribute("aria-busy");
-            buttonElement.removeAttribute("class");
             toastr.success(data.message);
+            stopLoading(registerButtonElement);
             navigate("/aktiver-bruger", { replace: true });
         } else {
             toastr.error(data.message);
-            buttonElement.removeAttribute("aria-busy");
-            buttonElement.removeAttribute("class");
+            stopLoading(registerButtonElement);
         }
     }
 </script>
@@ -128,7 +128,7 @@
             placeholder="********"
             required
         />
-        <button type="submit" id="register-btn">Opret</button>
+        <button type="submit" bind:this={registerButtonElement}>Opret</button>
     </form>
     <AuthLinks path={location.pathname} />
 </main>

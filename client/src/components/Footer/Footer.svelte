@@ -2,13 +2,15 @@
     import toastr from "toastr";
     import { Link } from "svelte-navigator";
     import { BASE_URL } from "../../stores/globalsStore.js";
+	import { startLoading, stopLoading } from "../../util/loadingButton.js";
 
     let email = "";
 
+    let footerContactButtonElement;
+
     async function handleContact() {
-        let buttonElement = document.getElementById("footer-contact-btn");
-        buttonElement.setAttribute("aria-busy", "true");
-        buttonElement.setAttribute("class", "secondary");
+        startLoading(footerContactButtonElement);
+        
         const response = await fetch($BASE_URL + "/api/contact/footer", {
             credentials: "include",
             method: "POST",
@@ -19,14 +21,12 @@
         });
         const data = await response.json();
         if (response.status === 200) {
-            buttonElement.removeAttribute("aria-busy");
-            buttonElement.removeAttribute("class");
             toastr.success(data.message);
             email = "";
+            stopLoading(footerContactButtonElement);
         } else {
             toastr.error(data.message);
-            buttonElement.removeAttribute("aria-busy");
-            buttonElement.removeAttribute("class");
+            stopLoading(footerContactButtonElement);
         }
     }
 </script>
@@ -61,7 +61,7 @@
                     bind:value={email}
                     placeholder="Din email.."
                 />
-                <button type="submit" id="footer-contact-btn">Kontakt os</button
+                <button type="submit" bind:this={footerContactButtonElement}>Kontakt os</button
                 >
             </form>
         </div>

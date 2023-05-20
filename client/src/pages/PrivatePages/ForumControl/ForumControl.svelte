@@ -4,6 +4,7 @@
 
     import { BASE_URL } from "../../../stores/globalsStore.js";
     import { forum_subjects } from "../../../stores/taxStore.js";
+    import { startLoading, stopLoading } from "../../../util/loadingButton.js";
     import { onMount } from "svelte";
     import { Confirm } from "svelte-confirm";
     import toastr from "toastr";
@@ -22,12 +23,16 @@
     let subject = "";
     let is_published = false;
 
+    let submitNewPostButtonElement;
+    let newPostFormButtonElement;
+
+
     function toggleForm() {
         showForm = !showForm;
         if (showForm) {
-            document.getElementById("new-post-btn").innerText = "Anuller";
+            newPostFormButtonElement.innerText = "Anuller";
         } else {
-            document.getElementById("new-post-btn").innerText = "Nyt indlæg";
+            newPostFormButtonElement.innerText = "Nyt indlæg";
             if (title !== "" || content !== "" || is_published !== false) {
                 title = "";
                 content = "";
@@ -92,9 +97,8 @@
     }
 
     async function createPost() {
-        let buttonElement = document.getElementById("submit-btn");
-        buttonElement.setAttribute("aria-busy", "true");
-        buttonElement.setAttribute("class", "secondary");
+        startLoading(submitNewPostButtonElement);
+
         const response = await fetch(`${$BASE_URL}/api/private/forum/posts/`, {
             method: "POST",
             credentials: "include",
@@ -113,12 +117,10 @@
             toastr.success(data.message);
             await getAllPosts();
             toggleForm();
-            buttonElement.removeAttribute("aria-busy");
-            buttonElement.removeAttribute("class");
+            stopLoading(submitNewPostButtonElement);
         } else {
             toastr.error(data.message);
-            buttonElement.removeAttribute("aria-busy");
-            buttonElement.removeAttribute("class");
+            stopLoading(submitNewPostButtonElement);
         }
     }
 
@@ -140,7 +142,7 @@
         <div id="create-btn-container" class="card-end">
             <button
                 class="w-25"
-                id="new-post-btn"
+                bind:this={newPostFormButtonElement}
                 on:click={() => toggleForm()}
             >
                 Nyt indlæg
@@ -190,7 +192,7 @@
                         Offentliggør mit indlæg
                     </label>
                 </fieldset>
-                <button type="submit" id="submit-btn">Opret indlæg</button>
+                <button type="submit" bind:this={submitNewPostButtonElement}>Opret indlæg</button>
             </form>
         {/if}
         <hr />

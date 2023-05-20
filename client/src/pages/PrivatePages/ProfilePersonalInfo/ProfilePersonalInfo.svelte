@@ -4,14 +4,17 @@
 
     import { onMount } from "svelte";
     import { BASE_URL, user } from "../../../stores/globalsStore.js";
-    import toastr from "toastr";
+    import { startLoading, stopLoading } from "../../../util/loadingButton.js";
     import { Link } from "svelte-navigator";
+    import toastr from "toastr";
 
     let zip_code = "";
     let city = "";
     let adress = "";
     let tax_rate = "";
     let monthly_deduction = "";
+
+    let updatePersonalDataButtonElement;
 
     async function getPersonalData() {
         const response = await fetch(
@@ -39,9 +42,7 @@
     }
 
     async function updatePersonalData() {
-        let buttonElement = document.getElementById("update-personal-data-btn");
-        buttonElement.setAttribute("aria-busy", "true");
-        buttonElement.setAttribute("class", "secondary");
+        startLoading(updatePersonalDataButtonElement);
 
         const response = await fetch(
             `${$BASE_URL}/api/private/tax/data/users/${$user.id}`,
@@ -62,14 +63,12 @@
         );
         const data = await response.json();
         if (response.status === 200) {
-            buttonElement.removeAttribute("aria-busy");
-            buttonElement.removeAttribute("class");
             toastr.success(data.message);
             await getPersonalData();
+            stopLoading(updatePersonalDataButtonElement);
         } else {
             toastr.error(data.message);
-            buttonElement.removeAttribute("aria-busy");
-            buttonElement.removeAttribute("class");
+            stopLoading(updatePersonalDataButtonElement);
         }
     }
 
@@ -97,6 +96,8 @@
                     type="number"
                     id="zip_code"
                     name="zip_code"
+                    min="1000"
+                    max="9990"
                     placeholder="4000"
                     bind:value={zip_code}
                     required
@@ -172,7 +173,7 @@
 
         <small>Vi vil aldrig dele dine oplysninger med andre.</small>
 
-        <button type="submit" id="update-personal-data-btn"
+        <button type="submit" bind:this={updatePersonalDataButtonElement}
             >Gem oplysninger</button
         >
     </form>

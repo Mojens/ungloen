@@ -7,9 +7,10 @@
 
 	import { BASE_URL, user } from "../../../../stores/globalsStore.js";
 	import { onMount } from "svelte";
-	import toastr from "toastr";
+	import { startLoading, stopLoading } from "../../../../util/loadingButton.js";
 	import { Confirm } from "svelte-confirm";
 	import { Link } from "svelte-navigator";
+	import toastr from "toastr";
 
 	let ownedTeams = [];
 	let teamsApartOf = [];

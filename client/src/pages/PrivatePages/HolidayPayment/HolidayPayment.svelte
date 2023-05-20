@@ -3,10 +3,13 @@
     document.title = pageTitle;
 
     import { BASE_URL } from "../../../stores/globalsStore.js";
+    import { startLoading, stopLoading } from "../../../util/loadingButton.js";
     import toastr from "toastr";
 
     let holidayData = {};
     let monthlyIncome = 0;
+
+    let calculateHolidayPaymentButtonElement;
 
     function formatNumber(number) {
         const formattedNumber = number.toLocaleString("da-DK");
@@ -14,9 +17,8 @@
     }
 
     async function calculateHolidayPayment() {
-        let buttonElement = document.getElementById("calculate-holiday");
-        buttonElement.setAttribute("aria-busy", "true");
-        buttonElement.setAttribute("class", "secondary w-25");
+       startLoading(calculateHolidayPaymentButtonElement);
+
         const response = await fetch(
             `${$BASE_URL}/api/private/tax/holiday-payment`,
             {
@@ -33,17 +35,15 @@
         const data = await response.json();
         if (response.status === 200) {
             holidayData = data.holidayPaymentData;
-            buttonElement.removeAttribute("aria-busy");
-            buttonElement.setAttribute("class", "w-25");
             setTimeout(() => {
                 document.getElementById("vacation-output").scrollIntoView({
                     behavior: "smooth",
                 });
             }, 100);
+            stopLoading(calculateHolidayPaymentButtonElement);
         } else {
-            buttonElement.removeAttribute("aria-busy");
-            buttonElement.setAttribute("class", "w-25");
             toastr.error(data.message);
+            stopLoading(calculateHolidayPaymentButtonElement);
         }
     }
 </script>
@@ -69,7 +69,7 @@
             <div />
         </div>
         <div class="center">
-            <button type="submit" class="w-25" id="calculate-holiday"
+            <button type="submit" class="w-25" bind:this={calculateHolidayPaymentButtonElement}
                 >Beregn feriepenge</button
             >
         </div>

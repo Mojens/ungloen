@@ -13,6 +13,7 @@
 		recievedRequests,
 	} from "../../../../stores/shareDollarStore.js";
 	import { Confirm } from "svelte-confirm";
+	import { startLoading, stopLoading } from "../../../../util/loadingButton.js";
 	import io from "socket.io-client";
 	import toastr from "toastr";
 
@@ -34,6 +35,8 @@
 
 	let totalAmount = 0;
 	let requests = [];
+
+	let sendMessageButtonElement;
 
 	function formatRequest() {
 		let formattedRequests = [];
@@ -131,9 +134,7 @@
 	}
 
 	async function sendMessage() {
-		let buttonElement = document.getElementById("send-message-btn");
-		buttonElement.setAttribute("aria-busy", "true");
-		buttonElement.setAttribute("class", "button w-25 float-right secondary");
+		startLoading(sendMessageButtonElement);
 
 		const response = await fetch(
 			`${$BASE_URL}/api/private/sharedollar/teams/${teamId}/messages`,
@@ -158,10 +159,10 @@
 				date: new Date().toLocaleString("da-DK"),
 			});
 			messageToSend = "";
-			buttonElement.removeAttribute("aria-busy");
-			buttonElement.setAttribute("class", "button w-25 float-right");
+			stopLoading(sendMessageButtonElement);
 		} else {
 			toastr.error(data.message);
+			stopLoading(sendMessageButtonElement);
 		}
 	}
 
@@ -454,7 +455,7 @@
 			</div>
 			<footer class="p-down m-top">
 				<div class="chat-input">
-					<form>
+					<form on:submit|preventDefault={sendMessage}>
 						<textarea
 							class="input chat-message-input"
 							bind:value={messageToSend}
@@ -462,9 +463,9 @@
 							placeholder="Skriv en besked"
 						/>
 						<button
-							id="send-message-btn"
+							bind:this={sendMessageButtonElement}
+							type="submit"
 							class="button w-25 float-right"
-							on:click|preventDefault={sendMessage}
 						>
 							Send
 						</button>
