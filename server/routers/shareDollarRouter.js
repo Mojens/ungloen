@@ -192,7 +192,7 @@ router.delete('/api/private/sharedollar/teams/delete/:id', async (req, res) => {
     for (const teamUser of teamUsers) {
         const requestToDelete = await db.all('SELECT * FROM share_dollar_teams_money_requests WHERE requestor_id = ? AND team_id = ?', [teamUser.user_id, Number(req.params.id)]);
 
-        if (requestToDelete.length > 0) {
+        if (requestToDelete && requestToDelete.length > 0) {
             for (const request of requestToDelete) {
                 await db.run('DELETE FROM share_dollar_teams_money_requests_users WHERE request_id = ?', [request.id]);
                 await db.run('DELETE FROM share_dollar_teams_money_requests WHERE requestor_id = ? AND team_id = ?', [teamUser.user_id, Number(req.params.id)]);
