@@ -4,7 +4,7 @@
 	export let pageTitle = "";
 	document.title = pageTitle;
 
-	import { useParams, useNavigate } from "svelte-navigator";
+	import { useParams, useNavigate, Link } from "svelte-navigator";
 	import { onMount, afterUpdate, onDestroy } from "svelte";
 	import { BASE_URL, user } from "../../../../stores/globalsStore.js";
 	import {
@@ -324,198 +324,96 @@
 	});
 </script>
 
-<main class="container">
-	<h1 class="center title-contact down-m">{teamName}</h1>
-	{#if isAdmin}
-		<div class="grid top-m">
-			<div>
-				<Confirm
-					confirmTitle={"Inviter medlem"}
-					cancelTitle={"Annuller"}
-					let:confirm={confirmThis}
-				>
-					<button
-						class="button"
-						on:click={() => confirmThis(inviteUser)}
-					>
-						Inviter medlemmer
-					</button>
-					<span slot="title">
-						<h2 class="center">Inviter en ny medlem!</h2>
-					</span>
-					<span slot="description">
-						<form>
-							<label
-								for="inviteEmail"
-								class="p-24">Email</label
-							>
-							<input
-								type="email"
-								bind:value={inviteEmail}
-								name="inviteEmail"
-								id="inviteEmail"
-								class="input"
-							/>
-						</form>
-					</span>
-				</Confirm>
-			</div>
-			<div>
-				<Confirm
-					confirmTitle={"Færdig"}
-					cancelTitle={"Annuller"}
-					let:confirm={confirmThis}
-				>
-					<button
-						class="button"
-						on:click={confirmThis}
-					>
-						Håndter medlemmer
-					</button>
-					<span slot="title">
-						<h2 class="center">Håndter medlemmer</h2>
-					</span>
-					<span slot="description">
-						<div class="list-container">
-							<ul class="member-ul">
-								{#each teamMembers as member}
-									<li>
-										<a>{member.first_name + " " + member.last_name}</a>
-
-										{#if member.id !== teamCreator.id}
-											<Confirm
-												confirmTitle={"Fjern fra gruppe"}
-												cancelTitle={"Annuller"}
-												let:confirm={confirmThis}
-											>
-												<i
-													on:click={() =>
-														confirmThis(removeFromTeam, member.id)}
-													class="fa fa-user-times"
-												/>
-												<span slot="title">
-													<h2 class="center">Fjern fra gruppe</h2>
-												</span>
-												<span slot="description">
-													<p class="center">
-														Er du sikker på du vil fjerne
-														{member.first_name + " " + member.last_name} fra gruppen?
-													</p>
-												</span></Confirm
-											>
-										{/if}
-									</li>
-								{/each}
-							</ul>
-						</div>
-					</span>
-				</Confirm>
-			</div>
-		</div>
-	{/if}
-	<div>
-		<article>
-			<em data-tooltip="Alle beskeder vil automatisk slettet efter 30 dage"
-				><i class="fa fa-question-circle" /></em
-			>
-			<header class="center p-down-0 down-m p-top-0">
-				<h2 class="p-36 down-m">{teamName}</h2>
-			</header>
-			<div
-				class="chat-box"
-				bind:this={chatContainer}
-			>
-				{#if $chatMessages.length === 0}
-					<div class="center">
-						<h5
-							class="center bold"
-							style="margin-top: 20%;"
-						>
-							Der er ingen beskeder endnu
-						</h5>
-					</div>
-				{/if}
-				{#each $chatMessages as chatMessage}
-					{#if chatMessage.userId === $user.id}
-						<div class="sent">
-							<span class="message-metadata-sent"
-								>{chatMessage.name} | {chatMessage.date}</span
-							>
-							<div>{chatMessage.message}</div>
-						</div>
-					{:else}
-						<div class="received">
-							<span class="message-metadata-received"
-								>{chatMessage.name} | {chatMessage.date}</span
-							>
-							<div>{chatMessage.message}</div>
-						</div>
-					{/if}
-				{/each}
-			</div>
-			<footer class="p-down m-top">
-				<div class="chat-input">
-					<form on:submit|preventDefault={sendMessage}>
-						<textarea
-							class="input chat-message-input"
-							bind:value={messageToSend}
-							name="message"
-							placeholder="Skriv en besked"
-						/>
-						<button
-							bind:this={sendMessageButtonElement}
-							type="submit"
-							class="button w-25 float-right"
-						>
-							Send
-						</button>
-					</form>
+<main>
+	<nav
+		aria-label="breadcrumb"
+		class="share-dollar-nav"
+	>
+		<ul>
+			<li><Link to="/tjenester/share-dollar">ShareDollar overblik</Link></li>
+			<li>{teamName}</li>
+		</ul>
+	</nav>
+	<div class="container">
+		<h1 class="center title-contact down-m">{teamName}</h1>
+		{#if isAdmin}
+			<div class="grid top-m">
+				<div>
 					<Confirm
-						confirmTitle={"Anmod om betaling"}
+						confirmTitle={"Inviter medlem"}
 						cancelTitle={"Annuller"}
 						let:confirm={confirmThis}
 					>
-						<a
-							class="icon-button pointer"
-							data-tooltip="Her kan du anmode dine venner om at betale dig tilbage"
-							data-placement="bottom"
-							on:click={() => confirmThis(sendPaymentRequest)}
+						<button
+							class="button"
+							on:click={() => confirmThis(inviteUser)}
 						>
-							<i class="fa fa-money fa-3x" />
-						</a>
+							Inviter medlemmer
+						</button>
 						<span slot="title">
-							<h2 class="center">Anmod om betaling</h2>
+							<h2 class="center">Inviter en ny medlem!</h2>
 						</span>
 						<span slot="description">
-							<label
-								for="amount"
-								class="p-24">Total Beløb</label
-							>
-							<input
-								type="number"
-								name="amount"
-								bind:value={totalAmount}
-								id="amount"
-								class="input"
-							/>
+							<form>
+								<label
+									for="inviteEmail"
+									class="p-24">Email</label
+								>
+								<input
+									type="email"
+									bind:value={inviteEmail}
+									name="inviteEmail"
+									id="inviteEmail"
+									class="input"
+								/>
+							</form>
+						</span>
+					</Confirm>
+				</div>
+				<div>
+					<Confirm
+						confirmTitle={"Færdig"}
+						cancelTitle={"Annuller"}
+						let:confirm={confirmThis}
+					>
+						<button
+							class="button"
+							on:click={confirmThis}
+						>
+							Håndter medlemmer
+						</button>
+						<span slot="title">
+							<h2 class="center">Håndter medlemmer</h2>
+						</span>
+						<span slot="description">
 							<div class="list-container">
 								<ul class="member-ul">
 									{#each teamMembers as member}
 										<li>
 											<a>{member.first_name + " " + member.last_name}</a>
-											<a>
-												<label
-													for="amountMember"
-													class="center">Beløb</label
+
+											{#if member.id !== teamCreator.id}
+												<Confirm
+													confirmTitle={"Fjern fra gruppe"}
+													cancelTitle={"Annuller"}
+													let:confirm={confirmThis}
 												>
-												<input
-													type="number"
-													min="0"
-													id="amountMember"
-													on:input={(e) => handleInputChange(member.id, e)}
-													bind:value={requests[member.id]}
-												/>
-											</a>
+													<i
+														on:click={() =>
+															confirmThis(removeFromTeam, member.id)}
+														class="fa fa-user-times"
+													/>
+													<span slot="title">
+														<h2 class="center">Fjern fra gruppe</h2>
+													</span>
+													<span slot="description">
+														<p class="center">
+															Er du sikker på du vil fjerne
+															{member.first_name + " " + member.last_name} fra gruppen?
+														</p>
+													</span></Confirm
+												>
+											{/if}
 										</li>
 									{/each}
 								</ul>
@@ -523,310 +421,431 @@
 						</span>
 					</Confirm>
 				</div>
-			</footer>
-		</article>
-		<div class="grid">
-			<div>
-				<Confirm
-					confirmTitle={"Færdig"}
-					cancelTitle={"Luk"}
-					let:confirm={confirmThis}
+			</div>
+		{/if}
+		<div>
+			<article>
+				<em data-tooltip="Alle beskeder vil automatisk slettet efter 30 dage"
+					><i class="fa fa-question-circle" /></em
 				>
-					<button on:click={confirmThis}>Sendte anmodninger</button>
-					<span slot="title">
-						<h2 class="center">Sendte anmodninger</h2>
-					</span>
-					<span slot="description">
-						<div class="list-container">
-							<ul class="request-ul">
-								<li>
-									<details open>
-										<summary>Manglende Betaling</summary>
-										<li>
-											{#each $sentRequests as request}
+				<header class="center p-down-0 down-m p-top-0">
+					<h2 class="p-36 down-m">{teamName}</h2>
+				</header>
+				<div
+					class="chat-box"
+					bind:this={chatContainer}
+				>
+					{#if $chatMessages.length === 0}
+						<div class="center">
+							<h5
+								class="center bold"
+								style="margin-top: 20%;"
+							>
+								Der er ingen beskeder endnu
+							</h5>
+						</div>
+					{/if}
+					{#each $chatMessages as chatMessage}
+						{#if chatMessage.userId === $user.id}
+							<div class="sent">
+								<span class="message-metadata-sent"
+									>{chatMessage.name} | {chatMessage.date}</span
+								>
+								<div>{chatMessage.message}</div>
+							</div>
+						{:else}
+							<div class="received">
+								<span class="message-metadata-received"
+									>{chatMessage.name} | {chatMessage.date}</span
+								>
+								<div>{chatMessage.message}</div>
+							</div>
+						{/if}
+					{/each}
+				</div>
+				<footer class="p-down m-top">
+					<div class="chat-input">
+						<form on:submit|preventDefault={sendMessage}>
+							<textarea
+								class="input chat-message-input"
+								bind:value={messageToSend}
+								name="message"
+								placeholder="Skriv en besked"
+							/>
+							<button
+								bind:this={sendMessageButtonElement}
+								type="submit"
+								class="button w-25 float-right"
+							>
+								Send
+							</button>
+						</form>
+						<Confirm
+							confirmTitle={"Anmod om betaling"}
+							cancelTitle={"Annuller"}
+							let:confirm={confirmThis}
+						>
+							<a
+								class="icon-button pointer"
+								data-tooltip="Her kan du anmode dine venner om at betale dig tilbage"
+								data-placement="bottom"
+								on:click={() => confirmThis(sendPaymentRequest)}
+							>
+								<i class="fa fa-money fa-3x" />
+							</a>
+							<span slot="title">
+								<h2 class="center">Anmod om betaling</h2>
+							</span>
+							<span slot="description">
+								<label
+									for="amount"
+									class="p-24">Total Beløb</label
+								>
+								<input
+									type="number"
+									name="amount"
+									bind:value={totalAmount}
+									id="amount"
+									class="input"
+								/>
+								<div class="list-container">
+									<ul class="member-ul">
+										{#each teamMembers as member}
+											<li>
+												<a>{member.first_name + " " + member.last_name}</a>
+												<a>
+													<label
+														for="amountMember"
+														class="center">Beløb</label
+													>
+													<input
+														type="number"
+														min="0"
+														id="amountMember"
+														on:input={(e) => handleInputChange(member.id, e)}
+														bind:value={requests[member.id]}
+													/>
+												</a>
+											</li>
+										{/each}
+									</ul>
+								</div>
+							</span>
+						</Confirm>
+					</div>
+				</footer>
+			</article>
+			<div class="grid">
+				<div>
+					<Confirm
+						confirmTitle={"Færdig"}
+						cancelTitle={"Luk"}
+						let:confirm={confirmThis}
+					>
+						<button on:click={confirmThis}>Sendte anmodninger</button>
+						<span slot="title">
+							<h2 class="center">Sendte anmodninger</h2>
+						</span>
+						<span slot="description">
+							<div class="list-container">
+								<ul class="request-ul">
+									<li>
+										<details open>
+											<summary>Manglende Betaling</summary>
+											<li>
+												{#each $sentRequests as request}
+													{#if !request.paid}
+														<li>
+															<details>
+																<summary class="summary-space">
+																	Anmodet beløb: <b
+																		>{formatNumber(
+																			Number(request.totalAmount)
+																		)}</b
+																	>
+																	kr.
+																	{#if request.paid}
+																		<p style="color:green">
+																			Hele beløbet er betalt
+																		</p>
+																	{:else}
+																		<p style="color:red">
+																			Beløbet mangler at blive betalt færdig
+																		</p>
+																	{/if}
+																</summary>
+																<div>
+																	<p class="center down-m">
+																		<b
+																			>{formatNumber(
+																				Number(
+																					formatProgressBar(
+																						request.totalAmount,
+																						request.usersPaid
+																					)[0]
+																				)
+																			)}</b
+																		>&nbsp;kr.
+																	</p>
+																	<progress
+																		value={formatProgressBar(
+																			request.totalAmount,
+																			request.usersPaid
+																		)[0]}
+																		max={formatProgressBar(
+																			request.totalAmount,
+																			request.usersPaid
+																		)[1]}
+																	/>
+																	<div class="progress-labels">
+																		<p>
+																			<b>0,00</b> kr.
+																		</p>
+																		<p>
+																			<b
+																				>{formatNumber(
+																					Number(
+																						formatProgressBar(
+																							request.totalAmount,
+																							request.usersPaid
+																						)[1]
+																					)
+																				)}</b
+																			> kr.
+																		</p>
+																	</div>
+																	<hr />
+																</div>
+																{#if request.usersPaid.length > 0}
+																	<div class="paid-users">
+																		<p>Personer der har betalt:</p>
+																		<ul class="paid-users-list">
+																			{#each request.usersPaid as user}
+																				<li>
+																					<p>
+																						{user.user}
+																					</p>
+																					<p>
+																						Betalt:
+																						<b
+																							>{formatNumber(
+																								Number(user.amountPaid)
+																							)}</b
+																						>
+																						kr.
+																					</p>
+																				</li>
+																			{/each}
+																		</ul>
+																	</div>
+																{/if}
+															</details>
+														</li>
+													{/if}
+												{/each}
+											</li>
+										</details>
+									</li>
+									<li>
+										<details>
+											<summary>Betalt</summary>
+											<l1>
+												{#each $sentRequests as request}
+													{#if request.paid}
+														<li>
+															<details>
+																<summary class="summary-space">
+																	Anmodet beløb: <b
+																		>{formatNumber(
+																			Number(request.totalAmount)
+																		)}</b
+																	>
+																	kr.
+																	{#if request.paid}
+																		<p style="color:green">
+																			Hele beløbet er betalt
+																		</p>
+																	{:else}
+																		<p style="color:red">
+																			Beløbet mangler at blive betalt færdig
+																		</p>
+																	{/if}
+																</summary>
+																<div>
+																	<p class="center down-m">
+																		<b
+																			>{formatNumber(
+																				Number(
+																					formatProgressBar(
+																						request.totalAmount,
+																						request.usersPaid
+																					)[0]
+																				)
+																			)}</b
+																		>&nbsp;kr.
+																	</p>
+																	<progress
+																		value={formatProgressBar(
+																			request.totalAmount,
+																			request.usersPaid
+																		)[0]}
+																		max={formatProgressBar(
+																			request.totalAmount,
+																			request.usersPaid
+																		)[1]}
+																	/>
+																	<div class="progress-labels">
+																		<p>
+																			<b>0,00</b> kr.
+																		</p>
+																		<p>
+																			<b
+																				>{formatNumber(
+																					Number(
+																						formatProgressBar(
+																							request.totalAmount,
+																							request.usersPaid
+																						)[1]
+																					)
+																				)}</b
+																			> kr.
+																		</p>
+																	</div>
+																	<hr />
+																</div>
+																{#if request.usersPaid.length > 0}
+																	<div class="paid-users">
+																		<p>Personer der har betalt:</p>
+																		<ul class="paid-users-list">
+																			{#each request.usersPaid as user}
+																				<li>
+																					<p>
+																						{user.user}
+																					</p>
+																					<p>
+																						Betalt:
+																						<b
+																							>{formatNumber(
+																								Number(user.amountPaid)
+																							)}</b
+																						>
+																						kr.
+																					</p>
+																				</li>
+																			{/each}
+																		</ul>
+																	</div>
+																{/if}
+															</details>
+														</li>
+													{/if}
+												{/each}
+											</l1>
+										</details>
+									</li>
+								</ul>
+							</div>
+						</span>
+					</Confirm>
+				</div>
+				<div>
+					<Confirm
+						confirmTitle={"Færdig"}
+						cancelTitle={"Luk"}
+						let:confirm={confirmThis}
+					>
+						<button on:click={confirmThis}> Modtagne anmodninger </button>
+						<span slot="title">
+							<h2 class="center">Modtagne anmodninger</h2>
+						</span>
+						<span slot="description">
+							<div class="list-container">
+								<ul class="request-ul">
+									<li>
+										<details open>
+											<summary>Manglende Betalte anmodninger</summary>
+											{#each $recievedRequests as request}
 												{#if !request.paid}
 													<li>
 														<details>
 															<summary class="summary-space">
-																Anmodet beløb: <b
-																	>{formatNumber(
-																		Number(request.totalAmount)
-																	)}</b
+																<span class="down-m"
+																	>Anmodet beløb på <b
+																		>{formatNumber(request.amount)}
+																		kr.</b
+																	></span
+																><br />
+																<span class="top-m"
+																	>Fra {request.requestor}</span
 																>
-																kr.
+															</summary>
+															<div class="request-container">
 																{#if request.paid}
-																	<p style="color:green">
-																		Hele beløbet er betalt
+																	<p style="color:green;">
+																		Du har betalt denne regning
 																	</p>
 																{:else}
-																	<p style="color:red">
-																		Beløbet mangler at blive betalt færdig
+																	<p style="color:red;">
+																		Du mangler at betale denne regning
 																	</p>
+																	<button
+																		on:click={() => payRequest(request.id)}
+																	>
+																		Betal regning
+																	</button>
 																{/if}
-															</summary>
-															<div>
-																<p class="center down-m">
-																	<b
-																		>{formatNumber(
-																			Number(
-																				formatProgressBar(
-																					request.totalAmount,
-																					request.usersPaid
-																				)[0]
-																			)
-																		)}</b
-																	>&nbsp;kr.
-																</p>
-																<progress
-																	value={formatProgressBar(
-																		request.totalAmount,
-																		request.usersPaid
-																	)[0]}
-																	max={formatProgressBar(
-																		request.totalAmount,
-																		request.usersPaid
-																	)[1]}
-																/>
-																<div class="progress-labels">
-																	<p>
-																		<b>0,00</b> kr.
-																	</p>
-																	<p>
-																		<b
-																			>{formatNumber(
-																				Number(
-																					formatProgressBar(
-																						request.totalAmount,
-																						request.usersPaid
-																					)[1]
-																				)
-																			)}</b
-																		> kr.
-																	</p>
-																</div>
-																<hr />
 															</div>
-															{#if request.usersPaid.length > 0}
-																<div class="paid-users">
-																	<p>Personer der har betalt:</p>
-																	<ul class="paid-users-list">
-																		{#each request.usersPaid as user}
-																			<li>
-																				<p>
-																					{user.user}
-																				</p>
-																				<p>
-																					Betalt:
-																					<b
-																						>{formatNumber(
-																							Number(user.amountPaid)
-																						)}</b
-																					>
-																					kr.
-																				</p>
-																			</li>
-																		{/each}
-																	</ul>
-																</div>
-															{/if}
 														</details>
 													</li>
 												{/if}
 											{/each}
-										</li>
-									</details>
-								</li>
-								<li>
-									<details>
-										<summary>Betalt</summary>
-										<l1>
-											{#each $sentRequests as request}
+										</details>
+									</li>
+									<li>
+										<details>
+											<summary>Betalte anmodninger</summary>
+											{#each $recievedRequests as request}
 												{#if request.paid}
 													<li>
 														<details>
 															<summary class="summary-space">
-																Anmodet beløb: <b
-																	>{formatNumber(
-																		Number(request.totalAmount)
-																	)}</b
+																<span class="down-m"
+																	>Anmodet beløb på <b
+																		>{formatNumber(request.amount)}
+																		kr.</b
+																	></span
+																><br />
+																<span class="top-m"
+																	>Fra {request.requestor}</span
 																>
-																kr.
+															</summary>
+															<div class="request-container">
 																{#if request.paid}
-																	<p style="color:green">
-																		Hele beløbet er betalt
+																	<p style="color:green;">
+																		Du har betalt denne regning
 																	</p>
 																{:else}
-																	<p style="color:red">
-																		Beløbet mangler at blive betalt færdig
+																	<p style="color:red;">
+																		Du mangler at betale denne regning
 																	</p>
+																	<button
+																		on:click={() => payRequest(request.id)}
+																	>
+																		Betal regning
+																	</button>
 																{/if}
-															</summary>
-															<div>
-																<p class="center down-m">
-																	<b
-																		>{formatNumber(
-																			Number(
-																				formatProgressBar(
-																					request.totalAmount,
-																					request.usersPaid
-																				)[0]
-																			)
-																		)}</b
-																	>&nbsp;kr.
-																</p>
-																<progress
-																	value={formatProgressBar(
-																		request.totalAmount,
-																		request.usersPaid
-																	)[0]}
-																	max={formatProgressBar(
-																		request.totalAmount,
-																		request.usersPaid
-																	)[1]}
-																/>
-																<div class="progress-labels">
-																	<p>
-																		<b>0,00</b> kr.
-																	</p>
-																	<p>
-																		<b
-																			>{formatNumber(
-																				Number(
-																					formatProgressBar(
-																						request.totalAmount,
-																						request.usersPaid
-																					)[1]
-																				)
-																			)}</b
-																		> kr.
-																	</p>
-																</div>
-																<hr />
 															</div>
-															{#if request.usersPaid.length > 0}
-																<div class="paid-users">
-																	<p>Personer der har betalt:</p>
-																	<ul class="paid-users-list">
-																		{#each request.usersPaid as user}
-																			<li>
-																				<p>
-																					{user.user}
-																				</p>
-																				<p>
-																					Betalt:
-																					<b
-																						>{formatNumber(
-																							Number(user.amountPaid)
-																						)}</b
-																					>
-																					kr.
-																				</p>
-																			</li>
-																		{/each}
-																	</ul>
-																</div>
-															{/if}
 														</details>
 													</li>
 												{/if}
 											{/each}
-										</l1>
-									</details>
-								</li>
-							</ul>
-						</div>
-					</span>
-				</Confirm>
-			</div>
-			<div>
-				<Confirm
-					confirmTitle={"Færdig"}
-					cancelTitle={"Luk"}
-					let:confirm={confirmThis}
-				>
-					<button on:click={confirmThis}> Modtagne anmodninger </button>
-					<span slot="title">
-						<h2 class="center">Modtagne anmodninger</h2>
-					</span>
-					<span slot="description">
-						<div class="list-container">
-							<ul class="request-ul">
-								<li>
-									<details open>
-										<summary>Manglende Betalte anmodninger</summary>
-										{#each $recievedRequests as request}
-											{#if !request.paid}
-												<li>
-													<details>
-														<summary class="summary-space">
-															<span class="down-m"
-																>Anmodet beløb på <b
-																	>{formatNumber(request.amount)}
-																	kr.</b
-																></span
-															><br />
-															<span class="top-m">Fra {request.requestor}</span>
-														</summary>
-														<div class="request-container">
-															{#if request.paid}
-																<p style="color:green;">
-																	Du har betalt denne regning
-																</p>
-															{:else}
-																<p style="color:red;">
-																	Du mangler at betale denne regning
-																</p>
-																<button on:click={() => payRequest(request.id)}>
-																	Betal regning
-																</button>
-															{/if}
-														</div>
-													</details>
-												</li>
-											{/if}
-										{/each}
-									</details>
-								</li>
-								<li>
-									<details>
-										<summary>Betalte anmodninger</summary>
-										{#each $recievedRequests as request}
-											{#if request.paid}
-												<li>
-													<details>
-														<summary class="summary-space">
-															<span class="down-m"
-																>Anmodet beløb på <b
-																	>{formatNumber(request.amount)}
-																	kr.</b
-																></span
-															><br />
-															<span class="top-m">Fra {request.requestor}</span>
-														</summary>
-														<div class="request-container">
-															{#if request.paid}
-																<p style="color:green;">
-																	Du har betalt denne regning
-																</p>
-															{:else}
-																<p style="color:red;">
-																	Du mangler at betale denne regning
-																</p>
-																<button on:click={() => payRequest(request.id)}>
-																	Betal regning
-																</button>
-															{/if}
-														</div>
-													</details>
-												</li>
-											{/if}
-										{/each}
-									</details>
-								</li>
-							</ul>
-						</div>
-					</span>
-				</Confirm>
+										</details>
+									</li>
+								</ul>
+							</div>
+						</span>
+					</Confirm>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -857,10 +876,12 @@
 		font-size: 12px;
 		color: white;
 	}
+
 	.message-metadata-received {
 		font-size: 12px;
 		color: black;
 	}
+
 	.list-container {
 		background-color: white;
 		border-left: 3px solid #f0f0f0;
@@ -912,6 +933,7 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
+
 	.request-ul li {
 		color: black;
 		text-decoration: none;
@@ -924,9 +946,11 @@
 	.request-ul li i {
 		margin-left: 10px;
 	}
+
 	.summary-space {
 		display: contents;
 	}
+
 	.progress-labels {
 		display: flex;
 		justify-content: space-between;
@@ -936,6 +960,7 @@
 		margin-top: 10px;
 		margin-bottom: 10px;
 	}
+
 	.paid-users {
 		margin-top: 10px;
 	}
@@ -953,7 +978,14 @@
 	.paid-users-list li {
 		margin-bottom: 10px;
 	}
+
 	.top-m {
 		margin-top: 10px;
+	}
+
+	.share-dollar-nav {
+		position: relative;
+		margin-left: 10%;
+		top: 25px;
 	}
 </style>
