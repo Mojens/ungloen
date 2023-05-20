@@ -1,5 +1,5 @@
 <script>
-    export let pageTitle = "UngLøn | Accepter invitation";
+    export let pageTitle;
     document.title = pageTitle;
 
     import { onMount } from "svelte";
@@ -9,12 +9,13 @@
 
     const navigate = useNavigate();
     const params = useParams();
+
     let token = $params.token;
     let teamId = $params.teamId;
 
     onMount(async () => {
         const response = await fetch(
-            $BASE_URL + "/api/private/sharedollar/teams/join",
+            `${$BASE_URL}/api/private/sharedollar/teams/join`,
             {
                 credentials: "include",
                 method: "POST",

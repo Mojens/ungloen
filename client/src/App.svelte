@@ -126,7 +126,7 @@
     </PrivateRoute>
 
     <PrivateRoute path="/accepter-invitation/:token/:teamId" let:location>
-        <AcceptInvitation />
+        <AcceptInvitation pageTitle="UngLøn | Accepter invitation"/>
     </PrivateRoute>
 
     <ScrollToTop />

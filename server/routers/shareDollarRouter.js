@@ -115,7 +115,7 @@ router.delete('/api/private/sharedollar/teams/leave/:id', async (req, res) => {
             status: 404
         });
     }
-    const isAlreadyInTeam = await db.get('SELECT * FROM share_dollar_teams_users WHERE team_id = ? AND user_id = ?',[Number(req.params.id), req.session.user.id])
+    const isAlreadyInTeam = await db.get('SELECT * FROM share_dollar_teams_users WHERE team_id = ? AND user_id = ?', [Number(req.params.id), req.session.user.id])
     if (!isAlreadyInTeam) {
         return res.status(400).send({
             message: "Du er ikke en del af dette team",
@@ -124,7 +124,7 @@ router.delete('/api/private/sharedollar/teams/leave/:id', async (req, res) => {
     }
     await db.run('DELETE FROM share_dollar_teams_users WHERE team_id = ? AND user_id = ?', [Number(req.params.id), req.session.user.id])
     return res.status(200).send({
-        message:`Du har forladt ${team.team_name}`,
+        message: `Du har forladt ${team.team_name}`,
         status: 200
     });
 });
@@ -172,25 +172,38 @@ router.get('/api/private/sharedollar/teams/invite', async (req, res) => {
 });
 
 router.delete('/api/private/sharedollar/teams/delete/:id', async (req, res) => {
-    const team = await db.get('SELECT * FROM share_dollar_teams WHERE id = ?', [Number(req.params.id)])
+    const team = await db.get('SELECT * FROM share_dollar_teams WHERE id = ?', [Number(req.params.id)]);
     if (!team) {
         return res.status(404).send({
             message: "Team ikke fundet",
             status: 404
         });
     }
-    const isOwnerOfTeam = await db.get('SELECT * FROM share_dollar_teams WHERE team_creator_id = ? AND id = ?', [req.session.user.id, Number(req.params.id)])
+
+    const isOwnerOfTeam = await db.get('SELECT * FROM share_dollar_teams WHERE team_creator_id = ? AND id = ?', [req.session.user.id, Number(req.params.id)]);
     if (!isOwnerOfTeam) {
         return res.status(400).send({
             message: "Du er ikke ejer af teamet",
             status: 400
         });
     }
-    await db.run('DELETE FROM share_dollar_teams WHERE id = ?', [Number(req.params.id)])
-    const teamUsers = await db.all('SELECT * FROM share_dollar_teams_users WHERE team_id = ?', [Number(req.params.id)])
+
+    const teamUsers = await db.all('SELECT * FROM share_dollar_teams_users WHERE team_id = ?', [Number(req.params.id)]);
     for (const teamUser of teamUsers) {
-        await db.run('DELETE FROM share_dollar_teams_users WHERE id = ?', [teamUser.id])
+        const requestToDelete = await db.all('SELECT * FROM share_dollar_teams_money_requests WHERE requestor_id = ? AND team_id = ?', [teamUser.user_id, Number(req.params.id)]);
+
+        if (requestToDelete.length > 0) {
+            for (const request of requestToDelete) {
+                await db.run('DELETE FROM share_dollar_teams_money_requests_users WHERE request_id = ?', [request.id]);
+                await db.run('DELETE FROM share_dollar_teams_money_requests WHERE requestor_id = ? AND team_id = ?', [teamUser.user_id, Number(req.params.id)]);
+            }
+        }
+        
+        await db.run('DELETE FROM share_dollar_teams_users WHERE id = ?', [teamUser.id]);
     }
+
+    await db.run('DELETE FROM share_dollar_teams WHERE id = ?', [Number(req.params.id)]);
+
     return res.status(200).send({
         message: "Team slettet",
         status: 200
@@ -333,7 +346,7 @@ router.get('/api/private/sharedollar/teams/:id/messages', async (req, res) => {
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     const dbDateFormat = thirtyDaysAgo.toLocaleString("da-DK");
     await db.run('DELETE FROM share_dollar_teams_messages WHERE date <= ?', [dbDateFormat]);
-    const rawMessages = await db.all('SELECT * FROM share_dollar_teams_messages WHERE team_id = ?',[Number(req.params.id)])
+    const rawMessages = await db.all('SELECT * FROM share_dollar_teams_messages WHERE team_id = ?', [Number(req.params.id)])
     if (rawMessages.length === 0) {
         return res.status(200).send({
             message: "Ingen beskeder",
@@ -430,7 +443,7 @@ router.delete('/api/private/sharedollar/teams/:id/members/:memberId', async (req
 
 router.post('/api/private/sharedollar/teams/:id/requests', async (req, res) => {
     const { requests, totalAmount } = req.body;
-    if (!requests || !totalAmount) {
+    if (requests.length <= 0 || !totalAmount) {
         return res.status(400).send({
             message: "Udfyld venligst alle felter",
             status: 400
@@ -521,24 +534,28 @@ router.get('/api/private/sharedollar/requests/recieved', async (req, res) => {
         for (const request of requests) {
             if (!teamId) {
                 const requestInfo = await db.get('SELECT * FROM share_dollar_teams_money_requests WHERE id = ?', [request.request_id]);
-                const requestor = await db.get('SELECT * FROM users WHERE id = ?', [requestInfo.requestor_id]);
-                allRequests.push({
-                    id: request.id,
-                    requestor: `${requestor.first_name} ${requestor.last_name}`,
-                    amount: request.amount,
-                    paid: request.paid,
-                    date: requestInfo.date
-                });
+                if (requestInfo) {
+                    const requestor = await db.get('SELECT * FROM users WHERE id = ?', [requestInfo.requestor_id]);
+                    allRequests.push({
+                        id: request.id,
+                        requestor: `${requestor.first_name} ${requestor.last_name}`,
+                        amount: request.amount,
+                        paid: request.paid,
+                        date: requestInfo.date
+                    });
+                }
             } else {
                 const requestInfo = await db.get('SELECT * FROM share_dollar_teams_money_requests WHERE id = ? AND team_id = ?', [request.request_id, Number(teamId)]);
-                const requestor = await db.get('SELECT * FROM users WHERE id = ?', [requestInfo.requestor_id]);
-                allRequests.push({
-                    id: request.id,
-                    requestor: `${requestor.first_name} ${requestor.last_name}`,
-                    amount: request.amount,
-                    paid: request.paid,
-                    date: requestInfo.date
-                });
+                if (requestInfo) {
+                    const requestor = await db.get('SELECT * FROM users WHERE id = ?', [requestInfo.requestor_id]);
+                    allRequests.push({
+                        id: request.id,
+                        requestor: `${requestor.first_name} ${requestor.last_name}`,
+                        amount: request.amount,
+                        paid: request.paid,
+                        date: requestInfo.date
+                    });
+                }
             }
 
         }
@@ -573,7 +590,7 @@ router.patch('/api/private/sharedollar/requests/recieved/:id/pay', async (req, r
             status: 400
         });
     }
-    await db.run('UPDATE share_dollar_teams_money_requests_users SET paid = ? WHERE id = ?',[true, Number(req.params.id)])
+    await db.run('UPDATE share_dollar_teams_money_requests_users SET paid = ? WHERE id = ?', [true, Number(req.params.id)])
     let isAllPaid = true;
     const requestUsers = await db.all('SELECT * FROM share_dollar_teams_money_requests_users WHERE request_id = ?', [request.request_id])
     for (const requestUser of requestUsers) {

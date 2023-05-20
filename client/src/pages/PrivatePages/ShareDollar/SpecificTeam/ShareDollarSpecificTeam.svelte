@@ -5,7 +5,7 @@
     document.title = pageTitle;
 
     import { useParams, useNavigate } from "svelte-navigator";
-    import { onMount } from "svelte";
+    import { onMount, afterUpdate } from "svelte";
     import { BASE_URL, user } from "../../../../stores/globalsStore.js";
     import {
         chatMessages,
@@ -17,11 +17,12 @@
     import toastr from "toastr";
 
     const navigate = useNavigate();
-
-    let teamId = "";
     const params = useParams();
-    teamId = $params.teamId;
 
+    let socket;
+    let chatContainer;
+
+    let teamId = $params.teamId;
     let teamMembers = [];
     let teamCreator = {};
     let teamName = "";
@@ -44,6 +45,7 @@
         });
         return formattedRequests;
     }
+
     function formatProgressBar(totalAmount, requests = []) {
         let amountPaid = 0;
         if (requests.length > 0) {
@@ -53,18 +55,17 @@
         }
         return [amountPaid, totalAmount];
     }
+
     function formatNumber(number) {
         const formattedNumber = number.toLocaleString("da-DK", {
             minimumFractionDigits: 2,
         });
         return formattedNumber;
     }
+
     async function sendPaymentRequest() {
         const response = await fetch(
-            $BASE_URL +
-                "/api/private/sharedollar/teams/" +
-                teamId +
-                "/requests",
+            `${$BASE_URL}/api/private/sharedollar/teams/${teamId}/requests`,
             {
                 method: "POST",
                 credentials: "include",
@@ -110,11 +111,9 @@
         }
     }
 
-    let socket;
-
     async function getTeamData() {
         const response = await fetch(
-            $BASE_URL + "/api/private/sharedollar/teams/" + teamId,
+            `${$BASE_URL}/api/private/sharedollar/teams/${teamId}`,
             {
                 credentials: "include",
             }
@@ -131,6 +130,7 @@
             navigate("/tjenester/share-dollar", { replace: true });
         }
     }
+
     async function sendMessage() {
         let buttonElement = document.getElementById("send-message-btn");
         buttonElement.setAttribute("aria-busy", "true");
@@ -138,11 +138,9 @@
             "class",
             "button w-25 float-right secondary"
         );
+
         const response = await fetch(
-            $BASE_URL +
-                "/api/private/sharedollar/teams/" +
-                teamId +
-                "/messages",
+            `${$BASE_URL}/api/private/sharedollar/teams/${teamId}/messages`,
             {
                 method: "POST",
                 credentials: "include",
@@ -161,7 +159,7 @@
                 message: messageToSend,
                 userId: $user.id,
                 name: $user.first_name + " " + $user.last_name,
-                date: new Date().toISOString().slice(0, 19).replace("T", " "),
+                date: new Date().toLocaleString("da-DK"),
             });
             messageToSend = "";
             buttonElement.removeAttribute("aria-busy");
@@ -170,12 +168,10 @@
             toastr.error(data.message);
         }
     }
+
     async function getAllMessages() {
         const response = await fetch(
-            $BASE_URL +
-                "/api/private/sharedollar/teams/" +
-                teamId +
-                "/messages",
+            `${$BASE_URL}/api/private/sharedollar/teams/${teamId}/messages`,
             {
                 credentials: "include",
             }
@@ -190,9 +186,10 @@
             toastr.error(data.message);
         }
     }
+
     async function inviteUser() {
         const response = await fetch(
-            $BASE_URL + "/api/private/sharedollar/teams/invite",
+            `${$BASE_URL}/api/private/sharedollar/teams/invite`,
             {
                 credentials: "include",
                 method: "POST",
@@ -214,13 +211,10 @@
             toastr.error(data.message);
         }
     }
+
     async function removeFromTeam(memberId) {
         const response = await fetch(
-            $BASE_URL +
-                "/api/private/sharedollar/teams/" +
-                teamId +
-                "/members/" +
-                memberId,
+            `${BASE_URL}/api/private/sharedollar/teams/${teamId}/members/${memberId}`,
             {
                 method: "DELETE",
                 credentials: "include",
@@ -232,10 +226,12 @@
             teamMembers = teamMembers.filter(
                 (member) => member.id !== memberId
             );
+            await getTeamData();
         } else {
             toastr.error(data.message);
         }
     }
+
     async function getAllSentRequests() {
         const response = await fetch(
             `${$BASE_URL}/api/private/sharedollar/requests?team_id=${teamId}`,
@@ -250,6 +246,7 @@
             toastr.error(data.message);
         }
     }
+
     async function getAllRecievedRequests() {
         const response = await fetch(
             `${$BASE_URL}/api/private/sharedollar/requests/recieved?team_id=${teamId}`,
@@ -264,6 +261,7 @@
             toastr.error(data.message);
         }
     }
+
     async function payRequest(requestId) {
         const response = await fetch(
             `${$BASE_URL}/api/private/sharedollar/requests/recieved/${requestId}/pay`,
@@ -275,9 +273,7 @@
         const data = await response.json();
         if (response.status === 200) {
             toastr.success(data.message);
-            $recievedRequests = $recievedRequests.filter(
-                (request) => request.id !== requestId
-            );
+            await getAllRecievedRequests();
             await getAllSentRequests();
         } else {
             toastr.error(data.message);
@@ -326,6 +322,10 @@
                 return chatMessages;
             });
         });
+    });
+
+    afterUpdate(() => {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
     });
 </script>
 
@@ -434,7 +434,7 @@
             <header class="center p-down-0 down-m p-top-0">
                 <h2 class="p-36 down-m">{teamName}</h2>
             </header>
-            <div class="chat-box">
+            <div class="chat-box" bind:this={chatContainer}>
                 {#if $chatMessages.length === 0}
                     <div class="center">
                         <h5 class="center bold" style="margin-top: 20%;">
