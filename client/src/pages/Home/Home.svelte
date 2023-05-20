@@ -3,12 +3,12 @@
 	document.title = pageTitle;
 
 	import { Link } from "svelte-navigator";
-	import Slider from "../../components/Slider/Slider.svelte";
-	import Articles from "../../components/Articles/Articles.svelte";
 	import {
 		frontPageImages,
 		carousel_articles,
 	} from "../../stores/sliderStore.js";
+	import Slider from "../../components/Slider/Slider.svelte";
+	import Articles from "../../components/Articles/Articles.svelte";
 </script>
 
 <main class="container top-m">
