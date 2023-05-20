@@ -10,6 +10,22 @@
 	import { startLoading, stopLoading } from "../../util/loadingButton.js";
 	import ReadMore from "../../components/ReadMore/ReadMore.svelte";
 	import toastr from "toastr";
+	import BreadCrumb from "../../components/BreadCrumb/BreadCrumb.svelte";
+
+	const breadCrumbs = [
+		{
+			title: "Tjenester",
+			path: "/tjenester",
+		},
+		{
+			title: "Dine indlæg",
+			path: "/tjenester/forum"
+		},
+        {
+            title: "Forum",
+            path: "",
+        }
+	]
 
 	let comment = "";
 	let subject = "";
@@ -260,6 +276,10 @@
 		await getLikedPosts();
 	});
 </script>
+
+{#if $user}
+	<BreadCrumb breadCrumbs={breadCrumbs} />
+{/if}
 
 <main class="container">
 	<hgroup>

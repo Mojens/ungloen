@@ -4,7 +4,19 @@
 
     import { BASE_URL } from "../../../stores/globalsStore.js";
     import { startLoading, stopLoading } from "../../../util/loadingButton.js";
+    import BreadCrumb from "../../../components/BreadCrumb/BreadCrumb.svelte";
     import toastr from "toastr";
+
+    const breadCrumbs = [
+		{
+			title: "Tjenester",
+			path: "/tjenester",
+		},
+		{
+			title: "Feriepenge",
+			path: ""
+		},
+	]
 
     let holidayData = {};
     let monthlyIncome = 0;
@@ -48,6 +60,7 @@
     }
 </script>
 
+<BreadCrumb breadCrumbs={breadCrumbs} />
 <main class="container">
     <hgroup>
         <h1 class="title-contact">Beregn feriepenge</h1>

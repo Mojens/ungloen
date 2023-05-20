@@ -7,12 +7,28 @@
     import { startLoading, stopLoading } from "../../../util/loadingButton.js";
     import { Link } from "svelte-navigator";
     import toastr from "toastr";
+	import BreadCrumb from "../../../components/BreadCrumb/BreadCrumb.svelte";
 
     let zip_code = "";
     let city = "";
     let adress = "";
     let tax_rate = "";
     let monthly_deduction = "";
+
+    const breadcrumbs = [
+        {
+            title: "Profil",
+            path: "/profil",
+        },
+        {
+            title: "Person oplysninger",
+            path: "",
+        },
+        {
+            title: "Tjenester",
+            path: "/tjenester",
+        }
+    ];
 
     let updatePersonalDataButtonElement;
 
@@ -77,17 +93,12 @@
     });
 </script>
 
+<BreadCrumb breadCrumbs={breadcrumbs} />
 <main class="container">
     <hgroup>
         <h1 class="title-contact">Dine personlige oplysninger</h1>
         <h3>Du kan opdater dine personlige oplysninger her.</h3>
     </hgroup>
-    <nav aria-label="breadcrumb">
-        <ul>
-            <li><Link to="/profil">Profil</Link></li>
-            <li>Person oplysninger</li>
-        </ul>
-    </nav>
     <form on:submit|preventDefault={updatePersonalData}>
         <div class="grid">
             <label for="zip_code">

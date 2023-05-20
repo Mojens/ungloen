@@ -7,7 +7,19 @@
 	import { startLoading, stopLoading } from "../../../util/loadingButton.js";
 	import { onMount } from "svelte";
 	import { Link } from "svelte-navigator";
+	import BreadCrumb from "../../../components/BreadCrumb/BreadCrumb.svelte";
 	import toastr from "toastr";
+
+	const breadCrumbs = [
+		{
+			title: "Tjenester",
+			path: "/tjenester",
+		},
+		{
+			title: "Månedsløn",
+			path: ""
+		},
+	]
 
 	let showForm = false;
 	let userPersonalData = {};
@@ -88,6 +100,7 @@
 	});
 </script>
 
+<BreadCrumb breadCrumbs={breadCrumbs} />
 <main class="container">
 	{#if userPersonalData.tax_rate && userPersonalData.monthly_deduction}
 		<hgroup>

@@ -9,6 +9,22 @@
     import { Confirm } from "svelte-confirm";
     import toastr from "toastr";
     import ReadMore from "../../../components/ReadMore/ReadMore.svelte";
+	import BreadCrumb from "../../../components/BreadCrumb/BreadCrumb.svelte";
+
+    const breadCrumbs = [
+		{
+			title: "Tjenester",
+			path: "/tjenester",
+		},
+		{
+			title: "Dine indlæg",
+			path: ""
+		},
+        {
+            title: "Forum",
+            path: "/forum",
+        }
+	]
 
     let posts = [];
 
@@ -129,6 +145,7 @@
     });
 </script>
 
+<BreadCrumb breadCrumbs={breadCrumbs} />
 <main class="container">
     <hgroup>
         <h1 class="title-contact">Dine indlæg</h1>

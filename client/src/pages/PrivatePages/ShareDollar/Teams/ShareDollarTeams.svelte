@@ -7,10 +7,21 @@
 
 	import { BASE_URL, user } from "../../../../stores/globalsStore.js";
 	import { onMount } from "svelte";
-	import { startLoading, stopLoading } from "../../../../util/loadingButton.js";
 	import { Confirm } from "svelte-confirm";
 	import { Link } from "svelte-navigator";
+	import BreadCrumb from "../../../../components/BreadCrumb/BreadCrumb.svelte";
 	import toastr from "toastr";
+
+	const breadCrumbs = [
+		{
+			title: "Tjenester",
+			path: "/tjenester",
+		},
+		{
+			title: "ShareDollar",
+			path: "",
+		},
+	];
 
 	let ownedTeams = [];
 	let teamsApartOf = [];
@@ -140,6 +151,7 @@
 	});
 </script>
 
+<BreadCrumb {breadCrumbs} />
 <main class="container">
 	<hgroup>
 		<h1 class="title-contact down-m">ShareDollar</h1>

@@ -7,11 +7,27 @@
     import { BASE_URL, user } from "../../../stores/globalsStore.js";
     import { Link } from "svelte-navigator";
     import toastr from "toastr";
+	import BreadCrumb from "../../../components/BreadCrumb/BreadCrumb.svelte";
 
     let first_name = "";
     let last_name = "";
     let email = "";
     let phone = "";
+    
+    const breadcrumbs = [
+        {
+            title: "Profil",
+            path: "",
+        },
+        {
+            title: "Person oplysninger",
+            path: "/profil/personlig",
+        },
+        {
+            title: "Tjenester",
+            path: "/tjenester",
+        }
+    ];
 
     let resetPasswordButtonElement;
     let updateProfileButtonElement;
@@ -90,20 +106,12 @@
         await getUser();
     });
 </script>
-
+<BreadCrumb breadCrumbs={breadcrumbs} />
 <main class="container">
     <hgroup>
         <h1 class="title-contact">Profil</h1>
         <h3>Du kan opdater dine bruger informationer her.</h3>
     </hgroup>
-    <nav aria-label="breadcrumb">
-        <ul>
-            <li><a>Profil</a></li>
-            <li>
-                <Link to="/profil/personlig">Person oplysninger</Link>
-            </li>
-        </ul>
-    </nav>
     <form on:submit|preventDefault={updateUser}>
         <label for="first_name">Fornavn</label>
         <input

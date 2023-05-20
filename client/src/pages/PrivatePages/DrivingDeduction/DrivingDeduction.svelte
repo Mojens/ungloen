@@ -6,6 +6,18 @@
 	import { startLoading, stopLoading } from "../../../util/loadingButton.js";
 	import { onMount } from "svelte";
 	import toastr from "toastr";
+	import BreadCrumb from "../../../components/BreadCrumb/BreadCrumb.svelte";
+
+	const breadCrumbs = [
+		{
+			title: "Tjenester",
+			path: "/tjenester",
+		},
+		{
+			title: "Kørselsfradrag",
+			path: ""
+		},
+	]
 
 	let destination = "";
 	let origin = "";
@@ -187,7 +199,7 @@
 		getWorkDays();
 	});
 </script>
-
+<BreadCrumb breadCrumbs={breadCrumbs} />
 <main class="container">
 	<hgroup>
 		<h1 class="title-contact down-m">Bereng kørselsfradrag</h1>
