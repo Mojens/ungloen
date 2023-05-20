@@ -48,18 +48,21 @@ io.on('connection', (socket) => {
         socket.emit("userJoined", team.user);
         socket.to(team.teamId).emit("userJoined", team.user);
     });
+
     socket.on("leaveRoom", (team) => {
         socket.leave(team.teamId);
         socket.emit("userLeft", team.user);
         socket.to(team.teamId).emit("userLeft", team.user);
     });
+
     socket.on('chatMessage', (data) => {
         io.to(data.room).emit('message', data);
-      });
-      socket.on("invites", (data)=> {
-        io.emit("invitesRecieved", data);
-        
     });
+
+    socket.on("invites", (data) => {
+        io.emit("invitesRecieved", data);
+    });
+    
 });
 
 import loginRouter from './routers/loginRouter.js';

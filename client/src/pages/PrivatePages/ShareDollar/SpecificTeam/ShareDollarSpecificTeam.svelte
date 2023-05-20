@@ -285,12 +285,9 @@
 			teamName: teamName,
 			user: $user,
 		};
+
 		socket.on("connect", () => {
 			socket.emit("joinRoom", room);
-		});
-
-		socket.on("disconnect", () => {
-			socket.emit("leaveRoom", room);
 		});
 
 		socket.on("userLeft", (user) => {
@@ -314,6 +311,7 @@
 	afterUpdate(() => {
 		chatContainer.scrollTop = chatContainer.scrollHeight;
 	});
+
 	onDestroy(() => {
 		const room = {
 			teamId: teamId,

@@ -9,6 +9,7 @@
 	import { onMount } from "svelte";
 	import toastr from "toastr";
 	import { Confirm } from "svelte-confirm";
+	import { Link } from "svelte-navigator";
 
 	let ownedTeams = [];
 	let teamsApartOf = [];
@@ -258,10 +259,10 @@
 									</span>
 								</Confirm>
 
-								<a
+								<Link
 									class="icon-in-list"
-									href="/tjenester/share-dollar/{team.id}"
-									><i class="fa fa-arrow-circle-o-right" /></a
+									to="/tjenester/share-dollar/{team.id}"
+									><i class="fa fa-arrow-circle-o-right" /></Link
 								>
 							</a>
 						</li>
@@ -319,10 +320,10 @@
 										</span>
 									</Confirm>
 								{/if}
-								<a
+								<Link
 									class="icon-in-list"
-									href="/tjenester/share-dollar/{team.id}"
-									><i class="fa fa-arrow-circle-o-right" /></a
+									to="/tjenester/share-dollar/{team.id}"
+									><i class="fa fa-arrow-circle-o-right" /></Link
 								>
 							</a>
 						</li>
