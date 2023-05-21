@@ -19,13 +19,13 @@
 		},
 		{
 			title: "Dine indlæg",
-			path: "/tjenester/forum"
+			path: "/tjenester/forum",
 		},
-        {
-            title: "Forum",
-            path: "",
-        }
-	]
+		{
+			title: "Forum",
+			path: "",
+		},
+	];
 
 	let comment = "";
 	let subject = "";
@@ -146,7 +146,6 @@
 		});
 		const data = await response.json();
 		if (response.status === 200) {
-			toastr.success(data.message);
 			comment = "";
 			await getPublishedPosts();
 			stopLoading(addCommentButtonElement);
@@ -167,7 +166,7 @@
 		if (response.status === 200) {
 			publishedPosts = data;
 		} else {
-			toastr.error(data.message);
+			publishedPosts = [];
 		}
 	}
 
@@ -278,7 +277,7 @@
 </script>
 
 {#if $user}
-	<BreadCrumb breadCrumbs={breadCrumbs} />
+	<BreadCrumb {breadCrumbs} />
 {/if}
 
 <main class="container">
@@ -304,13 +303,16 @@
 		{#if subject !== ""}
 			<h2 class="down-m">Alle indlæg om: {subject}</h2>
 			{#if publishedPosts.length === 0}
-				<p>Der er ingen indlæg med dette emne</p>
+				<p>Kunne ikke finde nogle indlæg om {subject}</p>
 			{:else}
 				<p>
 					Fundet <b>{publishedPosts.length}</b> indlæg om
 					<b>{subject}</b>
 				</p>
 			{/if}
+		{:else if publishedPosts.length === 0}
+			<h2 class="down-m">Alle indlæg</h2>
+			<p>Kunne ikke finde nogle indlæg</p>
 		{:else}
 			<h2 class="down-m">Alle indlæg</h2>
 			<p>

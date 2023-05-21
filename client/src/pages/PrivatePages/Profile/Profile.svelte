@@ -157,9 +157,3 @@
         ><i class="fa fa-lock right-m" />Nulstil adgangskode</button
     >
 </main>
-<style>
-    li a {
-        text-decoration: none;
-        color: black;
-    }
-</style>
