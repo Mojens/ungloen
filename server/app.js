@@ -41,18 +41,32 @@ const io = new Server(server, {
     }
 });
 
+const onlineUsers = {};
+
 io.on('connection', (socket) => {
 
     socket.on("joinRoom", (team) => {
         socket.join(team.teamId);
+
+        const existingUser = Object.values(onlineUsers).find((users) => {
+            return users.some((user) => user.teamId === team.teamId && user.user.email === team.user.email);
+        });
+        if (!existingUser) {
+            if (!onlineUsers[team.teamId + team.user.email]) {
+                onlineUsers[team.teamId + team.user.email] = [{ teamId: team.teamId, user: team.user }];
+            }
+        }
         socket.emit("userJoined", team.user);
         socket.to(team.teamId).emit("userJoined", team.user);
+        io.to(team.teamId).emit("onlineUsers", onlineUsers);
     });
 
     socket.on("leaveRoom", (team) => {
         socket.leave(team.teamId);
         socket.emit("userLeft", team.user);
         socket.to(team.teamId).emit("userLeft", team.user);
+        delete onlineUsers[team.teamId + team.user.email];
+        io.to(team.teamId).emit("onlineUsers", onlineUsers);
     });
 
     socket.on('chatMessage', (data) => {
@@ -62,7 +76,7 @@ io.on('connection', (socket) => {
     socket.on("invites", (data) => {
         io.emit("invitesRecieved", data);
     });
-    
+
 });
 
 import loginRouter from './routers/loginRouter.js';

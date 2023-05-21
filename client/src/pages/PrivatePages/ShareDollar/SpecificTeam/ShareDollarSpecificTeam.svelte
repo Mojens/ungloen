@@ -11,12 +11,14 @@
 		chatMessages,
 		sentRequests,
 		recievedRequests,
+		whoIsOnline,
 	} from "../../../../stores/shareDollarStore.js";
 	import { Confirm } from "svelte-confirm";
 	import { startLoading, stopLoading } from "../../../../util/loadingButton.js";
-	import BreadCrumb from "../../../../components/BreadCrumb/BreadCrumb.svelte"
+	import BreadCrumb from "../../../../components/BreadCrumb/BreadCrumb.svelte";
 	import toastr from "toastr";
 	import io from "socket.io-client";
+	import TeamUsers from "../../../../components/TeamUsers/TeamUsers.svelte";
 
 	const navigate = useNavigate();
 	const params = useParams();
@@ -304,6 +306,11 @@
 			);
 		});
 
+		socket.on("onlineUsers", (users) => {
+			whoIsOnline.set([]);
+			whoIsOnline.set(Object.values(users).filter(Boolean));
+		});
+
 		socket.on("message", (message) => {
 			chatMessages.update((chatMessages) => {
 				chatMessages.push(message);
@@ -312,16 +319,15 @@
 		});
 
 		breadCrumbs = [
-		{
-			title: "ShareDollar",
-			path: "/tjenester/share-dollar",
-		},
-		{
-			title: teamName,
-			path: "",
-		}
-		
-	]
+			{
+				title: "ShareDollar",
+				path: "/tjenester/share-dollar",
+			},
+			{
+				title: teamName,
+				path: "",
+			},
+		];
 	});
 
 	afterUpdate(() => {
@@ -339,7 +345,13 @@
 	});
 </script>
 
-<BreadCrumb breadCrumbs={breadCrumbs} />
+<BreadCrumb {breadCrumbs} />
+<TeamUsers
+	{teamMembers}
+	onlineTeamMembers={$whoIsOnline}
+	teamId={Number(teamId)}
+	{teamName}
+/>
 <main class="container">
 	<h1 class="center title-contact down-m">{teamName}</h1>
 	{#if isAdmin}
