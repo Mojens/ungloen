@@ -36,7 +36,7 @@
 	<div class="grid">
 		<div class="center">
 			<a>
-				<Link to="/">
+				<Link to="/"style="text-decoration: none;">
 					<h2>
 						<span>💰</span>
 						<span>ungløn.dk</span>
