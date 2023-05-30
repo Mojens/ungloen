@@ -11,7 +11,7 @@
 
 	const navigate = useNavigate();
 
-	let email = "john_doe@emailprovider.com";
+	let email = "";
 	let password = "";
 
 	let loginButtonElement;
