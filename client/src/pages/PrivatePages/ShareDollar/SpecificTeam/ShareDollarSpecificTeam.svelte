@@ -23,6 +23,8 @@
 	const navigate = useNavigate();
 	const params = useParams();
 
+	let userFromStore = $user;
+
 	let socket;
 	let chatContainer;
 
@@ -338,7 +340,7 @@
 		const room = {
 			teamId: teamId,
 			teamName: teamName,
-			user: $user,
+			user: userFromStore,
 		};
 		socket.emit("leaveRoom", room);
 		socket.disconnect();

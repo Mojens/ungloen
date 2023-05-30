@@ -8,6 +8,13 @@
     const navigate = useNavigate();
     const location = useLocation();
 
+    let invitationsDropdown;
+    let dropdownNav;
+
+    function closeDropDown(element){
+        element.open = false;
+    }
+
     $: notLoggedNavigationLinks = [
         {
             path: "/tjenester",
@@ -120,7 +127,7 @@
     <ul>
         {#if $user}
             <li>
-                <details class="inline-block" role="list" dir="rtl">
+                <details class="inline-block" role="list" dir="rtl" bind:this={invitationsDropdown}>
                     <summary
                         class="inline-block"
                         aria-haspopup="listbox"
@@ -141,7 +148,9 @@
                             </li>
                         {:else}
                             {#each $invitations as invitation}
-                                <li class="down-m">
+                                <li class="down-m"
+                                on:click={() => closeDropDown(invitationsDropdown)}
+                                >
                                     <div class="icon-container">
                                         <a
                                             class="icon-in-list pointer"
@@ -188,7 +197,7 @@
                 {/if}
             {/each}
             <li>
-                <details role="list" dir="rtl" id="dropdown-nav">
+                <details role="list" dir="rtl" bind:this={dropdownNav}>
                     <summary aria-haspopup="listbox" role="link"
                         >Tjenester</summary
                     >
@@ -196,11 +205,7 @@
                         {#each LoggedNavigationLinksDropDown as link}
                             {#if link}
                                 <li
-                                    on:click={() => {
-                                        document.getElementById(
-                                            "dropdown-nav"
-                                        ).open = false;
-                                    }}
+                                    on:click={() => closeDropDown(dropdownNav)}
                                 >
                                     <Link to={link.path}>{link.name}</Link>
                                 </li>

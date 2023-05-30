@@ -40,7 +40,6 @@
 
 	let commentToEdit = "";
 
-	let addCommentButtonElement;
 
 	const navigate = useNavigate();
 
@@ -56,7 +55,7 @@
 		if (response.status === 200) {
 			toastr.success(data.message);
 			publishedPosts = [];
-			await getPublishedPosts();
+			await sortPostBySubject();
 		} else {
 			toastr.error(data.message);
 		}
@@ -80,7 +79,7 @@
 		if (response.status === 200) {
 			toastr.success(data.message);
 			publishedPosts = [];
-			await getPublishedPosts();
+			await sortPostBySubject();
 		} else {
 			toastr.error(data.message);
 		}
@@ -97,7 +96,7 @@
 		const data = await response.json();
 		if (response.status === 200) {
 			toastr.success(data.message);
-			await getPublishedPosts();
+			await sortPostBySubject();
 		} else {
 			toastr.error(data.message);
 		}
@@ -124,14 +123,13 @@
 		if (response.status === 200) {
 			toastr.success(data.message);
 			publishedPosts = [];
-			await getPublishedPosts();
+			await sortPostBySubject();
 		} else {
 			toastr.error(data.message);
 		}
 	}
 
 	async function addComment(postId) {
-		startLoading(addCommentButtonElement);
 
 		const response = await fetch(`${$BASE_URL}/api/private/forum/comments`, {
 			credentials: "include",
@@ -147,15 +145,15 @@
 		const data = await response.json();
 		if (response.status === 200) {
 			comment = "";
-			await getPublishedPosts();
-			stopLoading(addCommentButtonElement);
+			await sortPostBySubject();
+			
 		} else if (response.status === 401) {
 			toastr.error(data.message);
 			navigate("/log-ind", { replace: true });
-			stopLoading(addCommentButtonElement);
+			
 		} else {
 			toastr.error(data.message);
-			stopLoading(addCommentButtonElement);
+			
 			comment = "";
 		}
 	}
@@ -240,7 +238,7 @@
 		const data = await response.json();
 		if (response.status === 200 || response.status === 201) {
 			await getLikedPosts();
-			await getPublishedPosts();
+			await sortPostBySubject();
 		} else if (response.status === 401) {
 			toastr.error(data.message);
 			navigate("/log-ind", { replace: true });
@@ -260,7 +258,7 @@
 		const data = await response.json();
 		if (response.status === 200 || response.status === 201) {
 			await getLikedComments();
-			await getPublishedPosts();
+			await sortPostBySubject();
 		} else if (response.status === 401) {
 			toastr.error(data.message);
 			navigate("/log-ind", { replace: true });
@@ -580,7 +578,6 @@
 									placeholder="Skriv en kommentar"
 								/>
 								<button
-									bind:this={addCommentButtonElement}
 									type="submit"
 								>
 									Tilføj kommentar
