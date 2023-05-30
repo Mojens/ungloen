@@ -22,6 +22,7 @@
     let monthlyIncome = 0;
 
     let calculateHolidayPaymentButtonElement;
+    let vacationOutputElement;
 
     function formatNumber(number) {
         const formattedNumber = number.toLocaleString("da-DK");
@@ -48,7 +49,7 @@
         if (response.status === 200) {
             holidayData = data.holidayPaymentData;
             setTimeout(() => {
-                document.getElementById("vacation-output").scrollIntoView({
+                vacationOutputElement.scrollIntoView({
                     behavior: "smooth",
                 });
             }, 100);
@@ -88,7 +89,7 @@
         </div>
     </form>
     {#if holidayData.holidayPayment}
-        <div id="vacation-output">
+        <div class="vacation-result" bind:this={vacationOutputElement}>
             <h2 class="title-contact">Resultat</h2>
             <div class="center">
                 <div>
@@ -123,10 +124,10 @@
     .title-contact {
         font-size: 24px;
     }
-    #vacation-output h2 {
+    .vacation-result h2 {
         font-size: 36px;
     }
-    #vacation-output p {
+    .vacation-result p {
         font-size: 24px;
     }
 </style>

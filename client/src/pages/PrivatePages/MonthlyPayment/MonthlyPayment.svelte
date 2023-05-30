@@ -30,6 +30,7 @@
 	let monthlyPayoutData = {};
 
     let calculateMonthlyPayoutButtonElement;
+	let payoutResultElement;
 
 	function toggleForm() {
 		monthlyPayoutData = {};
@@ -84,7 +85,7 @@
 		if (response.status === 200) {
 			monthlyPayoutData = data.monthlyPayoutData;
 			setTimeout(() => {
-				document.getElementById("udbetaling-output").scrollIntoView({
+				payoutResultElement.scrollIntoView({
 					behavior: "smooth",
 				});
 			}, 100);
@@ -242,7 +243,7 @@
 
 	{#if monthlyPayoutData.payout}
 		<div
-			id="udbetaling-output"
+			bind:this={payoutResultElement}
 			class="container"
 		>
 			<h2 class="title">Udbetaling</h2>

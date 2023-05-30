@@ -39,11 +39,14 @@
 
 	let calculateDeductionButtonElement;
     let calculateDistanceButtonElement;
+
+	let drivingDeductionFormElement;
+	let drivingDeductionResultElement;
     
 
 	function resetForm() {
 		setTimeout(() => {
-			document.getElementById("driving-deduction-form").scrollIntoView({
+			drivingDeductionFormElement.scrollIntoView({
 				behavior: "smooth",
 			});
 			setTimeout(() => {
@@ -98,7 +101,7 @@
 		if (response.status === 200) {
 			drivingDeductionData = data.drivingDeductionData;
 			setTimeout(() => {
-				document.getElementById("driving-deduction-result").scrollIntoView({
+				drivingDeductionResultElement.scrollIntoView({
 					behavior: "smooth",
 				});
 			}, 100);
@@ -151,7 +154,7 @@
 			distance = Math.floor(data.distance).toString();
 			toastr.success(data.message);
 			setTimeout(() => {
-				document.getElementById("driving-deduction-form").scrollIntoView({
+				drivingDeductionFormElement.scrollIntoView({
 					behavior: "smooth",
 				});
 			}, 100);
@@ -267,7 +270,7 @@
 		</form>
 	</details>
 	<form
-		id="driving-deduction-form"
+		bind:this={drivingDeductionFormElement}
 		on:submit|preventDefault={calculateDrivingDeduction}
 	>
 		<hgroup>
@@ -514,7 +517,7 @@
 		<button bind:this={calculateDeductionButtonElement}>Udregn Kørselsfradrag</button>
 	</form>
 	{#if drivingDeductionData.deductionTotal}
-		<div id="driving-deduction-result">
+		<div bind:this={drivingDeductionResultElement} class="deduction-result">
 			<p>Resultat for: {$user.first_name + " " + $user.last_name}</p>
 			<h2 class="title down-m top-m h2-h3">Resultat</h2>
 			<h3 class="top-m h2-h3">
@@ -680,7 +683,7 @@
 			border-radius: 8px;
 			padding: 16px;
 		}
-		#driving-deduction-result hr {
+		.deduction-result hr {
 			border: none;
 			height: 1px;
 			background-color: #000000;
@@ -689,7 +692,7 @@
 		.inner-grid p {
 			color: #16212a;
 		}
-		#driving-deduction-result p,
+		.deduction-result p,
 		h4,
 		h6 {
 			color: #16212a !important;
@@ -726,7 +729,7 @@
 		font-weight: 600;
 		margin-bottom: 1rem;
 	}
-	#driving-deduction-result {
+	.deduction-result {
 		background-color: white;
 		border-radius: 5px;
 		box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
